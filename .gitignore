@@ -1,43 +1,18 @@
-*/config/development
-*/logs/log-*.php
-*/logs/!index.html
-*/cache/*
-*/cache/!index.html
-*/cache/!.htaccess
+#-------------------------
+# Operating Specific Junk Files
+#-------------------------
 
-# =========================
-# Operating System Files
-# =========================
-
-# OSX
-# =========================
-
+# OS X
 .DS_Store
 .AppleDouble
 .LSOverride
 
-# Thumbnails
+# OS X Thumbnails
 ._*
-
-# Files that might appear on external disk
-.Spotlight-V100
-.Trashes
-
-# Directories potentially created on remote AFP share
-.AppleDB
-.AppleDesktop
-Network Trash Folder
-Temporary Items
-.apdisk
-
-# Windows
-# =========================
 
 # Windows image file caches
 Thumbs.db
 ehthumbs.db
-
-# Folder config file
 Desktop.ini
 
 # Recycle Bin used on file shares
@@ -52,37 +27,101 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-# Copy of CodeIgniter .gitignore file
-# =========================
+# Linux
+*~
 
-.DS_Store
+# KDE directory preferences
+.directory
 
-application/cache/*
-!application/cache/index.html
+# Linux trash folder which might appear on any partition or disk
+.Trash-*
 
-application/logs/*
-!application/logs/index.html
+#-------------------------
+# Environment Files
+#-------------------------
+# These should never be under version control,
+# as it poses a security risk.
+.env
+.vagrant
+Vagrantfile
 
-!application/*/.htaccess
+#-------------------------
+# Temporary Files
+#-------------------------
+writable/cache/*
+!writable/cache/index.html
 
-composer.lock
+writable/logs/*
+!writable/logs/index.html
 
+writable/session/*
+!writable/session/index.html
+
+writable/uploads/*
+!writable/uploads/index.html
+
+writable/debugbar/*
+
+php_errors.log
+
+#-------------------------
+# User Guide Temp Files
+#-------------------------
 user_guide_src/build/*
 user_guide_src/cilexer/build/*
 user_guide_src/cilexer/dist/*
 user_guide_src/cilexer/pycilexer.egg-info/*
-/vendor/
 
-# IDE Files
 #-------------------------
-/nbproject/
-.idea/*
+# Test Files
+#-------------------------
+tests/coverage*
 
-## Sublime Text cache files
+# Don't save phpunit under version control.
+phpunit
+
+#-------------------------
+# Composer
+#-------------------------
+vendor/
+
+#-------------------------
+# IDE / Development Files
+#-------------------------
+
+# Modules Testing
+_modules/*
+
+# phpenv local config
+.php-version
+
+# Jetbrains editors (PHPStorm, etc)
+.idea/
+*.iml
+
+# Netbeans
+nbproject/
+build/
+nbbuild/
+dist/
+nbdist/
+nbactions.xml
+nb-configuration.xml
+.nb-gradle/
+
+# Sublime Text
 *.tmlanguage.cache
 *.tmPreferences.cache
 *.stTheme.cache
 *.sublime-workspace
 *.sublime-project
-/tests/tests/
-/tests/results/
+.phpintel
+/api/
+
+# Visual Studio Code
+.vscode/
+
+/results/
+/phpunit*.xml
+/.phpunit.*.cache
+
