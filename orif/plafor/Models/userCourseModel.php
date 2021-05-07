@@ -10,17 +10,21 @@ use User\Models\User_model;
 
 class UserCourseModel extends \CodeIgniter\Model
 {
+    private static $userCourseModel=null;
     protected $table='user_course';
     protected $primaryKey='id';
     protected $allowedFields=['fk_user','fk_course_plan','fk_status','date_begin','date_end'];
     private User_model $userModel;
     private CoursePlanModel $coursePlanModel;
     private AcquisitionStatusModel $acquisitionStatusModel;
-    /** create function to get user, course plan and status */
-    public function __construct(ConnectionInterface &$db = null, ValidationInterface $validation = null)
-    {
-        parent::__construct($db, $validation);
 
+    /**
+     * @return UserCourseModel
+     */
+    public static function getInstance(){
+        if (UserCourseModel::$userCourseModel==null)
+            UserCourseModel::$userCourseModel=new UserCourseModel();
+        return UserCourseModel::$userCourseModel;
     }
     public function getUser($userCourse){
         if ($this->userModel==null)

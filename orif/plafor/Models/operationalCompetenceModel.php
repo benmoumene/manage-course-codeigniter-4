@@ -9,20 +9,37 @@ use CodeIgniter\Validation\ValidationInterface;
 
 class OperationalCompetenceModel extends \CodeIgniter\Model
 {
+    private static $operationalCompetenceModel=null;
     protected $table='operational_competence';
     protected $primaryKey='id';
     protected $allowedFields=['fk_competence_domain','name','symbol','methodologic','social','personal'];
     protected $useSoftDeletes='true';
     protected $deletedField='archive';
     private CompetenceDomainModel $competenceDomainModel;
-    public function __construct(ConnectionInterface &$db = null, ValidationInterface $validation = null)
-    {
-        parent::__construct($db, $validation);
+
+    /**
+     * @return OperationalCompetenceModel
+     */
+    public static function getInstance(){
+        if (OperationalCompetenceModel::$operationalCompetenceModel==null)
+            OperationalCompetenceModel::$operationalCompetenceModel=new OperationalCompetenceModel();
+        return OperationalCompetenceModel::$operationalCompetenceModel;
     }
-    public function getCompetenceDomain($operationalCompetence){
-        if ($this->competenceDomainModel==null)
-        $this->competenceDomainModel=new CompetenceDomainModel();
-        return $this->competenceDomainModel->find($operationalCompetence['fk_competence_domain']);
+
+    /**
+     * @param $fkCompetenceDomain
+     * @return array|object|null
+     */
+    public static function getCompetenceDomain($fkCompetenceDomain){
+        return CompetenceDomainModel::getInstance()->find($fkCompetenceDomain);
+    }
+
+    /**
+     * @param $operationalCompetenceId
+     * @return array
+     */
+    public static function getObjectives($operationalCompetenceId){
+        return ObjectiveModel::getInstance()->where('fk_operational_competence',$operationalCompetenceId)->findAll();
     }
 
 }

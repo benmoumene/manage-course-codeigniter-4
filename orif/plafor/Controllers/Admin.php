@@ -4,7 +4,10 @@
 namespace Plafor\Controllers;
 
 
+use Plafor\Models\CompetenceDomainModel;
 use Plafor\Models\CoursePlanModel;
+use Plafor\Models\ObjectiveModel;
+use Plafor\Models\OperationalCompetenceModel;
 use Plafor\Models\UserCourseModel;
 
 class Admin extends \App\Controllers\BaseController
@@ -12,6 +15,7 @@ class Admin extends \App\Controllers\BaseController
     private $validation;
     public function initController(\CodeIgniter\HTTP\RequestInterface $request, \CodeIgniter\HTTP\ResponseInterface $response, \Psr\Log\LoggerInterface $logger)
     {
+        $this->access_level=config('\User\Config\UserConfig')->access_lvl_admin;
         parent::initController($request, $response, $logger);
         $this->validation =  \Config\Services::validation();
     }
@@ -98,6 +102,75 @@ class Admin extends \App\Controllers\BaseController
 
         $this->display_view('\Plafor\course_plan\save', $output);
     }
+    /**
+     * Deletes a course plan depending on $action
+     *
+     * @param integer $course_plan_id = ID of the course_plan to affect
+     * @param integer $action = Action to apply on the course plan:
+     *  - 0 for displaying the confirmation
+     *  - 1 for deactivating (soft delete)
+     *  - 2 for deleting (hard delete)
+     * @return void
+     */
+    public function delete_course_plan($course_plan_id, $action = 0)
+    {
+        $competenceDomainIds=[];
+        $objectiveIds=[];
+        $coursePlanModel=new CoursePlanModel();
+        $competenceDomainModel=new CompetenceDomainModel();
+        $operationalCompetencesModel=new OperationalCompetenceModel();
+        $objectiveModel=new ObjectiveModel();
 
+        $course_plan = $coursePlanModel->find($course_plan_id);
+        if (is_null($course_plan)) {
+            return redirect()->to('/plafor/admin/list_course_plan');
+        }
+        switch($action) {
+            case 0: // Display confirmation
+                $coursePlanModel->getUserCourses($course_plan);
+                exit;
+                $output = array(
+                    'course_plan' => $course_plan,
+                    'title' => lang('title_course_plan_delete')
+                );
+                $this->display_view('\Plafor\course_plan\delete', $output);
+                break;
+            case 1: // Deactivate (soft delete) course plan
+                //get linked competence domain
+
+                $competence_domains=$competenceDomainModel->getWhere(['fk_course_plan'=>$course_plan['id']])->getResultArray();
+                foreach ($competence_domains as $competence_domain){
+                    $competenceDomainIds[] = $competence_domain['id'];
+                }
+                //no need
+                //$competenceDomainId = implode(',',$competenceDomainIds);
+
+                //get operational competences
+                //No need
+                $operational_competences = $operationalCompetencesModel->whereIn('fk_competence_domain',$competenceDomainIds)->findAll();
+                $objectives=null;
+                //get Objectives
+                foreach ($operational_competences as $operational_competence){
+                    //get objectives linked to operational competence
+                        $objectives=$objectiveModel->getWhere(['fk_operational_competence'=>$operational_competence['id']])->getResultArray();
+
+                }
+                foreach ($objectives as $objective){
+                    $objectiveIds[] = $objective['id'];
+                }
+                //no need
+                //$objectiveId = implode(',',$objectiveIds);
+                var_dump($objectiveIds);
+                $objectiveModel->whereIn('id',$objectiveIds)->delete();
+                $operationalCompetencesModel->whereIn('fk_competence_domain',$competenceDomainIds)->delete();
+                $competenceDomainModel->where('fk_course_plan',$course_plan_id);
+                $coursePlanModel->delete($course_plan_id, FALSE);
+                return redirect()->to('/plafor/admin/list_course_plan');
+                break;
+            default:
+                // Do nothing
+                return redirect()->to('/plafor/admin/list_course_plan');
+        }
+    }
 
 }
