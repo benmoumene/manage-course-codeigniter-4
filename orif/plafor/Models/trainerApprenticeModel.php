@@ -14,29 +14,30 @@ class TrainerApprenticeModel extends \CodeIgniter\Model
     protected $table='trainer_apprentice';
     protected $primaryKey='id';
     protected $allowedFields=['fk_trainer','fk_apprentice'];
-    private User_model $userModel;
 
     /**
-     * @return null
+     * @return TrainerApprenticeModel
      */
     public static function getInstance(){
         if (TrainerApprenticeModel::$trainerApprenticeModel==null)
             TrainerApprenticeModel::$trainerApprenticeModel=new TrainerApprenticeModel();
         return TrainerApprenticeModel::$trainerApprenticeModel;
     }
-    public function __construct(ConnectionInterface &$db = null, ValidationInterface $validation = null)
-    {
-        parent::__construct($db, $validation);
+
+    /**
+     * @param $trainerApprentice
+     * @return array
+     */
+    public static function getTrainer($trainerApprentice){
+        return User_model::getInstance()->find($trainerApprentice['fk_trainer']);
     }
-    public function getTrainer($trainerApprentice){
-        if ($this->userModel==null)
-        $this->userModel=new User_model();
-        return $this->userModel->find($trainerApprentice['fk_trainer']);
-    }
-    public Function getApprentice($trainerApprentice){
-        if ($this->userModel==null)
-        $this->userModel=new User_model();
-        return $this->userModel->find($trainerApprentice['fk_apprentice']);
+
+    /**
+     * @param $trainerApprentice
+     * @return array
+     */
+    public static function getApprentice($trainerApprentice){
+        return User_model::getInstance()->find($trainerApprentice['fk_apprentice']);
 
     }
 }

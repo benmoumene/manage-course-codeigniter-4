@@ -19,4 +19,12 @@ class UserCourseStatusModel extends \CodeIgniter\Model
             UserCourseStatusModel::$userCourseStatusModel=new UserCourseStatusModel();
         return UserCourseStatusModel::$userCourseStatusModel;
     }
+
+    /**
+     * @param $userCourseStatusId
+     * @return array
+     */
+    public static function getUserCourses($userCourseStatusId){
+        return UserCourseModel::getInstance()->where('fk_status',$userCourseStatusId)->findAll();
+    }
 }

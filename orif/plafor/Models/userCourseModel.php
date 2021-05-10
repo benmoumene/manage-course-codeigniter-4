@@ -14,9 +14,6 @@ class UserCourseModel extends \CodeIgniter\Model
     protected $table='user_course';
     protected $primaryKey='id';
     protected $allowedFields=['fk_user','fk_course_plan','fk_status','date_begin','date_end'];
-    private User_model $userModel;
-    private CoursePlanModel $coursePlanModel;
-    private AcquisitionStatusModel $acquisitionStatusModel;
 
     /**
      * @return UserCourseModel
@@ -26,21 +23,39 @@ class UserCourseModel extends \CodeIgniter\Model
             UserCourseModel::$userCourseModel=new UserCourseModel();
         return UserCourseModel::$userCourseModel;
     }
-    public function getUser($userCourse){
-        if ($this->userModel==null)
-        $this->userModel=new User_model();
-        return $this->userModel->find($userCourse['fk_user']);
+
+    /**
+     * @param $fkUserId
+     * @return array
+     */
+    public static function getUser($fkUserId){
+        return User_model::getInstance()->find($fkUserId);
     }
-    public function getCoursePlan($userCourse){
-        if ($this->coursePlanModel==null)
-        $this->coursePlanModel=new CoursePlanModel();
-        return $this->coursePlanModel->find($userCourse['fk_course_plan']);
+
+    /**
+     * @param $fkCoursePlanId
+     * @return array
+     */
+    public static function getCoursePlan($fkCoursePlanId){
+        return CoursePlanModel::getInstance()->find($fkCoursePlanId);
     }
-    public function getStatut($userCourse){
-        if ($this->acquisitionStatusModel==null)
-        $this->acquisitionStatusModel=new AcquisitionStatusModel();
-        return $this->acquisitionStatusModel->find($userCourse['fk_status']);
+
+    /**
+     * @param $fkUserCourseStatus
+     * @return array
+     */
+    public static function getUserCourseStatus($fkUserCourseStatus){
+        return UserCourseStatusModel::getInstance()->find($fkUserCourseStatus);
     }
+
+    /**
+     * @param $userCourseId
+     * @return array
+     */
+    public static function getAcquisitionStatus($userCourseId){
+        return AcquisitionStatusModel::getInstance()->where('fk_user_course',$userCourseId)->findAll();
+    }
+
 
 
 }
