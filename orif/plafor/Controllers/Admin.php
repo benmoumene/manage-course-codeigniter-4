@@ -151,9 +151,6 @@ class Admin extends \App\Controllers\BaseController
 
                 }
 
-                var_dump($competenceDomainIds);
-                var_dump($objectiveIds);
-
 
 
                 exit();
