@@ -116,19 +116,13 @@ class Admin extends \App\Controllers\BaseController
     {
         $competenceDomainIds=[];
         $objectiveIds=[];
-        $coursePlanModel=new CoursePlanModel();
-        $competenceDomainModel=new CompetenceDomainModel();
-        $operationalCompetencesModel=new OperationalCompetenceModel();
-        $objectiveModel=new ObjectiveModel();
 
-        $course_plan = $coursePlanModel->find($course_plan_id);
+        $course_plan = CoursePlanModel::getInstance()->find($course_plan_id);
         if (is_null($course_plan)) {
             return redirect()->to('/plafor/admin/list_course_plan');
         }
         switch($action) {
             case 0: // Display confirmation
-                $coursePlanModel->getUserCourses($course_plan);
-                exit;
                 $output = array(
                     'course_plan' => $course_plan,
                     'title' => lang('title_course_plan_delete')
@@ -138,31 +132,34 @@ class Admin extends \App\Controllers\BaseController
             case 1: // Deactivate (soft delete) course plan
                 //get linked competence domain
 
-                $competence_domains=$competenceDomainModel->getWhere(['fk_course_plan'=>$course_plan['id']])->getResultArray();
-                foreach ($competence_domains as $competence_domain){
-                    $competenceDomainIds[] = $competence_domain['id'];
-                }
-                //no need
-                //$competenceDomainId = implode(',',$competenceDomainIds);
+                $competenceDomains=CoursePlanModel::getCompetenceDomains($course_plan['id']);
+                $operationalCompetences=[];
+                $objectives=[];
 
-                //get operational competences
-                //No need
-                $operational_competences = $operationalCompetencesModel->whereIn('fk_competence_domain',$competenceDomainIds)->findAll();
-                $objectives=null;
-                //get Objectives
-                foreach ($operational_competences as $operational_competence){
-                    //get objectives linked to operational competence
-                        $objectives=$objectiveModel->getWhere(['fk_operational_competence'=>$operational_competence['id']])->getResultArray();
-
+                foreach ($competenceDomains as $competence_domain){
+                    //get all operationnal competences in an array($operational_competences) which format is [[:competencedomainid]=>[operationalCompetence id, name, etc...],[:competencedomainid]=>[operationalCompetence id, name, etc...]
+                    $operationalCompetences[$competence_domain['id']]=CompetenceDomainModel::getOperationalCompetences($competence_domain['id']);
+                    //get all objectives assiociated with an operational_competence in an array($objectives) which format is [[operationalcompetenceid]=>[objectives id,fkop, symbol, etc...]
+                    foreach ($operationalCompetences as list($operationalCompetence)){
+                        $objectives[$operationalCompetence['id']]=OperationalCompetenceModel::getObjectives($operationalCompetence['id']);
+                    }
                 }
-                foreach ($objectives as $objective){
+                //get all ids
+                $competenceDomainIds=array_column($competenceDomains,'id');
+                foreach ($objectives as list($objective)) {
                     $objectiveIds[] = $objective['id'];
+
                 }
-                //no need
-                //$objectiveId = implode(',',$objectiveIds);
+
+                var_dump($competenceDomainIds);
                 var_dump($objectiveIds);
-                $objectiveModel->whereIn('id',$objectiveIds)->delete();
-                $operationalCompetencesModel->whereIn('fk_competence_domain',$competenceDomainIds)->delete();
+
+
+
+                exit();
+
+                ObjectiveModel::getInstance()->whereIn('id',$objectiveIds)->delete();
+                OperationalCompetenceModel::getInstance()->whereIn('fk_competence_domain',$competenceDomainIds)->delete();
                 $competenceDomainModel->where('fk_course_plan',$course_plan_id);
                 $coursePlanModel->delete($course_plan_id, FALSE);
                 return redirect()->to('/plafor/admin/list_course_plan');

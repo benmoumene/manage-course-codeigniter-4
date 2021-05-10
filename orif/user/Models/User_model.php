@@ -18,6 +18,9 @@ class User_model extends \CodeIgniter\Model{
     protected $useSoftDeletes=true;
     protected $deletedField="archive";
 
+    /**
+     * @return User_model
+     */
     public static function getInstance(){
         if (User_model::$userModel==null)
             User_model::$userModel=new User_model();

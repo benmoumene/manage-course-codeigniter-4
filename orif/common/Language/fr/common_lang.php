@@ -28,6 +28,7 @@ return[
     'btn_add_m'                      => 'Nouveau',
     'btn_details'                    => 'Détails',
     'btn_update'                     => 'Modifier',
+    'btn_disable'                    => 'Désactiver',
 
 // Other common texts
     'yes'                            => 'Oui',

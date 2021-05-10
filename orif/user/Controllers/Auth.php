@@ -31,8 +31,6 @@ class Auth extends BaseController {
         // Load required services
         $this->validation = \Config\Services::validation();
 
-        // Load required models
-        $this->user_model = new User_model();
     }
 
     /**
@@ -80,22 +78,22 @@ class Auth extends BaseController {
                 if ($this->validation->withRequest($this->request)->run() == true) {
                     $input = $this->request->getVar('username');
                     $password = $this->request->getvar('password');
-                    $ismail = $this->user_model->check_password_email($input, $password);
-                    if ($ismail || $this->user_model->check_password_name($input, $password)) {
+                    $ismail = User_model::check_password_email($input, $password);
+                    if ($ismail || User_model::check_password_name($input, $password)) {
                         // Login success
                         $user = NULL;
                         // User is either logging in through an email or an username
                         // Even if an username is entered like an email, we're not grabbing it
                         if ($ismail) {
-                            $user = $this->user_model->getWhere(['email'=>$input])->getRow();
+                            $user = User_model::getInstance()->getWhere(['email'=>$input])->getRow();
                         } else {
-                            $user = $this->user_model->getWhere(['username'=>$input])->getRow();
+                            $user = User_model::getInstance()->getWhere(['username'=>$input])->getRow();
                         }
 
                         // Set session variables
                         $_SESSION['user_id'] = (int)$user->id;
                         $_SESSION['username'] = (string)$user->username;
-                        $_SESSION['user_access'] = (int)$this->user_model->get_access_level($user);
+                        $_SESSION['user_access'] = (int)User_model::get_access_level($user->id);
                         $_SESSION['logged_in'] = (bool)true;
 
                         // Send the user to the redirection URL
@@ -177,8 +175,7 @@ class Auth extends BaseController {
                     $new_password = $this->request->getVar('new_password');
                     $confirm_password = $this->request->getVar('confirm_password');
 
-                    $this->user_model=new \User\Models\User_model();
-                    $this->user_model->update($_SESSION['user_id'],
+                    User_model::getInstance()->update($_SESSION['user_id'],
                             array("password" => password_hash($new_password, config("\User\Config\UserConfig")->password_hash_algorithm)));
 
                     // Send the user back to the site's root
