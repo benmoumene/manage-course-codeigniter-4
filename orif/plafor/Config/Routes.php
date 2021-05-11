@@ -8,4 +8,6 @@
  */
 
 $routes->add('plafor/admin/(:any)','\Plafor\Controllers\Admin::$1');
+$routes->add('plafor/apprentice/(:any)','\Plafor\Controllers\Apprentice::$1');
+
 ?>
