@@ -25,6 +25,10 @@ return[
     'btn_add'                        => 'Ajouter',
     'btn_new_m'                      => 'Nouveau',
     'btn_new_f'                      => 'Nouvelle',
+    'btn_add_m'                      => 'Nouveau',
+    'btn_details'                    => 'Détails',
+    'btn_update'                     => 'Modifier',
+    'btn_disable'                    => 'Désactiver',
 
 // Other common texts
     'yes'                            => 'Oui',
