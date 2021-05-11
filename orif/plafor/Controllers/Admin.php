@@ -153,18 +153,41 @@ class Admin extends \App\Controllers\BaseController
 
 
 
-                exit();
 
-                ObjectiveModel::getInstance()->whereIn('id',$objectiveIds)->delete();
-                OperationalCompetenceModel::getInstance()->whereIn('fk_competence_domain',$competenceDomainIds)->delete();
-                $competenceDomainModel->where('fk_course_plan',$course_plan_id);
-                $coursePlanModel->delete($course_plan_id, FALSE);
+                count($objectiveIds)>0?ObjectiveModel::getInstance()->whereIn('id',$objectiveIds)->delete():null;
+                count($competenceDomainIds)>0?OperationalCompetenceModel::getInstance()->whereIn('fk_competence_domain',$competenceDomainIds)->delete():null;
+                CompetenceDomainModel::getInstance()->where('fk_course_plan',$course_plan_id);
+                CoursePlanModel::getInstance()->delete($course_plan_id, FALSE);
                 return redirect()->to('/plafor/admin/list_course_plan');
                 break;
             default:
                 // Do nothing
                 return redirect()->to('/plafor/admin/list_course_plan');
         }
+    }
+    /**
+     * Displays the list of course plans
+     *
+     * @return void
+     */
+    public function list_competence_domain($id_course_plan = null)
+    {
+        if($id_course_plan == null){
+            $competence_domains = CompetenceDomainModel::getInstance()->findAll();
+        }else{
+            $course_plan = CoursePlanModel::getInstance()->find($id_course_plan);
+            $competence_domains = CoursePlanModel::getCompetenceDomains($course_plan['id']);
+        }
+
+        $output = array(
+            'competence_domains' => $competence_domains
+        );
+
+        if(is_numeric($id_course_plan)){
+            $output[] = ['course_plan' => $course_plan];
+        }
+
+        $this->display_view('\Plafor\competence_domain\list', $output);
     }
 
 }
