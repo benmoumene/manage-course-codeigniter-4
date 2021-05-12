@@ -75,4 +75,20 @@ class User_model extends \CodeIgniter\Model{
         return User_type_model::getInstance()->getWhere(['id'=>$fkUserTypeId])->getRow()->access_level;
 
     }
+
+    /**
+     * @return array the list of apprentices
+     */
+    public static function getApprentices(){
+
+        return User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('name','Apprenti')->first()['id'])->findAll();
+    }
+
+    /**
+     * @return array the list of trainers
+     */
+    public static function getTrainers(){
+        return User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('name','Formateur')->first()['id'])->findAll();
+    }
+
 }
