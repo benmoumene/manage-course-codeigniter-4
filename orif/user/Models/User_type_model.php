@@ -10,12 +10,17 @@
 namespace User\Models;
 
 
+use CodeIgniter\Model;
+
 class User_type_model extends \CodeIgniter\Model
 {
     private static $userTypeModel;
     protected $table='user_type';
     protected $primaryKey='id';
 
+    /**
+     * @return Model
+     */
     public static function getInstance(){
         if (User_type_model::$userTypeModel==null)
             User_type_model::$userTypeModel=new User_type_model();
