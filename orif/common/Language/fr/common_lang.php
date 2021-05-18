@@ -26,7 +26,7 @@ return[
     'btn_new_m'                      => 'Nouveau',
     'btn_new_f'                      => 'Nouvelle',
     'btn_details'                    => 'Détails',
-    'btn_edit  '                     => 'Modifier',
+    'btn_edit'                       => 'Modifier',
     'btn_disable'                    => 'Désactiver',
 
 // Other common texts
