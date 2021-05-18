@@ -9,6 +9,11 @@ use Plafor\Models\CoursePlanModel;
 use Plafor\Models\ObjectiveModel;
 use Plafor\Models\OperationalCompetenceModel;
 use Plafor\Models\UserCourseModel;
+use Plafor\Models\UserCourseStatusModel;
+use Plafor\Models\TrainerApprenticeModel;
+
+use User\Models\User_type_model;
+use User\Models\User_model;
 
 class Admin extends \App\Controllers\BaseController
 {
@@ -52,7 +57,7 @@ class Admin extends \App\Controllers\BaseController
             $output[] = ['course_plans' => $course_plans];
         }
 
-        $this->display_view('Plafor\course_plan\list', $output);
+        $this->display_view(['Plafor\templates/admin_menu','Plafor\course_plan\list'], $output);
     }
     /**
      * Adds or modify a course plan
@@ -187,7 +192,7 @@ class Admin extends \App\Controllers\BaseController
             $output[] = ['course_plan' => $course_plan];
         }
 
-        $this->display_view('\Plafor\competence_domain\list', $output);
+        $this->display_view(['Plafor\templates/admin_Menu','\Plafor\competence_domain\list'], $output);
     }
-
+    
 }
