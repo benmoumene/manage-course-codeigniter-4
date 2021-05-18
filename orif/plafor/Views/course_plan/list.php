@@ -16,7 +16,7 @@
     <div class="row">
         <div class="col-sm-3 text-left">
             <a href="<?= base_url('plafor/admin/save_course_plan'); ?>" class="btn btn-primary">
-                <?= lang('common_lang.btn_add_m'); ?>
+                <?= lang('common_lang.btn_new_m'); ?>
             </a>
         </div>
     </div>
