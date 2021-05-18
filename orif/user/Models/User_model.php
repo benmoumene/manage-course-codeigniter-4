@@ -79,16 +79,23 @@ class User_model extends \CodeIgniter\Model{
     /**
      * @return array the list of apprentices
      */
-    public static function getApprentices(){
+    public static function getApprentices(bool $withDelted=false){
 
+        if ($withDelted)
+            return User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('name','Apprenti')->first()['id'])->withDeleted()->findAll();
         return User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('name','Apprenti')->first()['id'])->findAll();
+
     }
 
     /**
      * @return array the list of trainers
      */
-    public static function getTrainers(){
+    public static function getTrainers(bool $withDelted=false){
+        if ($withDelted)
+            return User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('name','Formateur')->first()['id'])->withDeleted()->findAll();
         return User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('name','Formateur')->first()['id'])->findAll();
+
     }
+
 
 }
