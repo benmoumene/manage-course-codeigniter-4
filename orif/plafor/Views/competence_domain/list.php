@@ -36,7 +36,7 @@
                 <tr>
                     <td><a href="<?= base_url('admin/list_operational_competence/'.$competence_domain['id']); ?>"><span class="font-weight-bold"><?= $competence_domain['symbol']?></span> <?= $competence_domain['name']; ?></td>
                     <td><a href="<?= base_url('apprentice/view_competence_domain/'.$competence_domain['id'])?>"><?= lang('common_lang.btn_details')?></a></td>
-                    <td><a href="<?= base_url('admin/save_competence_domain/'.$competence_domain['id']); ?>"><?= lang('common_lang.btn_update')?></a></td>
+                    <td><a href="<?= base_url('admin/save_competence_domain/'.$competence_domain['id']); ?>"><?= lang('common_lang.btn_edit')?></a></td>
                     <td><a href="<?= base_url('admin/delete_competence_domain/'.$competence_domain['id']); ?>" class="close">×</td>
                 </tr>
             <?php } ?>
