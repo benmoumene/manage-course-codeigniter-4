@@ -41,11 +41,11 @@ class UserCourseModel extends \CodeIgniter\Model
     }
 
     /**
-     * @param $fkUserCourseStatus
+     * @param $fkUserCourseStatusId
      * @return array
      */
-    public static function getUserCourseStatus($fkUserCourseStatus){
-        return UserCourseStatusModel::getInstance()->find($fkUserCourseStatus);
+    public static function getUserCourseStatus($fkUserCourseStatusId){
+        return UserCourseStatusModel::getInstance()->find($fkUserCourseStatusId);
     }
 
     /**
