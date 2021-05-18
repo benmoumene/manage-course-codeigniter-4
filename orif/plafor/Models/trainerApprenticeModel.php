@@ -25,19 +25,19 @@ class TrainerApprenticeModel extends \CodeIgniter\Model
     }
 
     /**
-     * @param $trainerApprentice
+     * @param $fkTrainerId
      * @return array
      */
-    public static function getTrainer($trainerApprentice){
-        return User_model::getInstance()->find($trainerApprentice['fk_trainer']);
+    public static function getTrainer($fkTrainerId){
+        return User_model::getInstance()->find($fkTrainerId);
     }
 
     /**
-     * @param $trainerApprentice
+     * @param $fkApprenticeId
      * @return array
      */
-    public static function getApprentice($trainerApprentice){
-        return User_model::getInstance()->find($trainerApprentice['fk_apprentice']);
+    public static function getApprentice($fkApprenticeId){
+        return User_model::getInstance()->find($fkApprenticeId);
 
     }
 }
