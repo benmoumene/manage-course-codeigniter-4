@@ -27,11 +27,11 @@ class OperationalCompetenceModel extends \CodeIgniter\Model
     }
 
     /**
-     * @param $fkCompetenceDomain
+     * @param $fkCompetenceDomainId
      * @return array|object|null
      */
-    public static function getCompetenceDomain($fkCompetenceDomain){
-        return CompetenceDomainModel::getInstance()->find($fkCompetenceDomain);
+    public static function getCompetenceDomain($fkCompetenceDomainId){
+        return CompetenceDomainModel::getInstance()->find($fkCompetenceDomainId);
     }
 
     /**
