@@ -2,7 +2,7 @@
     <div class="row">
             <ul class="nav nav-pills">
                 <li class="nav-item">
-                    <a href="<?= base_url('plafor/apprentice/list_apprentice/') ?>" class="nav-link active"><?= lang('user_lang.admin_apprentices'); ?></a>
+                    <a href="<?= base_url('plafor/apprentice/list_apprentice/') ?>" class="nav-link"><?= lang('user_lang.admin_apprentices'); ?></a>
                 </li>
                 <li class="nav-item">
                     <a href="<?= base_url('plafor/admin/list_course_plan/') ?>" class="nav-link"><?= lang('user_lang.admin_course_plans'); ?></a>
@@ -18,3 +18,11 @@
                 </li>
             </ul>
     </div>
+
+    <script async defer>
+        document.querySelectorAll(".nav-link").forEach((item)=>{
+            if (window.location.toString().startsWith(item.href)) {
+                item.classList.add('active');
+            }
+        });
+    </script>
