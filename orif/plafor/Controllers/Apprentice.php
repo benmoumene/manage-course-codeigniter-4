@@ -4,7 +4,16 @@
 namespace Plafor\Controllers;
 
 
+use Plafor\Models\CompetenceDomainModel;
 use Plafor\Models\CoursePlanModel;
+use Plafor\Models\ObjectiveModel;
+use Plafor\Models\OperationalCompetenceModel;
+use Plafor\Models\UserCourseModel;
+use Plafor\Models\UserCourseStatusModel;
+use Plafor\Models\TrainerApprenticeModel;
+
+use User\Models\User_type_model;
+use User\Models\User_model;
 
 class Apprentice extends \App\Controllers\BaseController
 {
@@ -33,5 +42,55 @@ class Apprentice extends \App\Controllers\BaseController
         );
 
         $this->display_view('\Plafor\course_plan\view',$output);
+    }
+    
+    public function list_apprentice()
+    {
+        
+        //if($trainer_id == null){
+            $apprentice_level = User_type_model::getInstance()->where('access_level', config("\User\Config\UserConfig")->access_level_apprentice)->find();
+            $apprentices = User_model::getInstance()->where('fk_user_type', $apprentice_level['0']['id'])->findall();
+            $coursesList = CoursePlanModel::getInstance()->findall();
+            $courses = UserCourseModel::getInstance()->findall();
+        //}else{
+        //        $apprentices = $this->user_model->get_many_by(array('id' => $trainer_id));
+            
+        //}
+        
+        $output = array(
+            'apprentices' => $apprentices,
+            'coursesList' => $coursesList,
+            'courses' => $courses
+        );
+
+        $this->display_view(['Plafor\templates/admin_menu','Plafor\apprentice/list'], $output);
+    }
+
+    public function view_apprentice($apprentice_id = null)
+    {
+        $apprentice = User_model::getInstance()->find($apprentice_id);
+        
+        if(is_null($apprentice) || $apprentice['fk_user_type'] != User_type_model::getInstance()->where('name',lang('user_lang.title_apprentice'))->first()['id']){
+            return redirect()->to(base_url("/plafor/apprentice/list_apprentice"));
+        }
+        
+        $user_courses = UserCourseModel::getInstance()->where('fk_user',$apprentice_id)->findall();
+        $user_course_status = UserCourseStatusModel::getInstance()->findAll();
+        $course_plans = CoursePlanModel::getInstance()->findall();
+        
+        $trainers = User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('name',lang('user_lang.title_trainer'))->first()['id'])->findall();
+        $links = TrainerApprenticeModel::getInstance()->where('fk_apprentice',$apprentice_id)->findAll();
+        
+        $output = array(
+            'apprentice' => $apprentice,
+            'trainers' => $trainers,
+            'links' => $links,
+            'user_courses' => $user_courses,
+            'user_course_status' => $user_course_status,
+            'course_plans' => $course_plans
+        );/*
+        var_dump($course_plan);
+        exit();*/
+        $this->display_view('Plafor\apprentice/view',$output);
     }
 }

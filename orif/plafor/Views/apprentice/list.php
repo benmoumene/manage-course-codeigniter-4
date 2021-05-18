@@ -7,7 +7,7 @@
  * @copyright   Copyright (c) Orif (http://www.orif.ch)
  */
 ?>
-<div class="container">-
+<div class="container">
     <div class="row">
         <div class="col">
             <h1 class="title-section"><?= lang('user_lang.title_apprentice_list'); ?></h1>
@@ -24,7 +24,7 @@
         <tbody id="apprenticeslist">
             <?php foreach($apprentices as $apprentice) { ?>
                 <tr>
-                    <td><a href="<?= base_url('apprentice/view_apprentice/'.$apprentice['id']); ?>"><?= $apprentice['username']; ?></td>
+                    <td><a href="<?= base_url('plafor/apprentice/view_apprentice/'.$apprentice['id']); ?>"><?= $apprentice['username']; ?></td>
                     <td><a href="<?= base_url('admin/list_course_plan/'.$apprentice['id'])?>"><?php 
                         $linkedCourses = "";
                         
