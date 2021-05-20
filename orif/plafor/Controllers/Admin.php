@@ -4,6 +4,7 @@
 namespace Plafor\Controllers;
 
 
+use CodeIgniter\Validation\Validation;
 use Plafor\Models\CompetenceDomainModel;
 use Plafor\Models\CoursePlanModel;
 use Plafor\Models\ObjectiveModel;
@@ -17,7 +18,7 @@ use User\Models\User_model;
 
 class Admin extends \App\Controllers\BaseController
 {
-    private $validation;
+    private Validation $validation;
     public function initController(\CodeIgniter\HTTP\RequestInterface $request, \CodeIgniter\HTTP\ResponseInterface $response, \Psr\Log\LoggerInterface $logger)
     {
         $this->access_level=config('\User\Config\UserConfig')->access_lvl_admin;
@@ -67,8 +68,6 @@ class Admin extends \App\Controllers\BaseController
      */
     public function save_course_plan($course_plan_id = 0)
     {
-        $coursePlanModel=new CoursePlanModel();
-
         if (count($_POST) > 0) {
             $course_plan_id = $this->request->getPost('id');
             $rules = array(
@@ -92,9 +91,9 @@ class Admin extends \App\Controllers\BaseController
                     'date_begin' => $this->request->getPost('date_begin')
                 );
                 if ($course_plan_id > 0) {
-                    $coursePlanModel->update($course_plan_id, $course_plan);
+                    CoursePlanModel::getInstance()->update($course_plan_id, $course_plan);
                 } else {
-                    $coursePlanModel->insert($course_plan);
+                    CoursePlanModel::getInstance()->insert($course_plan);
                 }
                 return redirect()->to(base_url('/plafor/admin/list_course_plan'));
             }
@@ -102,7 +101,7 @@ class Admin extends \App\Controllers\BaseController
 
         $output = array(
             'title' => lang('user_lang.title_course_plan_'.((bool)$course_plan_id ? 'update' : 'new')),
-            'course_plan' => $coursePlanModel->find($course_plan_id)
+            'course_plan' => CoursePlanModel::getInstance()->find($course_plan_id)
         );
 
         $this->display_view('\Plafor\course_plan\save', $output);
@@ -194,5 +193,118 @@ class Admin extends \App\Controllers\BaseController
 
         $this->display_view(['Plafor\templates/admin_Menu','\Plafor\competence_domain\list'], $output);
     }
-    
+    /**
+     * Displays the list of course plans
+     *
+     * @return void
+     */
+    public function list_operational_competence($id_competence_domain = null)
+    {
+        if($id_competence_domain == null){
+            $operational_competences = OperationalCompetenceModel::getInstance()->findAll();
+        }else{
+            $competence_domain = CompetenceDomainModel::getInstance()->find($id_competence_domain);
+            $operational_competences = CompetenceDomainModel::getOperationalCompetences($id_competence_domain);
+        }
+
+        $output = array(
+            'operational_competences' => $operational_competences
+        );
+
+        if(is_numeric($id_competence_domain)){
+            $output[] = ['competence_domain' => $competence_domain];
+        }
+
+        $this->display_view(['\Plafor\templates\admin_menu','\Plafor/operational_competence/list'], $output);
+    }
+    /**
+     * Adds or modify a course plan
+     *
+     * @param integer $competence_domain_id = The id of the course plan to modify, leave blank to create a new one
+     * @return void
+     */
+    public function save_competence_domain($competence_domain_id = 0)
+    {
+        if (count($_POST) > 0) {
+            $competence_domain_id = $this->request->getPost('id');
+            $rules = array(
+                array(
+                    'symbol'=>[
+                    'label' => 'user_lang.field_competence_domain_symbol',
+                    'rules' => 'required|max_length['.config('\Plafor\Config\PlaforConfig')->SYMBOL_MAX_LENGTH.']'
+                    ]
+                ),
+                array(
+                    'name'=>[
+                    'label' => 'user_lang.field_competence_domain_name',
+                    'rules' => 'required|max_length['.config('\Plafor\Config\PlaforConfig')->COMPETENCE_DOMAIN_NAME_MAX_LENGTH.']'
+                    ]
+                )
+            );
+            $this->validation->setRules($rules);
+            if ($this->validation->withRequest($this->request)->run()) {
+                $competence_domain = array(
+                    'symbol' => $this->request->getPost('symbol'),
+                    'name' => $this->request->getPost('name'),
+                    'fk_course_plan' => $this->request->getPost('course_plan')
+                );
+                if ($competence_domain_id > 0) {
+                    CompetenceDomainModel::getInstance()->update($competence_domain_id, $competence_domain);
+                } else {
+                    CompetenceDomainModel::getInstance()->insert($competence_domain);
+                }
+                return redirect()->to(base_url('plafor/admin/list_competence_domain'));
+            }
+        }
+
+        $output = array(
+            'title' => lang('user_lang.title_competence_domain_'.((bool)$competence_domain_id ? 'update' : 'new')),
+            'competence_domain' => CompetenceDomainModel::getInstance()->find($competence_domain_id),
+            'course_plans' => CoursePlanModel::getInstance()->findColumn('official_name')
+        );
+
+        $this->display_view('\Plafor\competence_domain/save', $output);
+    }
+    /**
+     * Deletes a course plan depending on $action
+     *
+     * @param integer $competence_domain_id = ID of the competence_domain to affect
+     * @param integer $action = Action to apply on the course plan:
+     *  - 0 for displaying the confirmation
+     *  - 1 for deactivating (soft delete)
+     *  - 2 for deleting (hard delete)
+     * @return void
+     */
+    public function delete_competence_domain($competence_domain_id, $action = 0)
+    {
+        $competence_domain = CompetenceDomainModel::getInstance()->find($competence_domain_id);
+        if (is_null($competence_domain)) {
+            return redirect()->to('plafor/admin/competence_domain/list');
+        }
+
+        switch($action) {
+            case 0: // Display confirmation
+                $output = array(
+                    'competence_domain' => $competence_domain,
+                    'title' => lang('user_lang.title_competence_domain_delete')
+                );
+                $this->display_view('\Plafor/competence_domain/delete', $output);
+                break;
+            case 1: // Deactivate (soft delete) competence domain
+
+                foreach (CompetenceDomainModel::getOperationalCompetences($competence_domain_id) as $operational_competence){
+                    $operationalCompetenceIds[] = $operational_competence['id'];
+                }
+
+                $operationalCompetenceId = implode(',',$operationalCompetenceIds);
+
+                ObjectiveModel::getInstance()->whereIn('fk_operational_competence',$operationalCompetenceIds)->delete();
+                OperationalCompetenceModel::getInstance()->where('fk_competence_domain',$competence_domain_id)->delete();
+                CompetenceDomainModel::getInstance()->delete($competence_domain_id);
+                return redirect()->to(base_url('plafor/admin/list_competence_domain'));
+                break;
+            default: // Do nothing
+                return redirect()->to(base_url('plafor/admin/list_competence_domain'));
+        }
+    }
 }
