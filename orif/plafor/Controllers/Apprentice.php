@@ -30,6 +30,7 @@ class Apprentice extends \App\Controllers\BaseController
      */
     public function view_course_plan($course_plan_id = null)
     {
+
         $course_plan = CoursePlanModel::getInstance()->find($course_plan_id);
         $competence_domains=CoursePlanModel::getCompetenceDomains($course_plan_id);
         if($course_plan == null){
@@ -92,5 +93,27 @@ class Apprentice extends \App\Controllers\BaseController
         var_dump($course_plan);
         exit();*/
         $this->display_view('Plafor\apprentice/view',$output);
+    }
+    /**
+     * Show details of the selected competence domain
+     *
+     * @param int (SQL PRIMARY KEY) $competence_domain_id
+     *
+     */
+    public function view_competence_domain($competence_domain_id = null)
+    {
+        $competence_domain = CompetenceDomainModel::getInstance()->find($competence_domain_id);
+
+        if($competence_domain == null){
+            return redirect()->to(base_url('admin/list_competence_domain'));
+        }
+
+        $output = array(
+            'course_plan' =>CompetenceDomainModel::getCoursePlan($competence_domain['fk_course_plan'])
+        ,
+            'competence_domain' => $competence_domain,
+        );
+
+        $this->display_view('\Plafor/competence_domain/view',$output);
     }
 }
