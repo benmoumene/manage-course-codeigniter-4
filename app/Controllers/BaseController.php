@@ -9,6 +9,7 @@
 
 namespace App\Controllers;
 use CodeIgniter\Controller;
+use CodeIgniter\Session\Session;
 
 /**
  * Class BaseController
@@ -33,6 +34,7 @@ class BaseController extends Controller
      * @var array
      */
     protected $helpers = [];
+    protected Session $session;
 
     /**
      * Limit the accessibility to the entire controller.
