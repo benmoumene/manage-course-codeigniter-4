@@ -9,7 +9,7 @@ $validation=\Config\Services::validation();
 
 $data_formation_number = array(
     'name' => 'formation_number',
-    'value' => $course_plan_formation_number ?? $course_plan->formation_number ?? '',
+    'value' => $course_plan_formation_number ?? $course_plan['formation_number'] ?? '',
     'type' => 'number',
     'max' => str_repeat('9',config('\Plafor\Config\PlaforConfig')->FORMATION_NUMBER_MAX_LENGTH),
     'class' => 'form-control',
@@ -18,7 +18,7 @@ $data_formation_number = array(
 
 $data_official_name = array(
     'name' => 'official_name',
-    'value' => $course_plan_official_name ?? $course_plan->official_name ?? '',
+    'value' => $course_plan_official_name ?? $course_plan['official_name'] ?? '',
     'maxlength' => config('\Plafor\Config\PlaforConfig')->OFFICIAL_NAME_MAX_LENGTH,
     'class' => 'form-control',
     'id' => 'course_plan_official_name'
@@ -26,7 +26,7 @@ $data_official_name = array(
 
 $data_date_begin = array(
     'name' => 'date_begin',
-    'value' => $course_plan_date_begin ?? $course_plan->date_begin ?? '',
+    'value' => $course_plan_date_begin ?? $course_plan['date_begin'] ?? '',
     'type' => 'date',
     'class' => 'form-control', 'id' => 'course_plan_date_begin'
 );

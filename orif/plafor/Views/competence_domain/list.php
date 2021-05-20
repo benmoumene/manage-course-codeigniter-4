@@ -16,7 +16,7 @@
     </div>
     <div class="row">
         <div class="col-sm-3 text-left">
-            <a href="<?= base_url('admin/save_competence_domain'); ?>" class="btn btn-primary">
+            <a href="<?= base_url('plafor/admin/save_competence_domain'); ?>" class="btn btn-primary">
                 <?= lang('common_lang.btn_new_m'); ?>
             </a>
         </div>
@@ -34,10 +34,10 @@
         <tbody id="competence_domainslist">
             <?php foreach($competence_domains as $competence_domain) { ?>
                 <tr>
-                    <td><a href="<?= base_url('admin/list_operational_competence/'.$competence_domain['id']); ?>"><span class="font-weight-bold"><?= $competence_domain['symbol']?></span> <?= $competence_domain['name']; ?></td>
-                    <td><a href="<?= base_url('apprentice/view_competence_domain/'.$competence_domain['id'])?>"><?= lang('common_lang.btn_details')?></a></td>
-                    <td><a href="<?= base_url('admin/save_competence_domain/'.$competence_domain['id']); ?>"><?= lang('common_lang.btn_edit')?></a></td>
-                    <td><a href="<?= base_url('admin/delete_competence_domain/'.$competence_domain['id']); ?>" class="close">×</td>
+                    <td><a href="<?= base_url('plafor/admin/list_operational_competence/'.$competence_domain['id']); ?>"><span class="font-weight-bold"><?= $competence_domain['symbol']?></span> <?= $competence_domain['name']; ?></td>
+                    <td><a href="<?= base_url('plafor/apprentice/view_competence_domain/'.$competence_domain['id'])?>"><?= lang('common_lang.btn_details')?></a></td>
+                    <td><a href="<?= base_url('plafor/admin/save_competence_domain/'.$competence_domain['id']); ?>"><?= lang('common_lang.btn_edit')?></a></td>
+                    <td><a href="<?= base_url('plafor/admin/delete_competence_domain/'.$competence_domain['id']); ?>" class="close">×</td>
                 </tr>
             <?php } ?>
         </tbody>

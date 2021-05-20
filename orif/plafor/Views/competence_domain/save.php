@@ -1,21 +1,24 @@
-<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
+<?php
 $update = !is_null($competence_domain);
+helper('form');
+$validation = \CodeIgniter\Config\Services::validation();
+$session=\CodeIgniter\Config\Services::session();
 ?>
 <?php
     // For some reasons, you can only set a type to input made with form_input if done with only a array as param, may need to be checked for later uses.
 
     $data_symbol = array(
         'name' => 'symbol',
-        'value' => $competence_domain_symbol ?? $competence_domain->symbol ?? '',
-        'max' => SYMBOL_MAX_LENGTH,
+        'value' => $competence_domain_symbol ?? $competence_domain['symbol'] ?? '',
+        'max' => config('\Plafor\Config\PlaforConfig')->SYMBOL_MAX_LENGTH,
         'class' => 'form-control',
         'id' => 'competence_domain_symbol'
     );
     
     $data_name = array(
         'name' => 'name',
-        'value' => $competence_domain_name ?? $competence_domain->name ?? '',
-        'max' => COMPETENCE_DOMAIN_NAME_MAX_LENGTH,
+        'value' => $competence_domain_name ?? $competence_domain['name'] ?? '',
+        'max' => config('\Plafor\Config\PlaforConfig')->COMPETENCE_DOMAIN_NAME_MAX_LENGTH,
         'class' => 'form-control', 'id' => 'competence_domain_name'
     );
 ?>
@@ -23,7 +26,7 @@ $update = !is_null($competence_domain);
     <!-- TITLE -->
     <div class="row">
         <div class="col">
-            <h1 class="title-section"><?= lang('competence_domain_'.($update ? 'update' : 'new').'_title'); ?></h1>
+            <h1 class="title-section"><?= lang('user_lang.title_competence_domain_'.($update ? 'update' : 'new')); ?></h1>
         </div>
     </div>
     
@@ -33,25 +36,29 @@ $update = !is_null($competence_domain);
         'id' => 'competence_domain_form',
         'name' => 'competence_domain_form'
     );
-    echo form_open('admin/save_competence_domain', $attributes, [
-        'id' => $competence_domain->id ?? 0
+    echo form_open(base_url('plafor/admin/save_competence_domain'), $attributes, [
+        'id' => $competence_domain['id'] ?? 0
     ]);
     ?>
 
         <!-- ERROR MESSAGES -->
-        <?= validation_errors('<div class="alert alert-danger">', '</div>'); ?>
+        <?php
+        if (count($validation->getErrors())){
+            echo '<div class="alert alert-danger">'.$validation->getErrors().'</div>';
+        }
+        ?>
 
         <!-- USER FIELDS -->
         <div class="row">
             <div class="col-sm-12 form-group">
-                <?= form_label(lang('field_competence_domain_course_plan'), 'course_plan', ['class' => 'form-label']); ?>
+                <?= form_label(lang('user_lang.field_competence_domain_course_plan'), 'course_plan', ['class' => 'form-label']); ?>
                 <br />
-                <?= form_dropdown('course_plan',$course_plans,$competence_domain->fk_course_plan ?? '','id="course_plan" class="form-control"')?>
+                <?= form_dropdown('course_plan',$course_plans,$competence_domain['fk_course_plan'] ?? '','id="course_plan" class="form-control"')?>
             </div>
             <div class="col-sm-12 form-group">
-                <?= form_label(lang('field_competence_domain_symbol'), 'competence_domain_symbol', ['class' => 'form-label']); ?>
+                <?= form_label(lang('user_lang.field_competence_domain_symbol'), 'competence_domain_symbol', ['class' => 'form-label']); ?>
                 <?= form_input($data_symbol); ?>
-                <?= form_label(lang('field_competence_domain_name'), 'competence_domain_name', ['class' => 'form-label']); ?>
+                <?= form_label(lang('user_lang.field_competence_domain_name'), 'competence_domain_name', ['class' => 'form-label']); ?>
                 <?= form_input($data_name); ?>
             </div>
         </div>
@@ -59,8 +66,8 @@ $update = !is_null($competence_domain);
         <!-- FORM BUTTONS -->
         <div class="row">
             <div class="col text-right">
-                <a class="btn btn-default" href="<?= base_url('admin/list_competence_domain'); ?>"><?= lang('btn_cancel'); ?></a>
-                <?= form_submit('save', lang('btn_save'), ['class' => 'btn btn-primary']); ?>
+                <a class="btn btn-default" href="<?= $session->get('_ci_previous_url') ?>"><?= lang('common_lang.btn_cancel'); ?></a>
+                <?= form_submit('save', lang('common_lang.btn_save'), ['class' => 'btn btn-primary']); ?>
             </div>
         </div>
     <?= form_close(); ?>
