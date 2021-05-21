@@ -43,9 +43,11 @@ $session=\CodeIgniter\Config\Services::session();
 
         <!-- ERROR MESSAGES -->
         <?php
-        if (count($validation->getErrors())){
-            echo '<div class="alert alert-danger">'.$validation->getErrors().'</div>';
+        echo count($validation->getErrors())>0?'<div class="alert alert-danger">':null;
+        foreach ($validation->getErrors() as $error){
+            echo $error;
         }
+        echo count($validation->getErrors())>0?'</div>':null;
         ?>
 
         <!-- USER FIELDS -->
