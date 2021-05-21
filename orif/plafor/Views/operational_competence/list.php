@@ -15,7 +15,7 @@
     </div>
     <div class="row">
         <div class="col-sm-3 text-left">
-            <a href="<?= base_url('admin/save_operational_competence'); ?>" class="btn btn-primary">
+            <a href="<?= base_url('plafor/admin/save_operational_competence'); ?>" class="btn btn-primary">
                 <?= lang('common_lang.btn_new_f'); ?>
             </a>
         </div>
