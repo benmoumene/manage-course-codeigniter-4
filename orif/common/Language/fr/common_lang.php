@@ -28,7 +28,7 @@ return[
     'btn_details'                    => 'Détails',
     'btn_edit'                       => 'Modifier',
     'btn_disable'                    => 'Désactiver',
-
+    'btn_show_disabled'              => 'Afficher les éléments désactivés'   ,
 // Other common texts
     'yes'                            => 'Oui',
     'no'                             => 'Non'
