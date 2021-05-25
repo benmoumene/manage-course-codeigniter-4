@@ -15,7 +15,7 @@
     <div class="row">
         <div class="col-md-12">
             <p class="bg-primary text-white"><?=lang('user_lang.field_trainer_link')?></p>
-            <a class="btn btn-primary text-white" href="<?= base_url('apprentice/save_apprentice_link/'.$apprentice['id'])?>"><?= lang('user_lang.title_apprentice_link_new') ?></a>
+            <a class="btn btn-primary text-white" href="<?= base_url('plafor/apprentice/save_apprentice_link/'.$apprentice['id'])?>"><?= lang('user_lang.title_apprentice_link_new') ?></a>
         </div>
         <div class="col-md-12">
             <table class="table table-hover">
@@ -34,10 +34,10 @@
                 foreach ($trainers as $trainer):
                     if($link['fk_trainer'] == $trainer['id']): ?>
                 <tr>
-                    <td><a href="<?= base_url('apprentice/list_apprentice/'.$trainer['id']); ?>"><?= $trainer['username']; ?></a></th>
+                    <td><a href="<?= base_url('plafor/apprentice/list_apprentice/'.$trainer['id']); ?>"><?= $trainer['username']; ?></a></th>
                     <?php if($_SESSION['user_access']): ?>
-                    <th><a href="<?= base_url('apprentice/save_apprentice_link/'.$apprentice['id'].'/'.$link['id']) ?>"><?= lang('user_lang.title_apprentice_link_update'); ?></a></th>
-                    <th><a href="<?= base_url('admin/delete_apprentice_link/'.$link['id']) ?>"><?= lang('user_lang.title_apprentice_link_delete');?></a></th>
+                    <th><a href="<?= base_url('plafor/apprentice/save_apprentice_link/'.$apprentice['id'].'/'.$link['id']) ?>"><?= lang('user_lang.title_apprentice_link_update'); ?></a></th>
+                    <th><a href="<?= base_url('plafor/admin/delete_apprentice_link/'.$link['id']) ?>"><?= lang('user_lang.title_apprentice_link_delete');?></a></th>
                     <?php endif; ?>
                 </tr><?php
                     endif;
@@ -51,7 +51,7 @@
     <div class="row">
         <div class="col-md-12">
             <p class="bg-primary text-white"><?=lang('user_lang.field_followed_courses')?></p>
-            <a class="btn btn-primary text-white" href="<?= base_url('apprentice/save_user_course/'.$apprentice['id'])?>"><?= lang('user_lang.title_user_course_new') ?></a>
+            <a class="btn btn-primary text-white" href="<?= base_url('plafor/apprentice/save_user_course/'.$apprentice['id'])?>"><?= lang('user_lang.title_user_course_new') ?></a>
         </div>
         <div class="col-md-12">
             <table class="table table-hover">
@@ -63,11 +63,12 @@
                 </tr>
             </thead>
             <tbody><?php
+
             foreach ($user_courses as $user_course){
                 ?><tr>
-                    <td><a class="font-weight-bold" href="<?= base_url('apprentice/view_course_plan/'.$course_plans[($user_course['fk_course_plan'])-1]['id'])?>"><?=$course_plans[$user_course['fk_course_plan']-1]['formation_number']?></a></td>
-                    <td><a href="<?= base_url('apprentice/view_course_plan/'.$course_plans[($user_course['fk_course_plan'])-1]['id'])?>"><?=$course_plans[$user_course['fk_course_plan']-1]['official_name']?></a></td>
-                    <td><a href="<?= base_url('apprentice/view_user_course/'.$user_course['id']) ?>"><?=$user_course_status[($user_course['fk_status'])-1]['name']?></a></td><?php
+                    <td><a class="font-weight-bold" href="<?= base_url('plafor/apprentice/view_course_plan/'.$course_plans[$user_course['fk_course_plan']]['id'])?>"><?=$course_plans[$user_course['fk_course_plan']]['formation_number']?></a></td>
+                    <td><a href="<?= base_url('plafor/apprentice/view_course_plan/'.$course_plans[$user_course['fk_course_plan']]['id'])?>"><?=$course_plans[$user_course['fk_course_plan']]['official_name']?></a></td>
+                    <td><a href="<?= base_url('plafor/apprentice/view_user_course/'.$user_course['id']) ?>"><?=$user_course_status[$user_course['fk_status']]['name']?></a></td><?php
                 }?></tr>
             </tbody>
             </table>
