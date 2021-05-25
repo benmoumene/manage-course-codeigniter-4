@@ -402,4 +402,104 @@ class Admin extends \App\Controllers\BaseController
                 break;
         }
     }
+    /**
+     * Deletes a trainer_apprentice link depending on $action
+     *
+     * @param integer $link_id = ID of the trainer_apprentice_link to affect
+     * @param integer $action = Action to apply on the trainer_apprentice link :
+     *  - 0 for displaying the confirmation
+     *  - 1 for deleting (hard delete)
+     * @return void
+     */
+    public function delete_apprentice_link($link_id, $action = 0){
+        $link = TrainerApprenticeModel::getInstance()->find($link_id);
+        $apprentice = TrainerApprenticeModel::getApprentice($link['fk_apprentice']);
+        $trainer = TrainerApprenticeModel::getTrainer($link['fk_trainer']);
+        if (is_null($link)) {
+            return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
+        }
+
+        switch($action) {
+            case 0: // Display confirmation
+                $output = array(
+                    'link' => $link,
+                    'apprentice' => $apprentice,
+                    'trainer' => $trainer,
+                    'title' => lang('user_lang.title_apprentice_link_delete')
+                );
+                $this->display_view('\Plafor\apprentice/delete', $output);
+                break;
+            case 1: // Delete apprentice link
+                TrainerApprenticeModel::getInstance()->delete($link_id, TRUE);
+                return redirect()->to(base_url('plafor/apprentice/list_apprentice/'.$apprentice['id']));
+            default: // Do nothing
+                return redirect()->to(base_url('plafor/apprentice/list_apprentice/'.$apprentice['id']));
+        }
+    }
+    /**
+     * Deletes a user_course depending on $action
+     *
+     * @param integer $user_course_id = ID of the user_course to affect
+     * @param integer $action = Action to apply on the course plan:
+     *  - 0 for displaying the confirmation
+     *  - 1 for deleting (hard delete)
+     * @return void
+     */
+    public function delete_user_course($user_course_id, $action = 0){
+        $user_course = UserCourseModel::getInstance()->find($user_course_id);
+        $course_plan = CoursePlanModel::getInstance()->find($user_course['fk_course_plan']);
+        $apprentice = User_model::getInstance()->find($user_course['fk_user']);
+        $status = UserCourseStatusModel::getInstance()->find($user_course['fk_status']);
+        if (is_null($user_course)) {
+            //à faire vue
+            return redirect()->to(base_url('plafor/admin/user_course/list'));
+        }
+
+        switch($action) {
+            case 0: // Display confirmation
+                $output = array(
+                    'user_course' => $user_course,
+                    'course_plan' => $course_plan,
+                    'apprentice' => $apprentice,
+                    'status' => $status,
+                    'title' => lang('title_user_course_delete')
+                );
+                $this->display_view('Plafor\user_course/delete', $output);
+                break;
+            case 1: // Delete course plan
+                /**@todo delete course plan
+                 * **/
+                UserCourseModel::getInstance()->delete($user_course_id, false);
+                return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
+            default: // Do nothing
+                return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
+        }
+    }
+    /**
+     * Displays the list of course plans
+     *
+     * @return void
+     */
+    public function list_objective($id_operational_competence = null,bool $with_archived=false)
+    {
+        $operational_competence=null;
+        if($id_operational_competence == null){
+            $objectives = ObjectiveModel::getInstance()->findAll();
+        }else{
+            $operational_competence = OperationalCompetenceModel::getInstance()->find($id_operational_competence);
+            $objectives = OperationalCompetenceModel::getObjectives($operational_competence['id']);
+        }
+
+        $output = array(
+            'objectives' => $objectives,
+            'with_archived' => $with_archived
+        );
+
+        if(is_numeric($id_operational_competence)){
+            $output[] = ['operational_competence',$operational_competence];
+        }
+
+        $this->display_view(['Plafor\templates/admin_menu','Plafor\objective/list'], $output);
+    }
+
 }
