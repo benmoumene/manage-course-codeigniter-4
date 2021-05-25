@@ -1,4 +1,4 @@
-<?php //if (!defined('BASEPATH')) exit('No direct script access allowed');
+<?php
 /**
  * Users List View
  *
@@ -25,11 +25,12 @@
             <?php foreach($apprentices as $apprentice) { ?>
                 <tr>
                     <td><a href="<?= base_url('plafor/apprentice/view_apprentice/'.$apprentice['id']); ?>"><?= $apprentice['username']; ?></td>
-                    <td><a href="<?= base_url('admin/list_course_plan/'.$apprentice['id'])?>"><?php 
+                    <td><a href="<?= base_url('plafor/admin/list_course_plan/'.$apprentice['id'])?>"><?php
                         $linkedCourses = "";
-                        
-                        foreach ($courses as $course){
-                            $linkedCourses .= ($course['fk_user'] == $apprentice['id']?$coursesList[$course['fk_course_plan']-1]['official_name'].",":"");
+                            //var_dump($coursesList);
+
+                            foreach ($courses as $course){
+                            $linkedCourses .= ($course['fk_user'] == $apprentice['id']?$coursesList[$course['fk_course_plan']]['official_name'].",":"");
                         } 
                         echo rtrim($linkedCourses,",");
                         ?></a></td>
