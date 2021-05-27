@@ -43,7 +43,7 @@ class AcquisitionStatusModel extends Model{
      * @param $fkAcquisitionLevelId /the id of the fk_aquisition_level
      * @return array|null
      */
-    public function getAcquisitionLevel($fkAcquisitionLevelId){
+    public static function getAcquisitionLevel($fkAcquisitionLevelId){
         return AcquisitionLevelModel::getInstance()->find($fkAcquisitionLevelId);
 
     }
