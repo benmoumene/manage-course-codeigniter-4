@@ -5,11 +5,11 @@
         </div>
         <div class="col-md-6">
             <p class="font-weight-bold"><?=lang('user_lang.field_course_plan_formation_number')?></p>
-            <a href="<?= base_url('apprentice/view_course_plan/'.$course_plan['id'])?>"><?=$course_plan['formation_number']?></a>
+            <a href="<?= base_url('plafor/apprentice/view_course_plan/'.$course_plan['id'])?>"><?=$course_plan['formation_number']?></a>
         </div>
         <div class="col-md-6">
             <p class="font-weight-bold"><?=lang('user_lang.field_course_plan_official_name')?></p>
-            <a href="<?= base_url('apprentice/view_course_plan/'.$course_plan['id'])?>"><?=$course_plan['official_name']?></a>
+            <a href="<?= base_url('plafor/apprentice/view_course_plan/'.$course_plan['id'])?>"><?=$course_plan['official_name']?></a>
         </div>
     </div>
     <div class="row">
@@ -40,8 +40,8 @@
             <tbody><?php
             foreach (\Plafor\Models\CompetenceDomainModel::getOperationalCompetences($competence_domain['id']) as $operational_competence){
                 ?><tr>
-                    <td><a class="font-weight-bold" href="<?= base_url('apprentice/view_operational_competence/'.$operational_competence['id'])?>"><?=$operational_competence['symbol']?></a></td>
-                    <td><a href="<?= base_url('apprentice/view_operational_competence/'.$operational_competence['id'])?>"><?=$operational_competence['name']?></a></td><?php
+                    <td><a class="font-weight-bold" href="<?= base_url('plafor/apprentice/view_operational_competence/'.$operational_competence['id'])?>"><?=$operational_competence['symbol']?></a></td>
+                    <td><a href="<?= base_url('plafor/apprentice/view_operational_competence/'.$operational_competence['id'])?>"><?=$operational_competence['name']?></a></td><?php
                 }?></tr>
             </tbody>
             </table>
