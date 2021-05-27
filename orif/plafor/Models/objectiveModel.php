@@ -12,7 +12,7 @@ class ObjectiveModel extends \CodeIgniter\Model
     private static $objectiveModel=null;
     protected $table='objective';
     protected $primaryKey='id';
-    protected $allowedFields=['fk_operational_competence','symbol','taxonomy','name'];
+    protected $allowedFields=['archive','fk_operational_competence','symbol','taxonomy','name'];
     protected $useSoftDeletes=true;
     protected $deletedField='archive';
     private OperationalCompetenceModel $operationalCompetenceModel;
