@@ -1,0 +1,57 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <p class="bg-primary text-white"><?=lang('user_lang.details_acquisition_status')?></p>
+        </div><div class="col-md-2">
+            <p class="font-weight-bold"><?=lang('user_lang.field_objective_symbol')?></p>
+            <a href="<?= base_url('apprentice/view_objective/'.$objective['id'])?>"><?=$objective['symbol']?></a>
+        </div><div class="col-md-6">
+            <p class="font-weight-bold"><?=lang('user_lang.field_objective_name')?></p>
+            <a href="<?= base_url('apprentice/view_objective/'.$objective['id'])?>"><?=$objective['name']?></a>
+        </div><div class="col-md-2">
+            <p class="font-weight-bold"><?=lang('user_lang.field_objective_taxonomy')?></p>
+            <a href="<?= base_url('apprentice/view_objective/'.$objective['id'])?>"><?=$objective['taxonomy']?></a>
+        </div>
+        <div class="col-md-2">
+            <p class="font-weight-bold"><?=lang('user_lang.field_acquisition_level')?></p>
+            <a href="<?= base_url('apprentice/save_acquisition_status/'.$acquisition_status['id'])?>"><?=$acquisition_level['name']?></a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <p class="bg-primary text-white"><?=lang('user_lang.field_linked_comments')?></p>
+		</div>
+		<?php if($_SESSION['user_access'] >= config('\User\Config\UserConfig')->ACCESS_LVL_TRAINER) { ?>
+		<a href="<?= base_url('plafor/apprentice/add_comment/'.$acquisition_status['id']); ?>" class="btn btn-primary"><?= lang('user_lang.title_comment_new'); ?></a>
+		<?php } ?>
+        <div class="col-md-12">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th><?= lang('user_lang.field_comment'); ?></th>
+                        <th><?= lang('user_lang.field_comment_creater'); ?></th>
+                        <th><?= lang('user_lang.field_comment_date_creation'); ?></th>
+                    </tr>
+                </thead>
+                <tbody>
+				<?php
+				$trainersSorted = [];
+				foreach ($trainers as $trainer) {
+					$trainersSorted[$trainer['id']] = $trainer;
+				}
+				foreach ($comments as $comment):
+				?>
+                    <tr>
+                        <td><?= $comment['comment']; ?></td>
+						<?php
+						if (isset($trainersSorted[$comment['fk_trainer']])): ?>
+                        <th><?= $trainer['username']; ?></th>
+						<?php endif; ?>
+                        <td><?= $comment['date_creation']; ?></td>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
