@@ -45,7 +45,7 @@ helper('form');
             <?php foreach($objectives as $objective) { ?>
                 <tr>
                     <td><a href="<?= base_url('plafor/apprentice/view_objective/'.$objective['id']); ?>"><span class="font-weight-bold"><?= $objective['symbol']?></span> <?= $objective['name']; ?></td>
-                    <td><a href="<?= base_url('plafor/apprentice/view_objective/').$objective['id']?>"><?= lang('common_lang.btn_details')?></a></td>
+                    <td><a href="<?= base_url('plafor/apprentice/view_objective/'.$objective['id'])?>"><?= lang('common_lang.btn_details')?></a></td>
                     <?php if($_SESSION['user_access'] == config('User\Config\UserConfig')->access_lvl_admin): ?>
                     <td><a href="<?= base_url('plafor/admin/save_objective/'.$objective['id']); ?>"><?= lang('common_lang.btn_edit')?></a></td>
                     <td><a href="<?= base_url('plafor/admin/delete_objective/'.$objective['id']); ?>" class="close">×</td>
@@ -61,7 +61,7 @@ helper('form');
 $(document).ready(function(){
     $('#toggle_deleted').change(e => {
         let checked = e.currentTarget.checked;
-		$.post('<?=base_url();?>admin/list_objective/<?=$id??null?>/'+(+checked), {}, data => {
+		$.post('<?php echo base_url("plafor/admin/list_objective").'/'.($id??'0').'/';?>'+(+checked), {}, data => {
             $('#objectiveslist').empty();
             $('#objectiveslist')[0].innerHTML = $(data).find('#objectiveslist')[0].innerHTML;
         });
