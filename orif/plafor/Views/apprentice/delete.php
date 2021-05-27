@@ -12,7 +12,7 @@
                     <div class = "alert alert-info" ><?= lang('user_lang.apprentice_link_disable_explanation')?></div>
                 </div>
                 <div class="text-right">
-                    <a href="<?= base_url('apprentice/view_apprentice/'.$apprentice['id']); ?>" class="btn btn-default">
+                    <a href="<?= base_url('plafor/apprentice/view_apprentice/'.$apprentice['id']); ?>" class="btn btn-default">
                         <?= lang('common_lang.btn_cancel'); ?>
                     </a>
                     <a href="<?= base_url(uri_string().'/1'); ?>" class="btn btn-danger">
