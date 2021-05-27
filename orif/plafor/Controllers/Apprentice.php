@@ -6,9 +6,12 @@ namespace Plafor\Controllers;
 
 use CodeIgniter\Config\Services;
 use CodeIgniter\Validation\Validation;
+use Plafor\Models\AcquisitionLevelModel;
 use Plafor\Models\AcquisitionStatusModel;
+use Plafor\Models\CommentModel;
 use Plafor\Models\CompetenceDomainModel;
 use Plafor\Models\CoursePlanModel;
+use Plafor\Models\ObjectiveModel;
 use Plafor\Models\OperationalCompetenceModel;
 use Plafor\Models\UserCourseModel;
 use Plafor\Models\UserCourseStatusModel;
@@ -108,9 +111,7 @@ class Apprentice extends \App\Controllers\BaseController
             'user_courses' => $user_courses,
             'user_course_status' => $user_course_status,
             'course_plans' => $course_plans
-        );/*
-        var_dump($course_plan);
-        exit();*/
+        );
         $this->display_view('Plafor\apprentice/view',$output);
     }
     /**
@@ -231,6 +232,290 @@ class Apprentice extends \App\Controllers\BaseController
             'apprentice' => $apprentice
         );
 
-        $this->display_view('Plafor\user_course/save',$output);
+        return $this->display_view('Plafor\user_course/save',$output);
+    }
+    /**@todo the user doesn't modify the trainer but add one on update
+    /**
+     * Create a link between a apprentice and a trainer, or change the trainer
+     * linked on the selected trainer_apprentice SQL entry
+     *
+     * @param int $id_apprentice = ID of the apprentice to add the link to or change the link of
+     * @param int $id_link = ID of the link to modify. If 0, adds a new link
+     * @return void
+     */
+    public function save_apprentice_link($id_apprentice = null, $id_link = 0){
+
+        $apprentice = User_model::getInstance()->find($id_apprentice);
+
+        if($_SESSION['user_access'] < config('\User\Config\UserConfig')->access_lvl_admin
+            || $apprentice == null
+            || $apprentice['fk_user_type'] != User_type_model::getInstance()->
+            where('name',lang('user_lang.title_apprentice'))->first()['id']){
+            return redirect()->to(base_url());
+        }
+
+        if(count($_POST) > 0){
+            $rules = array(
+                    'trainer'=>[
+                    'label' => 'user_lang.field_trainer_link',
+                    'rules' => 'required|numeric'
+                    ]
+
+            );
+
+            $this->validation->setRules($rules);
+
+            if($this->validation->withRequest($this->request)->run()){
+                $apprentice_link = array(
+                    'fk_trainer' => $this->request->getPost('trainer'),
+                    'fk_apprentice' => $this->request->getPost('apprentice'),
+                );
+                // This is used to prevent an apprentice from being linked to the same person twice
+                $old_link = TrainerApprenticeModel::getInstance()->where('fk_trainer',$apprentice_link['fk_trainer'])->where('fk_apprentice',$apprentice_link['fk_apprentice'])->first();
+
+                if ($id_link > 0) {
+                    if (!is_null($old_link)) {
+                        // Delete the old link instead of deleting the one being changed
+                        // It's easier that way
+                        TrainerApprenticeModel::getInstance()->delete($id_link);
+                    } else {
+                        TrainerApprenticeModel::getInstance()->update($id_apprentice,$apprentice_link);
+                    }
+                } elseif (is_null($old_link)) {
+                    // Don't insert a new link that is the same as an old one
+                    TrainerApprenticeModel::getInstance()->insert($apprentice_link);
+                }
+                return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
+            }
+        }
+        // It seems that the MY_model dropdown method can't return a filtered result
+        // so here we get every users that are trainer, then we create a array
+        // with the matching constitution
+
+        $trainersRaw = User_model::getTrainers();
+
+        $trainers = array();
+
+        foreach ($trainersRaw as $trainer){
+            $trainers[$trainer['id']] = $trainer['username'];
+        }
+
+        $link = TrainerApprenticeModel::getInstance()->find($id_link);
+
+        $output = array(
+            'apprentice' => $apprentice,
+            'trainers' => $trainers,
+            'link' => $link,
+        );
+
+        $this->display_view('Plafor\apprentice/link',$output);
+    }
+    /**
+     * Show details of the selected acquisition status
+     *
+     * @param int $acquisition_status_id = ID of the acquisition status to view
+     * @return void
+     */
+    public function view_acquisition_status($acquisition_status_id = null){
+        $acquisition_status = AcquisitionStatusModel::getInstance()->find($acquisition_status_id);
+        $objective=AcquisitionStatusModel::getObjective($acquisition_status['fk_objective']);
+        $acquisition_level=AcquisitionStatusModel::getAcquisitionLevel($acquisition_status['fk_acquisition_level']);
+        if($acquisition_status == null){
+            return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
+            exit();
+        }
+
+        $comments = CommentModel::getInstance()->where('fk_acquisition_status',$acquisition_status_id)->findAll();
+        $trainers = User_model::getTrainers();
+        $output = array(
+            'acquisition_status' => $acquisition_status,
+            'trainers' => $trainers,
+            'comments' => $comments,
+            'objective' => $objective,
+            'acquisition_level' => $acquisition_level,
+        );
+
+        return $this->display_view('Plafor\acquisition_status/view',$output);
+    }
+    /**
+     * Changes an acquisition status for an apprentice
+     *
+     * @param int $acquisition_status_id = ID of the acquisition status to change
+     * @return void
+     */
+    public function save_acquisition_status($acquisition_status_id = 0) {
+        $acquisitionStatus = AcquisitionStatusModel::getInstance()->find($acquisition_status_id);
+
+        if($_SESSION['user_access'] == config('\User\Config\UserConfig')->access_level_apprentice) {
+            // No need to check with $user_course outside of an apprentice
+            $userCourse = UserCourseModel::getInstance()->find($acquisitionStatus['fk_user_course']);
+            if ($userCourse['fk_user'] != $_SESSION['user_id']) {
+                return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
+            }
+        }
+
+        if (is_null($acquisitionStatus)) {
+            return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
+        }
+        $acquisitionLevels=[];
+        foreach (AcquisitionLevelModel::getInstance()->findAll() as $acquisitionLevel)
+            $acquisitionLevels[$acquisitionLevel['id']]=$acquisitionLevel['name'];
+
+        // Check if data was sent
+        if (!empty($_POST)) {
+            $acquisitionLevel = $this->request->getPost('field_acquisition_level');
+
+            $this->validation->setRules(['field_acquisition_level'=>[
+                'label'=>'user_lang.field_acquisition_level',
+                'rules'=>'required in_list['.implode(',', array_keys($acquisitionLevels)).']'
+            ]]);
+
+            if ($this->validation->withRequest($this->request)->run()) {
+                $acquisitionStatus = [
+                    'fk_acquisition_level' => $acquisitionLevel
+                ];
+                AcquisitionStatusModel::getInstance()->update($acquisition_status_id, $acquisitionStatus);
+
+                return redirect()->to(base_url('plafor/apprentice/view_acquisition_status/'.$acquisition_status_id));
+            }
+        }
+
+        $output = [
+            'acquisition_levels' => $acquisitionLevels,
+            'acquisition_level' => $acquisitionStatus['fk_acquisition_level'],
+            'id' => $acquisition_status_id
+        ];
+
+        return $this->display_view('Plafor\acquisition_status/save', $output);
+    }
+    public function add_comment($acquisition_status_id = null){
+        $acquisition_status = AcquisitionStatusModel::getInstance()->find($acquisition_status_id);
+
+        if($acquisition_status == null || $_SESSION['user_access'] != config('\User\Config\UserConfig')->access_lvl_trainer){
+            return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
+        }
+
+        if (count($_POST) > 0) {
+            $rules = array(
+                    'comment'=>[
+                    'label' => 'user_lang.field_comment',
+                    'rules' => 'required|max_length['.config('\Plafor\Config\PlaforConfig')->SQL_TEXT_MAX_LENGTH.']',
+                        ]
+            );
+            $this->validation->setRules($rules);
+            if ($this->validation->withRequest($this->request)->run()) {
+                $comment = array(
+                    'fk_trainer' => $_SESSION['user_id'],
+                    'fk_acquisition_status' => $acquisition_status_id,
+                    'comment' => $this->request->getPost('comment'),
+                    'date_creation' => date('Y-m-d H:i:s'),
+                );
+                CommentModel::getInstance()->insert($comment);
+
+                return redirect()->to(base_url('plafor/apprentice/view_acquisition_status/'.$acquisition_status['id']));
+            }
+        }
+
+        $output = array(
+            'acquisition_status' => $acquisition_status,
+        );
+
+        return $this->display_view('\Plafor\comment/save',$output);
+    }
+    /**
+     * Show details of the selected operational competence
+     *
+     * @param int $operational_competence_id = ID of the operational competence to view
+     * @return void
+     */
+    public function view_operational_competence($operational_competence_id = null)
+    {
+        $operational_competence = OperationalCompetenceModel::getInstance()->find($operational_competence_id);
+
+        if($operational_competence == null){
+            return redirect()->to(base_url('plafor/admin/list_operational_competence'));
+        }
+
+        $competence_domain = OperationalCompetenceModel::getCompetenceDomain($operational_competence['fk_competence_domain']);
+        $course_plan = CompetenceDomainModel::getCoursePlan($competence_domain['fk_course_plan']);
+        $objectives=OperationalCompetenceModel::getObjectives($operational_competence['id']);
+        $output = array(
+            'operational_competence' => $operational_competence,
+            'competence_domain' => $competence_domain,
+            'course_plan' => $course_plan,
+            'objectives' => $objectives
+        );
+
+        return $this->display_view('\Plafor/operational_competence/view',$output);
+    }
+    /**
+     * Show details of the selected objective
+     * @param int $objective_id = ID of the objective to view
+     * @return void
+     */
+    public function view_objective($objective_id = null)
+    {
+        $objective = ObjectiveModel::getInstance()->find($objective_id);
+
+        if($objective == null){
+            return redirect()->to(base_url('plafor/admin/list_objective'));
+        }
+
+        $operational_competence = ObjectiveModel::getOperationalCompetence($objective['fk_operational_competence']);
+        $competence_domain = OperationalCompetenceModel::getCompetenceDomain($operational_competence['fk_competence_domain']);
+        $course_plan = CompetenceDomainModel::getCoursePlan($competence_domain['fk_course_plan']);
+
+        $output = array(
+            'objective' => $objective,
+            'operational_competence' => $operational_competence,
+            'competence_domain' => $competence_domain,
+            'course_plan' => $course_plan
+        );
+
+        $this->display_view('Plafor\objective/view',$output);
+    }
+    /**
+     * Show a user course's details
+     *
+     * @param int $id_user_course = ID of the user course to view
+     * @return void
+     */
+    public function view_user_course($id_user_course = null){
+        $user_course = UserCourseModel::getInstance()->find($id_user_course);
+        if($user_course == null){
+            return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
+        }
+
+        $apprentice = User_model::getInstance()->find($user_course['fk_user']);
+        if($_SESSION['user_access'] == config('\User\Config\UserConfig')->access_level_apprentice && $apprentice['id'] != $_SESSION['user_id']) {
+            return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
+        }
+        $user_course_status = UserCourseModel::getUserCourseStatus($user_course['fk_status']);
+        $course_plan = UserCourseModel::getCoursePlan($user_course['fk_course_plan']);
+        $trainers_apprentice = TrainerApprenticeModel::getInstance()->where('fk_apprentice',$apprentice['id'])->findAll();
+        $acquisition_status = UserCourseModel::getAcquisitionStatus($id_user_course);
+        if($user_course == null){
+            return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
+        }
+        $objectives=[];
+        foreach ($acquisition_status as $acquisitionstatus){
+            $objectives[$acquisitionstatus['fk_objective']]=AcquisitionStatusModel::getObjective($acquisitionstatus['fk_objective']);
+        }
+        $acquisition_levels=[];
+        foreach (AcquisitionLevelModel::getInstance()->findAll() as $acquisitionLevel){
+            $acquisition_levels[$acquisitionLevel['id']]=$acquisitionLevel;
+        }
+        $output = array(
+            'user_course' => $user_course,
+            'apprentice' => $apprentice,
+            'user_course_status' => $user_course_status,
+            'course_plan' => $course_plan,
+            'trainers_apprentice' => $trainers_apprentice,
+            'acquisition_status' => $acquisition_status,
+            'acquisition_levels' => $acquisition_levels,
+            'objectives'=>$objectives
+        );
+
+        $this->display_view('\Plafor\user_course/view',$output);
     }
 }
