@@ -248,7 +248,6 @@ class Admin extends \App\Controllers\BaseController
                 if ($competence_domain_id > 0) {
                     CompetenceDomainModel::getInstance()->update($competence_domain_id, $competence_domain);
                 } else {
-                    var_dump($competence_domain);
                     CompetenceDomainModel::getInstance()->insert($competence_domain);
                 }
                 return redirect()->to(base_url('plafor/admin/list_competence_domain'));
@@ -483,13 +482,15 @@ class Admin extends \App\Controllers\BaseController
     public function list_objective($id_operational_competence = null,bool $with_archived=false)
     {
         $operational_competence=null;
-        if($id_operational_competence == null){
+        if($id_operational_competence == null ||$id_operational_competence==0 && !$with_archived){
             $objectives = ObjectiveModel::getInstance()->findAll();
-        }else{
+        }
+        elseif ($with_archived)
+            $objectives = ObjectiveModel::getInstance()->withDeleted()->findAll();
+        else{
             $operational_competence = OperationalCompetenceModel::getInstance()->find($id_operational_competence);
             $objectives = OperationalCompetenceModel::getObjectives($operational_competence['id']);
         }
-
         $output = array(
             'objectives' => $objectives,
             'with_archived' => $with_archived
@@ -501,5 +502,269 @@ class Admin extends \App\Controllers\BaseController
 
         $this->display_view(['Plafor\templates/admin_menu','Plafor\objective/list'], $output);
     }
+    /**
+     * Adds or modify a course plan
+     *
+     * @param integer $objective_id = The id of the course plan to modify, leave blank to create a new one
+     * @return void
+     */
+    public function save_objective($objective_id = 0)
+    {
+        if (count($_POST) > 0) {
+            $objective_id = $this->request->getPost('id');
+            $rules = array(
+                    'symbol'=>[
+                    'label' => 'user_lang.field_objective_symbol',
+                    'rules' => 'required|max_length['.config('\Plafor\Config\PlaforConfig')->SYMBOL_MAX_LENGTH.']',
+                    ],
+                    'taxonomy'=>[
+                    'label' => 'user_lang.field_objective_taxonomy',
+                    'rules' => 'required|max_length['.config('\Plafor\Config\PlaforConfig')->TAXONOMY_MAX_VALUE.']',
+                    ],
 
+                    'name'=>[
+                    'label' => 'user_lang.field_objective_name',
+                    'rules' => 'required|max_length['.config('\Plafor\Config\PlaforConfig')->OBJECTIVE_NAME_MAX_LENGTH.']',
+                    ]
+            );
+            $this->validation->setRules($rules);
+            if ($this->validation->withRequest($this->request)->run()) {
+                $objective = array(
+                    'symbol' => $this->request->getPost('symbol'),
+                    'taxonomy' => $this->request->getPost('taxonomy'),
+                    'name' => $this->request->getPost('name'),
+                    'fk_operational_competence' => $this->request->getPost('operational_competence')
+                );
+                if ($objective_id > 0) {
+                    ObjectiveModel::getInstance()->update($objective_id, $objective);
+                } else {
+                    ObjectiveModel::getInstance()->insert($objective);
+                }
+                return redirect()->to('plafor/admin/list_objective');
+            }
+        }
+        $operationalCompetences=[];
+        foreach (OperationalCompetenceModel::getInstance()->findAll() as $operationalCompetence) {
+            $operationalCompetences[$operationalCompetence['id']]=$operationalCompetence['name'];
+        }
+
+        $output = array(
+            'title' => lang('user_lang.title_objective_'.((bool)$objective_id ? 'update' : 'new')),
+            'objective' => ObjectiveModel::getInstance()->withDeleted()->find($objective_id),
+            'operational_competences' => $operationalCompetences
+        );
+
+        return $this->display_view('\Plafor\objective/save', $output);
+    }
+    /**
+     * Deletes a course plan depending on $action
+     *
+     * @param integer $objective_id = ID of the objective to affect
+     * @param integer $action = Action to apply on the course plan:
+     *  - 0 for displaying the confirmation
+     *  - 1 for deactivating (soft delete)
+     *  - 2 for deleting (hard delete)
+     *  - 3 for reactivating
+     * @return void
+     */
+    public function delete_objective($objective_id, $action = 0)
+    {
+        $objective = ObjectiveModel::getInstance()->withDeleted()->find($objective_id);
+        if (is_null($objective)) {
+            return redirect()->to('plafor/admin/objective/list');
+        }
+
+        switch($action) {
+            case 0: // Display confirmation
+                $output = array(
+                    'objective' => $objective,
+                    'title' => lang('user_lang.title_objective_delete'),
+                    'deleted' => $objective['archive']
+                );
+                $this->display_view('\Plafor\objective/delete', $output);
+                break;
+            case 1: // Deactivate (soft delete) objective
+                ObjectiveModel::getInstance()->delete($objective_id, FALSE);
+                return redirect()->to(base_url('plafor/admin/list_objective'));
+            case 2: // Hard delete
+                ObjectiveModel::getInstance()->delete($objective_id, TRUE);
+                return redirect()->to(base_url('plafor/admin/list_objective'));
+
+            case 3:
+                ObjectiveModel::getInstance()->withDeleted()->update($objective_id,['archive'=>null]);
+                return redirect()->to(base_url('plafor/admin/save_objective/'.$objective_id));
+            default: // Do nothing
+                return redirect()->to('plafor/admin/list_objective');
+        }
+    }
+    /**
+     * Form to create a link between a apprentice and a course plan
+     *
+     * @param int (SQL PRIMARY KEY) $id_user_course
+     */
+
+    /*public function save_user_course($id_apprentice = null,$id_user_course = 0){
+
+        $apprentice = User_model::getInstance()->find($id_apprentice);
+        $user_course = UserCourseModel::getInstance()->find($id_user_course);
+
+        if($id_apprentice == null || $apprentice['fk_user_type'] != User_type_model::getInstance()->where('name',lang('user_lang.title_apprentice'))['id']){
+            return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
+        }
+
+        if(count($_POST) > 0){
+            $rules = array(
+                    'course_plan'=>[
+                    'label' => 'user_lang.course_plan',
+                    'rules' => 'required|numeric',
+                    ],
+                    'status'=>[
+                    'label' => 'user_lang.status',
+                    'rules' => 'required|numeric',
+                    ],
+                    'date_begin'=>[
+                    'label' => 'user_lang.field_user_course_date_begin',
+                    'rules' => 'required'
+                    ]
+                /*
+                array(
+                    'field' => 'date_end',
+                    'label' => 'lang:field_user_course_date_end',
+                    'rules' => 'required',
+                ),
+                */
+    /*
+            );
+
+            $this->validation->setRules($rules);
+
+            if($this->validation->withRequest($this->request)->run()){
+                $user_course = array(
+                    'fk_user' => $id_apprentice,
+                    'fk_course_plan' => $this->request->getPost('course_plan'),
+                    'fk_status' => $this->request->getPost('status'),
+                    'date_begin' => $this->request->getPost('date_begin'),
+                    'date_end' => $this->request->getPost('date_end'),
+                );
+
+                if($id_user_course > 0){
+                    echo UserCourseModel::getInstance()->update($id_user_course, $user_course);
+                }else{
+                    UserCourseModel::getInstance()->insert($user_course);
+
+                    $course_plan = UserCourseModel::getCoursePlan($user_course['fk_course_plan']);
+
+                    $competenceDomainIds = array_column(CoursePlanModel::getCompetenceDomains($course_plan['id']), 'id');
+
+                    $operational_competences = OperationalCompetenceModel::getInstance()->whereIn('fk_competence_domain',$competenceDomainIds)->findAll();
+
+                    $objectiveIds = array_column(ObjectiveModel::getInstance()->whereIn('fk_operational_competence',array_column($operational_competences,'id'))->findAll(),'id');
+
+                    foreach ($objectiveIds as $objectiveId){
+
+                        $acquisition_status = array(
+                            'fk_objective' => $objectiveId,
+                            'fk_user_course' => $id_user_course,
+                            'fk_acquisition_level' => 1
+                        );
+
+                        AcquisitionStatusModel::getInstance()->insert($acquisition_status);
+                    }
+                }
+
+                return redirect()->to(base_url('plafor/apprentice/view_apprentice/'.$id_apprentice));
+            }
+        }
+
+        $course_plans=[];
+        foreach (CoursePlanModel::getInstance()->findAll() as $courseplan)
+            $course_plans[$courseplan['id']]=$courseplan['official_name'];
+        $status=[];
+        foreach (UserCourseStatusModel::getInstance()->findAll() as $usercoursestatus)
+            $status[$usercoursestatus['id']]=$usercoursestatus['name'];
+
+        $output = array(
+            'title' => lang('user_lang.title_course_plan_link'),
+            'course_plans' => $course_plans,
+            'user_course'   => $user_course,
+            'status' => $status,
+            'apprentice' => $apprentice
+        );
+
+        return $this->display_view('Plafor\user_course/save',$output);
+    }
+    */
+    /**
+     * Create a link between a apprentice and a trainer, or change the trainer
+     * linked on the selected trainer_apprentice SQL entry
+     *
+     * @param INT (SQL PRIMARY KEY) $id_apprentice
+     * @param INT (SQL PRIMARY KEY) $id_link
+     */
+    /*
+    public function save_apprentice_link($id_apprentice = null, $id_link = 0){
+
+        $apprentice = User_model::getInstance()->find($id_apprentice);
+
+        if($_SESSION['user_access'] < config('\Plafor\Config\plaforConfig')->access_lvl_admin
+            || $apprentice == null
+            || $apprentice['fk_user_type'] != User_type_model::getInstance()->where('name',lang('user_lang.title_apprentice'))->first()['id']){
+            return redirect()->to(base_url());
+        }
+
+        // It seems that the MY_model dropdown method can't return a filtered result
+        // so here we get every users that are trainer, then we create a array
+        // with the matching constitution
+
+        if(count($_POST) > 0){
+            $id_apprentice = $this->request->getPost('id');
+            $rules = array(
+                    'apprentice'=>[
+                    'label' => 'field_apprentice_username',
+                    'rules' => 'required|numeric'
+                    ],
+                    'trainer'=>[
+                    'label' => 'field_trainer_link',
+                    'rules' => 'required|numeric'
+                    ]
+            );
+
+            $this->validation->setRules($rules);
+
+            if($this->validation->withRequest($this->request)->run()){
+
+                $apprentice_link = array(
+                    'fk_trainer' => $this->request->getPost('trainer'),
+                    'fk_apprentice' => $this->request->getPost('apprentice'),
+                );
+
+                if($id_link > 0){
+                    echo TrainerApprenticeModel::getInstance()->update($id_apprentice,$apprentice_link);
+                }else{
+                    echo TrainerApprenticeModel::getInstance()->insert($apprentice_link);
+                }
+
+                return redirect()->to('plafor/apprentice/list_apprentice');
+            }
+        }
+
+        $trainersRaw = User_model::getTrainers();
+
+        $trainers = array();
+
+        foreach ($trainersRaw as $trainer){
+            $trainers[$trainer['id']] = $trainer['username'];
+        }
+
+        $link = TrainerApprenticeModel::getInstance()->find($id_link);
+
+        $output = array(
+            'apprentice' => $apprentice,
+            'trainers' => $trainers,
+            'link' => $link,
+        );
+
+        return $this->display_view('\Plafor\apprentice/link',$output);
+    }
+    */
 }
