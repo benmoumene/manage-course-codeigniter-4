@@ -25,7 +25,12 @@ return[
     'btn_add'                        => 'Ajouter',
     'btn_new_m'                      => 'Nouveau',
     'btn_new_f'                      => 'Nouvelle',
-
+    'btn_details'                    => 'Détails',
+    'btn_edit'                       => 'Modifier',
+    'btn_disable'                    => 'Désactiver',
+    'btn_show_disabled'              => 'Afficher les éléments désactivés',
+    'btn_delete'                     => 'Supprimer',
+    'btn_reactivate'                 => 'Réactiver',
 // Other common texts
     'yes'                            => 'Oui',
     'no'                             => 'Non'

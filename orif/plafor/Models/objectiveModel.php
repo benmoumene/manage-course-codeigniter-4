@@ -9,21 +9,37 @@ use CodeIgniter\Validation\ValidationInterface;
 
 class ObjectiveModel extends \CodeIgniter\Model
 {
+    private static $objectiveModel=null;
     protected $table='objective';
     protected $primaryKey='id';
-    protected $allowedFields=['fk_operational_competence','symbol','taxonomy','name'];
+    protected $allowedFields=['archive','fk_operational_competence','symbol','taxonomy','name'];
     protected $useSoftDeletes=true;
     protected $deletedField='archive';
     private OperationalCompetenceModel $operationalCompetenceModel;
 
-    public function __construct(ConnectionInterface &$db = null, ValidationInterface $validation = null)
-    {
-        parent::__construct($db, $validation);
+    /**
+     * @return ObjectiveModel
+     */
+    public static function getInstance(){
+        if (ObjectiveModel::$objectiveModel==null)
+            ObjectiveModel::$objectiveModel=new ObjectiveModel();
+        return ObjectiveModel::$objectiveModel;
     }
-    public function getOperationalCompetence($objective){
-        if ($this->operationalCompetenceModel==null)
-        $this->operationalCompetenceModel=new OperationalCompetenceModel();
-        return $this->operationalCompetenceModel->find($objective['fk_operational_competence']);
+
+    /**
+     * @param $fkOperationalCompetenceId
+     * @return array|object|null
+     */
+    public static function getOperationalCompetence($fkOperationalCompetenceId){
+        return OperationalCompetenceModel::getInstance()->find($fkOperationalCompetenceId);
+    }
+
+    /**
+     * @param $objectiveId
+     * @return array
+     */
+    public static function getAcquisitionStatus($objectiveId){
+        return AcquisitionStatusModel::getInstance()->where('fk_objective',$objectiveId)->findAll();
     }
 
 

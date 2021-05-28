@@ -32,9 +32,6 @@ class Admin extends BaseController
         // Load required services
         $this->validation = \Config\Services::validation();
 
-        // Load required models
-        $this->user_model = new User_model();
-        $this->user_type_model = new User_type_model();
         //get db instance
         $this->db = \CodeIgniter\Database\Config::connect();
 
@@ -49,9 +46,9 @@ class Admin extends BaseController
     public function list_user($with_deleted = FALSE)
     {
         if ($with_deleted) {
-            $users = $this->user_model->withDeleted()->findAll();
+            $users = User_model::getInstance()->withDeleted()->findAll();
         } else {
-            $users = $this->user_model->findAll();
+            $users = User_model::getInstance()->findAll();
         }
 
         //usertiarray is an array contained all usertype name and id
@@ -118,11 +115,11 @@ class Admin extends BaseController
                     'email' => $this->request->getPost('user_email') ?: NULL
                 );
                 if ($user_id > 0) {
-                    $this->user_model->update($user_id, $user);
+                    User_model::getInstance()->update($user_id, $user);
                 } else {
                     $password = $this->request->getPost('user_password');
                     $user['password'] = password_hash($password, config('\User\Config\UserConfig')->password_hash_algorithm);
-                    $this->user_model->insert($user);
+                    User_model::getInstance()->insert($user);
                 }
                 return redirect()->to('/user/admin/list_user');
             }
@@ -136,7 +133,7 @@ class Admin extends BaseController
         }
         $output = array(
             'title' => lang('user_lang.title_user_'.((bool)$user_id ? 'update' : 'new')),
-            'user' => $this->user_model->withDeleted()->find($user_id),
+            'user' => User_model::getInstance()->withDeleted()->find($user_id),
             'user_types' => $usertypes,
             'user_name' => $oldName,
             'user_usertype' => $oldUsertype
@@ -157,7 +154,7 @@ class Admin extends BaseController
      */
     public function delete_user($user_id, $action = 0)
     {
-        $user = $this->user_model->withDeleted()->find($user_id);
+        $user = User_model::getInstance()->withDeleted()->find($user_id);
         if (is_null($user)) {
             return redirect()->to('/user/admin/list_user');
         }
@@ -172,12 +169,12 @@ class Admin extends BaseController
                 break;
             case 1: // Deactivate (soft delete) user
                 if ($_SESSION['user_id'] != $user['id']) {
-                    $this->user_model->delete($user_id, FALSE);
+                    User_model::getInstance()->delete($user_id, FALSE);
                 }
                 return redirect()->to('/user/admin/list_user');
             case 2: // Delete user
                 if ($_SESSION['user_id'] != $user['id']) {
-                    $this->user_model->delete($user_id, TRUE);
+                    User_model::getInstance()->delete($user_id, TRUE);
                 }
                 return redirect()->to('/user/admin/list_user');
             default: // Do nothing
@@ -193,11 +190,11 @@ class Admin extends BaseController
      */
     public function reactivate_user($user_id)
     {
-        $user = $this->user_model->withDeleted()->find($user_id);
+        $user = User_model::getInstance()->withDeleted()->find($user_id);
         if (is_null($user)) {
             return redirect()->to('/user/admin/list_user');
         } else {
-            $this->user_model->withDeleted()->update($user_id,['archive'=>null]);
+            User_model::getInstance()->withDeleted()->update($user_id,['archive'=>null]);
             return redirect()->to('/user/admin/save_user/'.$user_id);
         }
     }
@@ -230,12 +227,12 @@ class Admin extends BaseController
             if ($this->validation->withRequest($this->request)->run()) {
                 $password = $this->request->getPost('user_password_new');
                 $password = password_hash($password, config('\User\Config\UserConfig')->password_hash_algorithm);
-                $this->user_model->update($user_id, ['password' => $password]);
+                User_model::getInstance()->update($user_id, ['password' => $password]);
                 return redirect()->to('/user/admin/list_user');
             }
         }
 
-        $user = $this->user_model->withDeleted()->find($user_id);
+        $user = User_model::getInstance()->withDeleted()->find($user_id);
         if (is_null($user)) return redirect()->to('/user/admin/list_user');
 
         $output = array(
