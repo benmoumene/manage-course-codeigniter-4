@@ -1,7 +1,7 @@
 <div class="container">
     <div class="row">
         <div class="col-md-12">
-            <p class="bg-primary text-white"><?=lang('user_lang.details_user_course')?></p>
+            <p class="bg-primary text-white"><?=lang('plafor_lang.title_view_user_course')?></p>
         </div>
         <div class="col-md-4">
             <p class="font-weight-bold"><?=lang('user_lang.field_user_course_date_begin')?></p>

@@ -34,7 +34,7 @@
             <?php foreach($operational_competences as $operational_competence) { ?>
                 <tr>
                     <td><a href="<?= base_url('plafor/admin/list_objective/'.$operational_competence['id']); ?>"><span class="font-weight-bold"><?= $operational_competence['symbol']?></span> <?= $operational_competence['name']; ?></td>
-                    <td><a href="<?= base_url('plafor/apprentice/view_operational_competence/').$operational_competence['id']?>"><?= lang('common_lang.btn_details')?></a></td>
+                    <td><a href="<?= base_url('plafor/apprentice/view_operational_competence/'.$operational_competence['id'])?>"><?= lang('common_lang.btn_details')?></a></td>
                     <td><a href="<?= base_url('plafor/admin/save_operational_competence/'.$operational_competence['id']); ?>"><?= lang('common_lang.btn_edit')?></a></td>
                     <td><a href="<?= base_url('plafor/admin/delete_operational_competence/'.$operational_competence['id']); ?>" class="close">×</td>
                 </tr>

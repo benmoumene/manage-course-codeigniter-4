@@ -105,6 +105,7 @@ class Apprentice extends \App\Controllers\BaseController
             $links[$link['id']]=$link;
         
         $output = array(
+            'title' => lang('plafor_lang.title_view_apprentice'),
             'apprentice' => $apprentice,
             'trainers' => $trainers,
             'links' => $links,
