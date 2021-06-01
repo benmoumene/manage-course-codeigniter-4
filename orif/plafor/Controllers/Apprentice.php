@@ -54,21 +54,35 @@ class Apprentice extends \App\Controllers\BaseController
     
     public function list_apprentice()
     {
+        $trainer_id = $this->request->getGet('trainer_id');
+        $trainersList = array();
+        $trainersList[0] = "Tous";
+        $apprentice_level = User_type_model::getInstance()->where('access_level', config("\User\Config\UserConfig")->access_level_apprentice)->find();
+
+        foreach(User_model::getTrainers() as $trainer)
+            {
+                $trainersList[$trainer['id']] = $trainer['username'];
+            }
+        
         $intermediateList=[];
-        //if($trainer_id == null){
-            $apprentice_level = User_type_model::getInstance()->where('access_level', config("\User\Config\UserConfig")->access_level_apprentice)->find();
+        if($trainer_id == null or $trainer_id == 0){
             $apprentices = User_model::getInstance()->where('fk_user_type', $apprentice_level['0']['id'])->findall();
 
             $coursesList=[];
             foreach (CoursePlanModel::getInstance()->findall() as $courseplan)
                 $coursesList[$courseplan['id']]=$courseplan;
             $courses = UserCourseModel::getInstance()->findall();
-        //}else{
-        //        $apprentices = $this->user_model->get_many_by(array('id' => $trainer_id));
-            
-        //}
+        }else{
+                $apprentices = User_Model::getInstance()->whereIn('id', array_column(TrainerApprenticeModel::getInstance()->where('fk_trainer', $trainer_id)->findall(), 'fk_apprentice'))->findall();
+                $coursesList=[];
+                foreach (CoursePlanModel::getInstance()->findall() as $courseplan)
+                    $coursesList[$courseplan['id']]=$courseplan;
+                $courses = UserCourseModel::getInstance()->findall();
+            }
         
         $output = array(
+            'trainer_id' => $trainer_id,
+            'trainers' => $trainersList,
             'apprentices' => $apprentices,
             'coursesList' => $coursesList,
             'courses' => $courses

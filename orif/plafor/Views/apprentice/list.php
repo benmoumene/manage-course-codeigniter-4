@@ -1,4 +1,5 @@
 <?php
+helper('Form');
 /**
  * Users List View
  *
@@ -11,6 +12,14 @@
     <div class="row">
         <div class="col">
             <h1 class="title-section"><?= lang('user_lang.title_apprentice_list'); ?></h1>
+            <div stlye="display:flex!important;flex-direction:row!important;align-items:center!important;">
+            <?php
+            echo form_open(base_url('plafor/apprentice/list_apprentice/'), ['method' => 'GET']);
+            echo form_dropdown('trainer_id', $trainers, $trainer_id, ['class' => 'form-control', 'style' => 'width:unset!important;display:unset!important;margin-left:-10px;']);
+            echo form_submit(null, lang('common_lang.btn_search'), ['class' => 'btn btn-primary', 'style' => 'vertical-align:unset!important;']);
+            echo form_close();
+            ?>
+            </div>
         </div>
     </div>
     <div class="row mt-2">
