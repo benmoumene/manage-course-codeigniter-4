@@ -31,12 +31,13 @@ class Admin extends \App\Controllers\BaseController
      *
      * @return void
      */
-    public function list_course_plan($id_apprentice = null)
+    public function list_course_plan($id_apprentice = null, bool $with_archived=false)
     {
+        $id_apprentice==0?$id_apprentice = null:null;
         $coursePlanModel=new CoursePlanModel();
         $userCourseModel=new UserCourseModel();
         if($id_apprentice == null){
-            $course_plans = $coursePlanModel->findAll();
+            $course_plans = $coursePlanModel->withDeleted($with_archived)->findAll();
         }else{
             $userCourses = $userCourseModel->getWhere(['fk_user'=>$id_apprentice])->getResult();
 
@@ -51,7 +52,8 @@ class Admin extends \App\Controllers\BaseController
         }
 
         $output = array(
-            'course_plans' => $course_plans
+            'course_plans' => $course_plans,
+            'with_archived' => $with_archived
         );
 
         if(is_numeric($id_apprentice)){
@@ -68,26 +70,29 @@ class Admin extends \App\Controllers\BaseController
      */
     public function save_course_plan($course_plan_id = 0)
     {
+        $lastDatas = array();
+        var_dump(count($this->request->getPost()));
         if (count($_POST) > 0) {
-            $course_plan_id = $this->request->getPost('id');
-            $rules = array(
+           $course_plan_id = empty($this->request->getPost('coursePlanId'))?0:$this->request->getPost('coursePlanId');
+           var_dump($course_plan_id==0);
+           $rules = array(
                 'formation_number'=>[
                     'label' => 'user_lang.field_course_plan_formation_number',
-                    'rules' => 'required|max_length['.config('\Plafor\Config\PlaforConfig')->FORMATION_NUMBER_MAX_LENGTH.']|numeric|checkFormPlanNumber',
+                    'rules' => 'required|max_length['.config('\Plafor\Config\PlaforConfig')->FORMATION_NUMBER_MAX_LENGTH.']|numeric'.($course_plan_id==0?('|checkFormPlanNumber'):("")),
                 ],
                 'official_name'=>[
                     'label' => 'user_lang.field_course_plan_official_name',
                     'rules' => 'required|max_length['.config('\Plafor\Config\PlaforConfig')->OFFICIAL_NAME_MAX_LENGTH.']',
                 ],'date_begin'=>[
-                    'label' => 'user_lang.field_course_plan_official_name',
-                    'rules' => 'required|required',
+                    'label' => 'user_lang.field_course_plan_date_begin',
+                    'rules' => 'required',
                 ]
             );
             $this->validation->setRules($rules);
             if ($this->validation->withRequest($this->request)->run()) {
                 $course_plan = array(
                     'formation_number' => $this->request->getPost('formation_number'),
-                    'official_name' => $this->request->getPost('official_name'),
+                    'official_name' => ' '.$this->request->getPost('official_name'),
                     'date_begin' => $this->request->getPost('date_begin')
                 );
                 if ($course_plan_id > 0) {
@@ -97,11 +102,21 @@ class Admin extends \App\Controllers\BaseController
                 }
                 return redirect()->to(base_url('/plafor/admin/list_course_plan'));
             }
+            else {
+                $lastDatas = array(
+                    'formation_number' => $this->request->getPost('formation_number'),
+                    'official_name' => ' '.$this->request->getPost('official_name'),
+                    'date_begin' => $this->request->getPost('date_begin')
+                );
+            }
         }
-
+        if($this->request->getPost('coursePlanId')){
+            $course_plan_id = $this->request->getPost('coursePlanId');
+        }
+        $formTitle = $course_plan_id<>0?'update' : 'new';
         $output = array(
-            'title' => lang('user_lang.title_course_plan_'.((bool)$course_plan_id ? 'update' : 'new')),
-            'course_plan' => CoursePlanModel::getInstance()->find($course_plan_id)
+            'title' => (lang('plafor_lang.title_course_plan_'.$formTitle)),
+            'course_plan' => CoursePlanModel::getInstance()->find($course_plan_id)==null?$lastDatas:CoursePlanModel::getInstance()->find($course_plan_id)
         );
 
         $this->display_view('\Plafor\course_plan\save', $output);

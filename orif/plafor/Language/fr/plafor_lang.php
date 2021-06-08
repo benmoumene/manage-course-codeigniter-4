@@ -2,6 +2,9 @@
 
     return [
         
+        //Usefull Links
+        'plafor_module' => 'Module Plafor',
+
         //Apprentice
         'title_list_apprentice' => 'Liste des apprentis',
         'title_view_apprentice' => 'Détail de l\'apprenti',
@@ -14,6 +17,8 @@
         //Course Plan
         'title_view_course_plan' => 'Détail du plan de formation',
         'title_delete_course_plan' => 'Supprimer',
+        'title_course_plan_new' => 'Ajouter un plan de formation',
+        'title_course_plan_update' => 'Modifier le plan de formation',
 
         //Competence Domain
         'title_view_competence_domain' => 'Détail du domaine de compétence',

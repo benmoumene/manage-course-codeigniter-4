@@ -188,13 +188,13 @@ class Apprentice extends \App\Controllers\BaseController
                 ),
                 */
             );
-
             $this->validation->setRules($rules);
 
             if($this->validation->withRequest($this->request)->run()){
+                $fk_course_plan = $this->request->getPost('course_plan');
                 $user_course = array(
                     'fk_user' => $id_apprentice,
-                    'fk_course_plan' => $this->request->getPost('course_plan'),
+                    'fk_course_plan' => $fk_course_plan,
                     'fk_status' => $this->request->getPost('status'),
                     'date_begin' => $this->request->getPost('date_begin'),
                     'date_end' => $this->request->getPost('date_end'),
@@ -202,7 +202,7 @@ class Apprentice extends \App\Controllers\BaseController
 
                 if($id_user_course > 0){
                     echo UserCourseModel::getInstance()->update($id_user_course, $user_course);
-                }else{
+                }else if(UserCourseModel::getInstance()->where('fk_user', $id_apprentice)->where('fk_course_plan', $fk_course_plan)->first()==null) {
                     $id_user_course = UserCourseModel::getInstance()->insert($user_course);
 
                     $course_plan = UserCourseModel::getCoursePlan($user_course['fk_course_plan']);
@@ -258,7 +258,7 @@ class Apprentice extends \App\Controllers\BaseController
      * @param int $id_link = ID of the link to modify. If 0, adds a new link
      * @return void
      */
-    public function save_apprentice_link($id_apprentice = null, $id_link = 0){
+    public function save_apprentice_link($id_apprentice = null, $id_link = null){
 
         $apprentice = User_model::getInstance()->find($id_apprentice);
 
@@ -288,19 +288,19 @@ class Apprentice extends \App\Controllers\BaseController
                 // This is used to prevent an apprentice from being linked to the same person twice
                 $old_link = TrainerApprenticeModel::getInstance()->where('fk_trainer',$apprentice_link['fk_trainer'])->where('fk_apprentice',$apprentice_link['fk_apprentice'])->first();
 
-                if ($id_link > 0) {
+                if ($id_link != null) {
                     if (!is_null($old_link)) {
                         // Delete the old link instead of deleting the one being changed
                         // It's easier that way
                         TrainerApprenticeModel::getInstance()->delete($id_link);
                     } else {
-                        TrainerApprenticeModel::getInstance()->update($id_apprentice,$apprentice_link);
+                        TrainerApprenticeModel::getInstance()->update($id_link,$apprentice_link);
                     }
                 } elseif (is_null($old_link)) {
                     // Don't insert a new link that is the same as an old one
                     TrainerApprenticeModel::getInstance()->insert($apprentice_link);
                 }
-                return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
+                return redirect()->to(base_url("plafor/apprentice/view_apprentice/{$id_apprentice}"));
             }
         }
         // It seems that the MY_model dropdown method can't return a filtered result
@@ -315,7 +315,7 @@ class Apprentice extends \App\Controllers\BaseController
             $trainers[$trainer['id']] = $trainer['username'];
         }
 
-        $link = TrainerApprenticeModel::getInstance()->find($id_link);
+        $link = $id_link==null?null:TrainerApprenticeModel::getInstance()->find($id_link);
 
         $output = array(
             'apprentice' => $apprentice,
