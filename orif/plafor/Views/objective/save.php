@@ -44,7 +44,7 @@ $validation=\CodeIgniter\Config\Services::validation();
         'id' => 'objective_form',
         'name' => 'objective_form'
     );
-    echo form_open('plafor/admin/save_objective', $attributes, [
+    echo form_open(base_url('plafor/admin/save_objective'), $attributes, [
         'id' => $objective['id'] ?? 0
     ]);
     ?>

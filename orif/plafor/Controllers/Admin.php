@@ -52,6 +52,7 @@ class Admin extends \App\Controllers\BaseController
         }
 
         $output = array(
+            'title' =>  lang('plafor_lang.title_list_course_plan'),
             'course_plans' => $course_plans,
             'with_archived' => $with_archived
         );
@@ -144,7 +145,7 @@ class Admin extends \App\Controllers\BaseController
             case 0: // Display confirmation
                 $output = array(
                     'course_plan' => $course_plan,
-                    'title' => lang('title_course_plan_delete')
+                    'title' => lang('plafor_lang.title_delete_course_plan')
                 );
                 $this->display_view('\Plafor\course_plan\delete', $output);
                 break;
@@ -199,6 +200,7 @@ class Admin extends \App\Controllers\BaseController
         }
 
         $output = array(
+            'title'=>lang('plafor_lang.title_competence_domain_list'),
             'competence_domains' => $competence_domains
         );
 
@@ -223,6 +225,7 @@ class Admin extends \App\Controllers\BaseController
         }
 
         $output = array(
+            'title'=>lang('plafor_lang.title_list_operational_competence'),
             'operational_competences' => $operational_competences
         );
 
@@ -241,6 +244,7 @@ class Admin extends \App\Controllers\BaseController
      */
     public function save_competence_domain($competence_domain_id = 0)
     {
+        var_dump(count($_POST));
         if (count($_POST) > 0) {
             $competence_domain_id = $this->request->getPost('id');
             $rules = array(
@@ -272,7 +276,7 @@ class Admin extends \App\Controllers\BaseController
         foreach (CoursePlanModel::getInstance()->findColumn('official_name') as $courseplanOfficialName)
             $course_plans[CoursePlanModel::getInstance()->where('official_name',$courseplanOfficialName)->first()['id']]=$courseplanOfficialName;
         $output = array(
-            'title' => lang('user_lang.title_competence_domain_'.((bool)$competence_domain_id ? 'update' : 'new')),
+            'title' => lang('plafor_lang.title_competence_domain_'.((bool)$competence_domain_id ? 'update' : 'new')),
             'competence_domain' => CompetenceDomainModel::getInstance()->find($competence_domain_id),
             'course_plans' => $course_plans
         );
@@ -300,7 +304,7 @@ class Admin extends \App\Controllers\BaseController
             case 0: // Display confirmation
                 $output = array(
                     'competence_domain' => $competence_domain,
-                    'title' => lang('user_lang.title_competence_domain_delete')
+                    'title' => lang('plafor_lang.title_competence_domain_delete')
                 );
                 $this->display_view('\Plafor/competence_domain/delete', $output);
                 break;
@@ -375,7 +379,7 @@ class Admin extends \App\Controllers\BaseController
         foreach (CompetenceDomainModel::getInstance()->findAll() as $competenceDomain)
             $competenceDomains[CompetenceDomainModel::getInstance()->where('id',$competenceDomain['id'])->first()['id']]=$competenceDomain['name'];
         $output = array(
-            'title' => lang('user_lang.title_operational_competence_'.((bool)$operational_competence_id ? 'update' : 'new')),
+            'title' => lang('plafor_lang.title_operational_competence_'.((bool)$operational_competence_id ? 'update' : 'new')),
             'operational_competence' => OperationalCompetenceModel::getInstance()->find($operational_competence_id),
             'competence_domains' => $competenceDomains
         );
@@ -402,7 +406,7 @@ class Admin extends \App\Controllers\BaseController
             case 0: // Display confirmation
                 $output = array(
                     'operational_competence' => $operational_competence,
-                    'title' => lang('user_lang.title_operational_competence_delete')
+                    'title' => lang('plafor_lang.title_operational_competence_delete')
                 );
                 $this->display_view('\Plafor\operational_competence/delete', $output);
                 break;
@@ -439,7 +443,7 @@ class Admin extends \App\Controllers\BaseController
                     'link' => $link,
                     'apprentice' => $apprentice,
                     'trainer' => $trainer,
-                    'title' => lang('user_lang.title_apprentice_link_delete')
+                    'title' => lang('plafor_lang.title_apprentice_link_delete')
                 );
                 $this->display_view('\Plafor\apprentice/delete', $output);
                 break;
@@ -476,7 +480,7 @@ class Admin extends \App\Controllers\BaseController
                     'course_plan' => $course_plan,
                     'apprentice' => $apprentice,
                     'status' => $status,
-                    'title' => lang('title_user_course_delete')
+                    'title' => lang('plafor_lang.title_user_course_delete')
                 );
                 $this->display_view('Plafor\user_course/delete', $output);
                 break;
@@ -507,6 +511,7 @@ class Admin extends \App\Controllers\BaseController
             $objectives = OperationalCompetenceModel::getObjectives($operational_competence['id']);
         }
         $output = array(
+            'title' => lang('plafor_lang.title_list_objective'),
             'objectives' => $objectives,
             'with_archived' => $with_archived
         );
@@ -555,7 +560,7 @@ class Admin extends \App\Controllers\BaseController
                 } else {
                     ObjectiveModel::getInstance()->insert($objective);
                 }
-                return redirect()->to('plafor/admin/list_objective');
+                return redirect()->to(base_url('plafor/admin/list_objective'));
             }
         }
         $operationalCompetences=[];
@@ -564,7 +569,7 @@ class Admin extends \App\Controllers\BaseController
         }
 
         $output = array(
-            'title' => lang('user_lang.title_objective_'.((bool)$objective_id ? 'update' : 'new')),
+            'title' => lang('plafor_lang.title_objective_'.((bool)$objective_id ? 'update' : 'new')),
             'objective' => ObjectiveModel::getInstance()->withDeleted()->find($objective_id),
             'operational_competences' => $operationalCompetences
         );
@@ -593,7 +598,7 @@ class Admin extends \App\Controllers\BaseController
             case 0: // Display confirmation
                 $output = array(
                     'objective' => $objective,
-                    'title' => lang('user_lang.title_objective_delete'),
+                    'title' => lang('plafor_lang.title_objective_delete'),
                     'deleted' => $objective['archive']
                 );
                 $this->display_view('\Plafor\objective/delete', $output);

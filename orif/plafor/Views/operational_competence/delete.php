@@ -10,7 +10,7 @@
                     <div class = "alert alert-info" ><?= lang('user_lang.operational_competence_disable_explanation')?></div>
                 </div>
                 <div class="text-right">
-                    <a href="<?= base_url('plafor/apprentice/list_operational_competence'); ?>" class="btn btn-default">
+                    <a href="<?= base_url('plafor/admin/list_operational_competence'); ?>" class="btn btn-default">
                         <?= lang('common_lang.btn_cancel'); ?>
                     </a>
                     <a href="<?= base_url(uri_string().'/1'); ?>" class="btn btn-danger">

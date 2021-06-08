@@ -45,6 +45,7 @@ class Apprentice extends \App\Controllers\BaseController
         }
 
         $output = array(
+            'title'=>lang('plafor_lang.title_course_plan_view'),
             'course_plan' => $course_plan,
             'competence_domains'=>$competence_domains
         );
@@ -64,7 +65,6 @@ class Apprentice extends \App\Controllers\BaseController
                 $trainersList[$trainer['id']] = $trainer['username'];
             }
         
-        $intermediateList=[];
         if($trainer_id == null or $trainer_id == 0){
             $apprentices = User_model::getInstance()->where('fk_user_type', $apprentice_level['0']['id'])->findall();
 
@@ -81,6 +81,7 @@ class Apprentice extends \App\Controllers\BaseController
             }
         
         $output = array(
+            'title' => lang('plafor_lang.title_list_apprentice'),
             'trainer_id' => $trainer_id,
             'trainers' => $trainersList,
             'apprentices' => $apprentices,
@@ -144,6 +145,7 @@ class Apprentice extends \App\Controllers\BaseController
         }
 
         $output = array(
+            'title' =>lang('plafor_lang.title_view_competence_domain'),
             'course_plan' =>CompetenceDomainModel::getCoursePlan($competence_domain['fk_course_plan'])
         ,
             'competence_domain' => $competence_domain,
@@ -240,7 +242,7 @@ class Apprentice extends \App\Controllers\BaseController
             $status[$usercoursestatus['id']]=$usercoursestatus['name'];
         }
         $output = array(
-            'title' => lang('user_course_title_course_plan_link'),
+            'title' => lang('plafor_lang.user_course_title_course_plan_link'),
             'course_plans' => $course_plans,
             'user_course'   => $user_course,
             'status' => $status,
@@ -318,6 +320,7 @@ class Apprentice extends \App\Controllers\BaseController
         $link = $id_link==null?null:TrainerApprenticeModel::getInstance()->find($id_link);
 
         $output = array(
+            'title'=>lang('plafor_lang.title_save_apprentice_link'),
             'apprentice' => $apprentice,
             'trainers' => $trainers,
             'link' => $link,
@@ -343,6 +346,7 @@ class Apprentice extends \App\Controllers\BaseController
         $comments = CommentModel::getInstance()->where('fk_acquisition_status',$acquisition_status_id)->findAll();
         $trainers = User_model::getTrainers();
         $output = array(
+            'title' => lang('plafor_lang.title_acquisition_status_view'),
             'acquisition_status' => $acquisition_status,
             'trainers' => $trainers,
             'comments' => $comments,
@@ -396,6 +400,7 @@ class Apprentice extends \App\Controllers\BaseController
         }
 
         $output = [
+            'title'=>lang('plafor_lang.title_acquisition_status_save'),
             'acquisition_levels' => $acquisitionLevels,
             'acquisition_level' => $acquisitionStatus['fk_acquisition_level'],
             'id' => $acquisition_status_id
@@ -432,6 +437,7 @@ class Apprentice extends \App\Controllers\BaseController
         }
 
         $output = array(
+            'title'=>lang('plafor_lang.title_comment_save'),
             'acquisition_status' => $acquisition_status,
         );
 
@@ -455,6 +461,7 @@ class Apprentice extends \App\Controllers\BaseController
         $course_plan = CompetenceDomainModel::getCoursePlan($competence_domain['fk_course_plan']);
         $objectives=OperationalCompetenceModel::getObjectives($operational_competence['id']);
         $output = array(
+            'title'=>lang('plafor_lang.title_view_operational_competence'),
             'operational_competence' => $operational_competence,
             'competence_domain' => $competence_domain,
             'course_plan' => $course_plan,
@@ -481,6 +488,7 @@ class Apprentice extends \App\Controllers\BaseController
         $course_plan = CompetenceDomainModel::getCoursePlan($competence_domain['fk_course_plan']);
 
         $output = array(
+            'title' => lang('plafor_lang.title_view_objective'),
             'objective' => $objective,
             'operational_competence' => $operational_competence,
             'competence_domain' => $competence_domain,
@@ -521,6 +529,7 @@ class Apprentice extends \App\Controllers\BaseController
             $acquisition_levels[$acquisitionLevel['id']]=$acquisitionLevel;
         }
         $output = array(
+            'title'=>lang('plafor_lang.title_user_course_view'),
             'user_course' => $user_course,
             'apprentice' => $apprentice,
             'user_course_status' => $user_course_status,
