@@ -34,7 +34,6 @@ helper("form");
         <thead>
             <tr>
                 <th><?= lang('user_lang.field_username'); ?></th>
-                <th><?= lang('user_lang.field_email'); ?></th>
                 <th><?= lang('user_lang.field_usertype'); ?></th>
                 <th><?= lang('user_lang.field_user_active'); ?></th>
                 <th></th>

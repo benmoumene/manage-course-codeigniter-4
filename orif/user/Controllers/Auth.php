@@ -89,11 +89,10 @@ class Auth extends BaseController {
                         } else {
                             $user = User_model::getInstance()->getWhere(['username'=>$input])->getRow();
                         }
-
                         // Set session variables
                         $_SESSION['user_id'] = (int)$user->id;
                         $_SESSION['username'] = (string)$user->username;
-                        $_SESSION['user_access'] = (int)User_model::get_access_level($user->id);
+                        $_SESSION['user_access'] = (int)User_model::get_access_level($user->fk_user_type);
                         $_SESSION['logged_in'] = (bool)true;
 
                         // Send the user to the redirection URL

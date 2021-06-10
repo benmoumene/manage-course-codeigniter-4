@@ -1,6 +1,9 @@
 <?php 
 
     return [
+
+        //Errors
+        'same_competence_domain' => 'Le domaine de compétences existe déjà',
         
         //Usefull Links
         'plafor_module' => 'Module Plafor',

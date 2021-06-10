@@ -8,6 +8,11 @@
  */
 
 return[
+
+//TEXTS
+    'all_m'                         => 'Tous',
+    'all_f'                         => 'Toutes',
+
 // Application name
     'app_title'                      => 'Titre de l\'application',
 

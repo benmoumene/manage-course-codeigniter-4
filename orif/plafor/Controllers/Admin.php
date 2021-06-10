@@ -72,10 +72,8 @@ class Admin extends \App\Controllers\BaseController
     public function save_course_plan($course_plan_id = 0)
     {
         $lastDatas = array();
-        var_dump(count($this->request->getPost()));
         if (count($_POST) > 0) {
            $course_plan_id = empty($this->request->getPost('coursePlanId'))?0:$this->request->getPost('coursePlanId');
-           var_dump($course_plan_id==0);
            $rules = array(
                 'formation_number'=>[
                     'label' => 'user_lang.field_course_plan_formation_number',
@@ -201,14 +199,10 @@ class Admin extends \App\Controllers\BaseController
 
         $output = array(
             'title'=>lang('plafor_lang.title_competence_domain_list'),
-            'competence_domains' => $competence_domains
+            'competence_domains' => $competence_domains,
+            'id_course_plan' => $id_course_plan
         );
-
-        if(is_numeric($id_course_plan)){
-            $output[] = ['course_plan' => $course_plan];
-        }
-
-        $this->display_view(['Plafor\templates/admin_Menu','\Plafor\competence_domain\list'], $output);
+        return $this->display_view(['Plafor\templates/admin_Menu','\Plafor\competence_domain\list'], $output);
     }
     /**
      * Displays the list of course plans
@@ -242,15 +236,14 @@ class Admin extends \App\Controllers\BaseController
      * @param integer $competence_domain_id = The id of the course plan to modify, leave blank to create a new one
      * @return void
      */
-    public function save_competence_domain($competence_domain_id = 0)
+    public function save_competence_domain($competence_domain_id = 0, $course_plan_id = 0)
     {
-        var_dump(count($_POST));
         if (count($_POST) > 0) {
             $competence_domain_id = $this->request->getPost('id');
             $rules = array(
                     'symbol'=>[
                     'label' => 'user_lang.field_competence_domain_symbol',
-                    'rules' => 'required|max_length['.config('\Plafor\Config\PlaforConfig')->SYMBOL_MAX_LENGTH.']'
+                    'rules' => 'required|max_length['.config('\Plafor\Config\PlaforConfig')->SYMBOL_MAX_LENGTH.']|checkSameCompetenceDomain[symbol]'
                     ],
                     'name'=>[
                     'label' => 'user_lang.field_competence_domain_name',
@@ -278,8 +271,9 @@ class Admin extends \App\Controllers\BaseController
         $output = array(
             'title' => lang('plafor_lang.title_competence_domain_'.((bool)$competence_domain_id ? 'update' : 'new')),
             'competence_domain' => CompetenceDomainModel::getInstance()->find($competence_domain_id),
-            'course_plans' => $course_plans
-        );
+            'course_plans' => $course_plans,
+            'fk_course_plan_id' => $course_plan_id
+            );
 
         $this->display_view('\Plafor\competence_domain/save', $output);
     }
@@ -500,6 +494,11 @@ class Admin extends \App\Controllers\BaseController
      */
     public function list_objective($id_operational_competence = null,bool $with_archived=false)
     {
+        $competences_op[0] = lang('common_lang.all_f');
+
+        //d(OperationalCompetenceModel::getInstance()->findall());
+        //exit();
+
         $operational_competence=null;
         if($id_operational_competence == null ||$id_operational_competence==0 && !$with_archived){
             $objectives = ObjectiveModel::getInstance()->findAll();

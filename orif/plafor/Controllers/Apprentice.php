@@ -57,7 +57,7 @@ class Apprentice extends \App\Controllers\BaseController
     {
         $trainer_id = $this->request->getGet('trainer_id');
         $trainersList = array();
-        $trainersList[0] = "Tous";
+        $trainersList[0] = lang('common_lang.all_m');
         $apprentice_level = User_type_model::getInstance()->where('access_level', config("\User\Config\UserConfig")->access_level_apprentice)->find();
 
         foreach(User_model::getTrainers() as $trainer)
