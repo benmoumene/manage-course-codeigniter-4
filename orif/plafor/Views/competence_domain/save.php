@@ -55,7 +55,7 @@ $session=\CodeIgniter\Config\Services::session();
             <div class="col-sm-12 form-group">
                 <?= form_label(lang('user_lang.field_competence_domain_course_plan'), 'course_plan', ['class' => 'form-label']); ?>
                 <br />
-                <?= form_dropdown('course_plan',$course_plans,$competence_domain['fk_course_plan'] ?? '','id="course_plan" class="form-control"')?>
+                <?= form_dropdown('course_plan',$course_plans,$fk_course_plan_id ?? '','id="course_plan" class="form-control"')?>
             </div>
             <div class="col-sm-12 form-group">
                 <?= form_label(lang('user_lang.field_competence_domain_symbol'), 'competence_domain_symbol', ['class' => 'form-label']); ?>

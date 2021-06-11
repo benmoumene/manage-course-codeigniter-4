@@ -14,7 +14,7 @@ class User_model extends \CodeIgniter\Model{
     private static $userModel;
     protected $table='user';
     protected $primaryKey='id';
-    protected $allowedFields=['archive','date_creation','email','username','password','fk_user_type'];
+    protected $allowedFields=['archive','date_creation','username','password','fk_user_type'];
     protected $useSoftDeletes=true;
     protected $deletedField="archive";
 
@@ -53,7 +53,7 @@ class User_model extends \CodeIgniter\Model{
      * @param string $password
      * @return bool true on success false otherwise
      */
-    public static function check_password_email($email,$password){
+   public static function check_password_email($email,$password){
         if (!filter_var($email,FILTER_VALIDATE_EMAIL)){
             return false;
         }
@@ -79,10 +79,10 @@ class User_model extends \CodeIgniter\Model{
     /**
      * @return array the list of apprentices
      */
-    public static function getApprentices(bool $withDelted=false){
+    public static function getApprentices(bool $withDeleted=false){
 
-        if ($withDelted)
-            return User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('name','Apprenti')->first()['id'])->withDeleted()->findAll();
+        if ($withDeleted)
+            return User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('access_level', config("\User\Config\UserConfig")->access_level_apprentice)->first()['id'])->withDeleted()->findAll();
         return User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('name','Apprenti')->first()['id'])->findAll();
 
     }

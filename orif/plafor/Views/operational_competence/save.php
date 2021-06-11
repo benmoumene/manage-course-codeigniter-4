@@ -78,7 +78,7 @@ $validation=\CodeIgniter\Config\Services::validation();
             <div class="col-sm-12 form-group">
                 <?= form_label(lang('user_lang.field_operational_competence_domain'), 'competence_domain', ['class' => 'form-label']); ?>
                 <br />
-                <?= form_dropdown('competence_domain',$competence_domains,$operational_competence['fk_competence_domain'] ?? '','id="competence_domain" class="form-control"')?>
+                <?= form_dropdown('competence_domain',$competence_domains,$competence_domain_id?? '','id="competence_domain" class="form-control"')?>
             </div>
             <div class="col-sm-12 form-group">
                 <?= form_label(lang('user_lang.field_operational_competence_symbol'), 'operational_competence_symbol', ['class' => 'form-label']); ?>
@@ -97,7 +97,7 @@ $validation=\CodeIgniter\Config\Services::validation();
         <!-- FORM BUTTONS -->
         <div class="row">
             <div class="col text-right">
-                <a class="btn btn-default" href="<?= base_url('plafor/admin/list_operational_competence'); ?>"><?= lang('common_lang.btn_cancel'); ?></a>
+                <a class="btn btn-default" href="<?= base_url('plafor/admin/list_operational_competence/'.($competence_domain_id??'')); ?>"><?= lang('common_lang.btn_cancel'); ?></a>
                 <?= form_submit('save', lang('common_lang.btn_save'), ['class' => 'btn btn-primary']); ?>
             </div>
         </div>

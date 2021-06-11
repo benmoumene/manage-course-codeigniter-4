@@ -42,4 +42,12 @@ class OperationalCompetenceModel extends \CodeIgniter\Model
         return ObjectiveModel::getInstance()->where('fk_operational_competence',$operationalCompetenceId)->findAll();
     }
 
+    public static function getOperationalCompetences($with_archived = false, $competence_domain_id = 0) { 
+        if($competence_domain_id == 0) {
+            return OperationalCompetenceModel::getInstance()->withDeleted($with_archived)->findall();
+        } else {
+            return OperationalCompetenceModel::getInstance()->where('fk_competence_domain', $competence_domain_id)->withDeleted($with_archived)->findall();
+        }
+    }
+
 }

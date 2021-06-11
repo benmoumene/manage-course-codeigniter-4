@@ -188,19 +188,22 @@ class Admin extends \App\Controllers\BaseController
      *
      * @return void
      */
-    public function list_competence_domain($id_course_plan = null)
+    public function list_competence_domain($id_course_plan = null , $with_archived = 0)
     {
-        if($id_course_plan == null){
-            $competence_domains = CompetenceDomainModel::getInstance()->findAll();
+        if($id_course_plan == null or $id_course_plan == 0){
+            $competence_domains = CompetenceDomainModel::getCompetenceDomains($with_archived);
         }else{
             $course_plan = CoursePlanModel::getInstance()->find($id_course_plan);
-            $competence_domains = CoursePlanModel::getCompetenceDomains($course_plan['id']);
+            $competence_domains = CompetenceDomainModel::getCompetenceDomains($with_archived, $course_plan['id']);
+
         }
+
 
         $output = array(
             'title'=>lang('plafor_lang.title_competence_domain_list'),
             'competence_domains' => $competence_domains,
-            'id_course_plan' => $id_course_plan
+            'id_course_plan' => $id_course_plan,
+            'with_archived' => $with_archived
         );
         return $this->display_view(['Plafor\templates/admin_Menu','\Plafor\competence_domain\list'], $output);
     }
@@ -209,22 +212,24 @@ class Admin extends \App\Controllers\BaseController
      *
      * @return void
      */
-    public function list_operational_competence($id_competence_domain = null)
+    public function list_operational_competence($id_competence_domain = null, $with_archived = 0)
     {
-        if($id_competence_domain == null){
-            $operational_competences = OperationalCompetenceModel::getInstance()->findAll();
+        if($id_competence_domain == null or $id_competence_domain == 0){
+            $operational_competences = OperationalCompetenceModel::getOperationalCompetences($with_archived);
         }else{
             $competence_domain = CompetenceDomainModel::getInstance()->find($id_competence_domain);
-            $operational_competences = CompetenceDomainModel::getOperationalCompetences($id_competence_domain);
+            $operational_competences = OperationalCompetenceModel::getOperationalCompetences($with_archived, $id_competence_domain);
         }
 
         $output = array(
             'title'=>lang('plafor_lang.title_list_operational_competence'),
-            'operational_competences' => $operational_competences
+            'operational_competences' => $operational_competences,
+            'with_archived' => $with_archived
         );
 
-        if(is_numeric($id_competence_domain)){
+        if(is_numeric($id_competence_domain) && $id_competence_domain != 0){
             $output[] = ['competence_domain' => $competence_domain];
+            $output['id_competence_domain'] = $id_competence_domain;
         }
 
         $this->display_view(['\Plafor\templates\admin_menu','\Plafor/operational_competence/list'], $output);
@@ -262,7 +267,7 @@ class Admin extends \App\Controllers\BaseController
                 } else {
                     CompetenceDomainModel::getInstance()->insert($competence_domain);
                 }
-                return redirect()->to(base_url('plafor/admin/list_competence_domain'));
+                return redirect()->to(base_url('plafor/admin/list_competence_domain/'.($this->request->getPost('course_plan')==null?'':$this->request->getPost('course_plan'))));
             }
         }
         $course_plans=null;
@@ -324,7 +329,7 @@ class Admin extends \App\Controllers\BaseController
      * @param integer $operational_competence_id = The id of the course plan to modify, leave blank to create a new one
      * @return void
      */
-    public function save_operational_competence($operational_competence_id = 0)
+    public function save_operational_competence($operational_competence_id = 0, $competence_domain_id = 0)
     {
         if (count($_POST) > 0) {
             $operational_competence_id = $this->request->getPost('id');
@@ -375,7 +380,8 @@ class Admin extends \App\Controllers\BaseController
         $output = array(
             'title' => lang('plafor_lang.title_operational_competence_'.((bool)$operational_competence_id ? 'update' : 'new')),
             'operational_competence' => OperationalCompetenceModel::getInstance()->find($operational_competence_id),
-            'competence_domains' => $competenceDomains
+            'competence_domains' => $competenceDomains,
+            'competence_domain_id' => $competence_domain_id
         );
 
         $this->display_view('\Plafor\operational_competence/save', $output);
@@ -492,22 +498,20 @@ class Admin extends \App\Controllers\BaseController
      *
      * @return void
      */
-    public function list_objective($id_operational_competence = null,bool $with_archived=false)
+    public function list_objective($id_operational_competence = 0,bool $with_archived=false)
     {
         $competences_op[0] = lang('common_lang.all_f');
 
-        //d(OperationalCompetenceModel::getInstance()->findall());
-        //exit();
 
         $operational_competence=null;
         if($id_operational_competence == null ||$id_operational_competence==0 && !$with_archived){
             $objectives = ObjectiveModel::getInstance()->findAll();
         }
-        elseif ($with_archived)
-            $objectives = ObjectiveModel::getInstance()->withDeleted()->findAll();
+        elseif ($id_operational_competence == null || $id_operational_competence==0 && $with_archived)
+            $objectives = ObjectiveModel::getObjectives($with_archived, $id_operational_competence);
         else{
             $operational_competence = OperationalCompetenceModel::getInstance()->find($id_operational_competence);
-            $objectives = OperationalCompetenceModel::getObjectives($operational_competence['id']);
+            $objectives = ObjectiveModel::getObjectives($with_archived, $id_operational_competence);
         }
         $output = array(
             'title' => lang('plafor_lang.title_list_objective'),
@@ -515,8 +519,9 @@ class Admin extends \App\Controllers\BaseController
             'with_archived' => $with_archived
         );
 
-        if(is_numeric($id_operational_competence)){
+        if(is_numeric($id_operational_competence) && $id_operational_competence != 0){
             $output[] = ['operational_competence',$operational_competence];
+            $output['operational_competence_id'] = $id_operational_competence;
         }
 
         $this->display_view(['Plafor\templates/admin_menu','Plafor\objective/list'], $output);
@@ -527,7 +532,7 @@ class Admin extends \App\Controllers\BaseController
      * @param integer $objective_id = The id of the course plan to modify, leave blank to create a new one
      * @return void
      */
-    public function save_objective($objective_id = 0)
+    public function save_objective($objective_id = 0, $operational_competence_id = 0)
     {
         if (count($_POST) > 0) {
             $objective_id = $this->request->getPost('id');
@@ -559,7 +564,7 @@ class Admin extends \App\Controllers\BaseController
                 } else {
                     ObjectiveModel::getInstance()->insert($objective);
                 }
-                return redirect()->to(base_url('plafor/admin/list_objective'));
+                return redirect()->to(base_url('plafor/admin/list_objective/'.($operational_competence_id!=0?$operational_competence_id:'')));
             }
         }
         $operationalCompetences=[];
@@ -570,7 +575,8 @@ class Admin extends \App\Controllers\BaseController
         $output = array(
             'title' => lang('plafor_lang.title_objective_'.((bool)$objective_id ? 'update' : 'new')),
             'objective' => ObjectiveModel::getInstance()->withDeleted()->find($objective_id),
-            'operational_competences' => $operationalCompetences
+            'operational_competences' => $operationalCompetences,
+            'operational_competence_id' => $operational_competence_id
         );
 
         return $this->display_view('\Plafor\objective/save', $output);

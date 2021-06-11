@@ -20,7 +20,7 @@ helper('Form');
                 <?= lang('common_lang.btn_new_m'); ?>
             </a>
         </div>
-            <div>
+            <div style="align-self:flex-end;">
                 <?=form_checkbox('toggle_deleted', '', $with_archived, [
                     'id' => 'toggle_deleted', 'class' => 'form-check-input'
                 ]);?>

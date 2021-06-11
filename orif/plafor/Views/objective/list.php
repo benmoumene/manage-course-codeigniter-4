@@ -17,7 +17,7 @@ helper('form');
     <div class="row">
     	<?php if($_SESSION['user_access'] == config('User\Config\UserConfig')->access_lvl_admin): ?>
         <div class="col-sm-3 text-left">
-            <a href="<?= base_url('plafor/admin/save_objective'); ?>" class="btn btn-primary">
+            <a href="<?= base_url('plafor/admin/save_objective/0/'.($operational_competence_id??'')); ?>" class="btn btn-primary">
                 <?= lang('common_lang.btn_add'); ?>
             </a>
         </div>
@@ -61,7 +61,7 @@ helper('form');
 $(document).ready(function(){
     $('#toggle_deleted').change(e => {
         let checked = e.currentTarget.checked;
-		$.post('<?php echo base_url("plafor/admin/list_objective").'/'.($id??'0').'/';?>'+(+checked), {}, data => {
+		$.post('<?php echo base_url("plafor/admin/list_objective").'/'.($operational_competence_id??'0').'/';?>'+(+checked), {}, data => {
             $('#objectiveslist').empty();
             $('#objectiveslist')[0].innerHTML = $(data).find('#objectiveslist')[0].innerHTML;
         });

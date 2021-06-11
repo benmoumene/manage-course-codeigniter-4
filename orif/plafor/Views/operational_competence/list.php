@@ -1,4 +1,5 @@
 <?php
+helper('form');
 /**
  * Users List View
  *
@@ -13,12 +14,18 @@
             <h1 class="title-section"><?= lang('user_lang.title_operational_competence_list'); ?></h1>
         </div>
     </div>
-    <div class="row">
+    <div class="row" style="justify-content:space-between;">
         <div class="col-sm-3 text-left">
-            <a href="<?= base_url('plafor/admin/save_operational_competence'); ?>" class="btn btn-primary">
+            <a href="<?= base_url('plafor/admin/save_operational_competence/0/'.($id_competence_domain??'')) ?>" class="btn btn-primary">
                 <?= lang('common_lang.btn_new_f'); ?>
             </a>
         </div>
+        <div style="align-self:flex-end;">
+			<?=form_checkbox('toggle_deleted', '', $with_archived, [
+				'id' => 'toggle_deleted', 'class' => 'form-check-input'
+			]);?>
+			<?=form_label(lang('common_lang.btn_show_disabled'), 'toggle_deleted', ['class' => 'form-check-label']);?>
+		</div>
     </div>
     <div class="row mt-2">
         <table class="table table-hover">
@@ -35,7 +42,7 @@
                 <tr>
                     <td><a href="<?= base_url('plafor/admin/list_objective/'.$operational_competence['id']); ?>"><span class="font-weight-bold"><?= $operational_competence['symbol']?></span> <?= $operational_competence['name']; ?></td>
                     <td><a href="<?= base_url('plafor/apprentice/view_operational_competence/'.$operational_competence['id'])?>"><?= lang('common_lang.btn_details')?></a></td>
-                    <td><a href="<?= base_url('plafor/admin/save_operational_competence/'.$operational_competence['id']); ?>"><?= lang('common_lang.btn_edit')?></a></td>
+                    <td><a href="<?= base_url('plafor/admin/save_operational_competence/'.$operational_competence['id'].'/'.($id_competence_domain??'')); ?>"><?= lang('common_lang.btn_edit')?></a></td>
                     <td><a href="<?= base_url('plafor/admin/delete_operational_competence/'.$operational_competence['id']); ?>" class="close">×</td>
                 </tr>
             <?php } ?>
@@ -48,7 +55,9 @@
 $(document).ready(function(){
     $('#toggle_deleted').change(e => {
         let checked = e.currentTarget.checked;
-        $.post('<?=base_url();?>admin/list_operational_competence/'+(+checked), {}, data => {
+		$.post('<?php
+        exit();
+        echo base_url("plafor/admin/list_operational_competence").'/'.($id_competence_domain??'0').'/';?>'+(+checked), {}, data => {
             $('#operational_competenceslist').empty();
             $('#operational_competenceslist')[0].innerHTML = $(data).find('#operational_competenceslist')[0].innerHTML;
         });

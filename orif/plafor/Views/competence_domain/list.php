@@ -1,4 +1,5 @@
 <?php
+helper('form');
 /**
  * Users List View
  *
@@ -14,12 +15,19 @@
             <h1 class="title-section"><?= lang('user_lang.title_competence_domain_list'); ?></h1>
         </div>
     </div>
-    <div class="row">
+    <div class="row" style="flex-direction:row;justify-content:space-between;">
         <div class="col-sm-3 text-left">
             <a href="<?= base_url('plafor/admin/save_competence_domain/0/'.($id_course_plan==null?'':$id_course_plan)); ?>" class="btn btn-primary">
                 <?= lang('common_lang.btn_new_m'); ?>
             </a>
+
         </div>
+        <div style="align-self:flex-end;">
+                <?=form_checkbox('toggle_deleted', '', $with_archived, [
+                    'id' => 'toggle_deleted', 'class' => 'form-check-input'
+                ]);?>
+                <?=form_label(lang('common_lang.btn_show_disabled'), 'toggle_deleted', ['class' => 'form-check-label']);?>
+            </div>
     </div>
     <div class="row mt-2">
         <table class="table table-hover">
@@ -49,7 +57,7 @@
 $(document).ready(function(){
     $('#toggle_deleted').change(e => {
         let checked = e.currentTarget.checked;
-        $.post('<?=base_url();?>admin/list_competence_domain/'+(+checked), {}, data => {
+        $.post('<?= base_url("plafor/admin/list_competence_domain/".($id_course_plan==null?'0':$id_course_plan)).'/'; ?>'+(+checked), {}, data => {
             $('#competence_domainslist').empty();
             $('#competence_domainslist')[0].innerHTML = $(data).find('#competence_domainslist')[0].innerHTML;
         });

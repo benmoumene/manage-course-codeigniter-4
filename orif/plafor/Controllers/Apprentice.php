@@ -53,7 +53,7 @@ class Apprentice extends \App\Controllers\BaseController
         $this->display_view('\Plafor\course_plan\view',$output);
     }
     
-    public function list_apprentice()
+    public function list_apprentice($withDeleted=0)
     {
         $trainer_id = $this->request->getGet('trainer_id');
         $trainersList = array();
@@ -66,7 +66,7 @@ class Apprentice extends \App\Controllers\BaseController
             }
         
         if($trainer_id == null or $trainer_id == 0){
-            $apprentices = User_model::getInstance()->where('fk_user_type', $apprentice_level['0']['id'])->findall();
+            $apprentices = User_model::getApprentices($withDeleted);
 
             $coursesList=[];
             foreach (CoursePlanModel::getInstance()->findall() as $courseplan)
@@ -80,13 +80,15 @@ class Apprentice extends \App\Controllers\BaseController
                 $courses = UserCourseModel::getInstance()->findall();
             }
         
+        
         $output = array(
             'title' => lang('plafor_lang.title_list_apprentice'),
             'trainer_id' => $trainer_id,
             'trainers' => $trainersList,
             'apprentices' => $apprentices,
             'coursesList' => $coursesList,
-            'courses' => $courses
+            'courses' => $courses,
+            'with_archived' => $withDeleted
         );
 
         $this->display_view(['Plafor\templates/admin_menu','Plafor\apprentice/list'], $output);
