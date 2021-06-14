@@ -27,7 +27,7 @@ foreach ($courses as $course){
                     <h1><?= lang('user_lang.status').' "'.$userCourseStatus[0]['name'].'"' ?></h1>
                     <?php } ?>
                     <h4><?= lang('user_lang.what_to_do')?></h4>
-                    <div class = "alert alert-info" ><?= lang('user_lang.user_course_disable_explanation')?></div>
+                    <div class = "alert alert-info" ><?= lang('user_lang.user_course_'.($course_plan['archive']==null?'disable_explanation':'enable_explanation'))?></div>
                 </div>
                 <div class="text-right">
                     <a href="<?= /*base_url('apprentice/view_user_course/'.$apprentices[0]['id']);*/ $session->get('_ci_previous_url')?>" class="btn btn-default">

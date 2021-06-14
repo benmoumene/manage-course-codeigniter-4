@@ -8,7 +8,7 @@ $session=\CodeIgniter\Config\Services::session();
                 <div>
                     <h1><?= lang('user_lang.competence_domain').' "'.$competence_domain['name'].'"' ?></h1>
                     <h4><?= lang('user_lang.what_to_do')?></h4>
-                    <div class = "alert alert-info" ><?= lang('user_lang.competence_domain_disable_explanation')?></div>
+                    <div class = "alert alert-info" ><?= lang('user_lang.competence_domain_'.($competence_domain['archive']==null?'disable_explanation':'enable_explanation'))?></div>
                 </div>
                 <div class="text-right">
                     <a href="<?= $session->get('_ci_previous_url'); ?>" class="btn btn-default">
