@@ -13,14 +13,12 @@
                     <a href="<?= base_url('plafor/admin/list_objective'); ?>" class="btn btn-default">
                         <?= lang('common_lang.btn_cancel'); ?>
                     </a>
-					<?php if (!$deleted) { ?>
-                    <a href="<?= base_url(uri_string().'/1'); ?>" class="btn btn-primary">
-                        <?= lang('common_lang.btn_disable'); ?>
-                    </a>
-					<?php } ?>
-                    <a href="<?= base_url(uri_string().'/2'); ?>" class="btn btn-danger">
-                        <?= lang('common_lang.btn_delete'); ?>
-                    </a>
+                    <?php 
+                    echo $objective['archive']!=null?"<a href=".base_url('plafor/admin/delete_objective/'.$objective['id'].'/3').">".lang('common_lang.reactivate')."</a>"
+                    :
+                    "<a href=".base_url(uri_string().'/1')." class={btn btn-danger} >".
+                        lang('common_lang.btn_disable');"
+                    </a> "?>
                 </div>
             </div>
         </div>

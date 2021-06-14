@@ -135,7 +135,7 @@ class Admin extends \App\Controllers\BaseController
         $competenceDomainIds=[];
         $objectiveIds=[];
 
-        $course_plan = CoursePlanModel::getInstance()->find($course_plan_id);
+        $course_plan = CoursePlanModel::getInstance()->withDeleted()->find($course_plan_id);
         if (is_null($course_plan)) {
             return redirect()->to('/plafor/admin/list_course_plan');
         }
@@ -178,6 +178,11 @@ class Admin extends \App\Controllers\BaseController
                 CoursePlanModel::getInstance()->delete($course_plan_id, FALSE);
                 return redirect()->to('/plafor/admin/list_course_plan');
                 break;
+                case 3:
+                    //Reactiver le plan de formation
+                    CoursePlanModel::getInstance()->withDeleted()->update($course_plan_id, ['archive' => null]);
+                    return redirect()->to(base_url('plafor/admin/list_course_plan'));
+                    break;
             default:
                 // Do nothing
                 return redirect()->to('/plafor/admin/list_course_plan');
@@ -294,7 +299,7 @@ class Admin extends \App\Controllers\BaseController
      */
     public function delete_competence_domain($competence_domain_id, $action = 0)
     {
-        $competence_domain = CompetenceDomainModel::getInstance()->find($competence_domain_id);
+        $competence_domain = CompetenceDomainModel::getInstance()->withDeleted()->find($competence_domain_id);
         if (is_null($competence_domain)) {
             return redirect()->to('plafor/admin/competence_domain/list');
         }
@@ -319,6 +324,14 @@ class Admin extends \App\Controllers\BaseController
                 CompetenceDomainModel::getInstance()->delete($competence_domain_id);
                 return redirect()->to(base_url('plafor/admin/list_competence_domain'));
                 break;
+
+                case 3:
+                    //Reactiver le domaine de compétences
+
+                    CompetenceDomainModel::getInstance()->withDeleted()->update($competence_domain_id, ['archive' => null]);
+                    return redirect()->to(base_url('plafor/admin/list_competence_domain/'.$competence_domain['fk_course_plan']));
+                    break;
+
             default: // Do nothing
                 return redirect()->to(base_url('plafor/admin/list_competence_domain'));
         }
@@ -370,7 +383,7 @@ class Admin extends \App\Controllers\BaseController
                 } else {
                     OperationalCompetenceModel::getInstance()->insert($operational_competence);
                 }
-                return redirect()->to(base_url('plafor/admin/list_operational_competence'));
+                return redirect()->to(base_url('plafor/admin/list_operational_competence/'.$competence_domain_id));
             }
         }
         $competenceDomains=[];
@@ -398,7 +411,7 @@ class Admin extends \App\Controllers\BaseController
      */
     public function delete_operational_competence($operational_competence_id, $action = 0)
     {
-        $operational_competence = OperationalCompetenceModel::getInstance()->find($operational_competence_id);
+        $operational_competence = OperationalCompetenceModel::getInstance()->withDeleted()->find($operational_competence_id);
         if (is_null($operational_competence)) {
             return redirect()->to(base_url('plafor/admin/list_operational_competence'));
         }
@@ -414,6 +427,11 @@ class Admin extends \App\Controllers\BaseController
                 ObjectiveModel::getInstance()->where('fk_operational_competence',$operational_competence_id)->delete();
                 OperationalCompetenceModel::getInstance()->delete($operational_competence_id, FALSE);
                 return redirect()->to(base_url('plafor/admin/list_operational_competence'));
+                break;
+            case 3:
+                //Reactiver la compétence opérationnelle
+                OperationalCompetenceModel::getInstance()->withDeleted()->update($operational_competence_id, ['archive' => null]);
+                return redirect()->to(base_url('plafor/admin/list_operational_competence/'.$operational_competence['fk_competence_domain']));
                 break;
             default: // Do nothing
                 return redirect()->to(base_url('plafor/admin/list_operational_competence'));
@@ -610,18 +628,22 @@ class Admin extends \App\Controllers\BaseController
                 break;
             case 1: // Deactivate (soft delete) objective
                 ObjectiveModel::getInstance()->delete($objective_id, FALSE);
-                return redirect()->to(base_url('plafor/admin/list_objective'));
+                return redirect()->to(base_url('plafor/admin/list_objective/'.$objective['fk_operational_competence']));
+                break;
             case 2: // Hard delete
                 ObjectiveModel::getInstance()->delete($objective_id, TRUE);
                 return redirect()->to(base_url('plafor/admin/list_objective'));
+                break;
 
             case 3:
                 ObjectiveModel::getInstance()->withDeleted()->update($objective_id,['archive'=>null]);
-                return redirect()->to(base_url('plafor/admin/save_objective/'.$objective_id));
+                return redirect()->to(base_url('plafor/admin/list_objective/'.$objective['fk_operational_competence']));
+                break;
             default: // Do nothing
                 return redirect()->to('plafor/admin/list_objective');
         }
     }
+
     /**
      * Form to create a link between a apprentice and a course plan
      *

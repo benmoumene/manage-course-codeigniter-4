@@ -13,9 +13,12 @@
                     <a href="<?= base_url('plafor/admin/list_operational_competence'); ?>" class="btn btn-default">
                         <?= lang('common_lang.btn_cancel'); ?>
                     </a>
-                    <a href="<?= base_url(uri_string().'/1'); ?>" class="btn btn-danger">
-                        <?= lang('common_lang.btn_disable'); ?>
-                    </a>
+                    <?php 
+                    echo $operational_competence['archive']!=null?"<a href=".base_url('plafor/admin/delete_operational_competence/'.$operational_competence['id'].'/3').">".lang('common_lang.reactivate')."</a>"
+                    :
+                    "<a href=".base_url(uri_string().'/1')." class={btn btn-danger} >".
+                        lang('common_lang.btn_disable');"
+                    </a> "?>
                 </div>
             </div>
         </div>

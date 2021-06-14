@@ -12,6 +12,7 @@ return[
 //TEXTS
     'all_m'                         => 'Tous',
     'all_f'                         => 'Toutes',
+    'reactivate'                    => 'Réactiver',
 
 // Application name
     'app_title'                      => 'Titre de l\'application',

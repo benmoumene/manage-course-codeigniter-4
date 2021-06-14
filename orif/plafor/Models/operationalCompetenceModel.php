@@ -12,7 +12,7 @@ class OperationalCompetenceModel extends \CodeIgniter\Model
     private static $operationalCompetenceModel=null;
     protected $table='operational_competence';
     protected $primaryKey='id';
-    protected $allowedFields=['fk_competence_domain','name','symbol','methodologic','social','personal'];
+    protected $allowedFields=['fk_competence_domain','name','symbol','methodologic','social','personal', 'archive'];
     protected $useSoftDeletes='true';
     protected $deletedField='archive';
     private CompetenceDomainModel $competenceDomainModel;

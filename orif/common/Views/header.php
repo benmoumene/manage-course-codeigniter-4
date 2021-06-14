@@ -25,6 +25,7 @@
     <!-- Icon -->
     <link rel="icon" type="image/png" href="<?= base_url("images/favicon.png"); ?>" />
     <link rel="shortcut icon" type="image/png" href="<?= base_url("images/favicon.png"); ?>" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
 
     <!-- Bootstrap  -->
     <!-- Orif Bootstrap CSS personalized with https://bootstrap.build/app -->

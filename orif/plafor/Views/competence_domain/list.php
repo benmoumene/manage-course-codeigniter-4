@@ -45,7 +45,7 @@ helper('form');
                     <td><a href="<?= base_url('plafor/admin/list_operational_competence/'.$competence_domain['id']); ?>"><span class="font-weight-bold"><?= $competence_domain['symbol']?></span> <?= $competence_domain['name']; ?></td>
                     <td><a href="<?= base_url('plafor/apprentice/view_competence_domain/'.$competence_domain['id'])?>"><?= lang('common_lang.btn_details')?></a></td>
                     <td><a href="<?= base_url('plafor/admin/save_competence_domain/'.$competence_domain['id'].'/'.($id_course_plan==null?'':$id_course_plan)); ?>"><?= lang('common_lang.btn_edit')?></a></td>
-                    <td><a href="<?= base_url('plafor/admin/delete_competence_domain/'.$competence_domain['id']); ?>" class="close">×</td>
+                    <td><a href="<?= base_url('plafor/admin/delete_competence_domain/'.$competence_domain['id']); ?>" class="<?=$competence_domain['archive']==null?'bi bi-trash':'bi bi-reply-all-fill'?>"></td>
                 </tr>
             <?php } ?>
         </tbody>

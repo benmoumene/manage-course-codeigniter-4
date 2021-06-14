@@ -32,10 +32,13 @@ foreach ($courses as $course){
                 <div class="text-right">
                     <a href="<?= /*base_url('apprentice/view_user_course/'.$apprentices[0]['id']);*/ $session->get('_ci_previous_url')?>" class="btn btn-default">
                         <?= lang('common_lang.btn_cancel'); ?>
-                    </a>
-                    <a href="<?= base_url(uri_string().'/1'); ?>" class="btn btn-danger">
-                        <?= lang('common_lang.btn_disable'); ?>
-                    </a>
+                    </a> 
+                    <?php 
+                    echo $course_plan['archive']!=null?"<a href=".base_url('plafor/admin/delete_course_plan/'.$course_plan['id'].'/3').">".lang('common_lang.reactivate')."</a>"
+                    :
+                    "<a href=".base_url(uri_string().'/1')." class={btn btn-danger} >".
+                        lang('common_lang.btn_disable');"
+                    </a> "?>
                 </div>
             </div>
         </div>
