@@ -2,9 +2,12 @@
 namespace Plafor\Database\Migrations;
 use CodeIgniter\Database\Migration;
 
-class AddComment extends CodeIgniter\Database\Migration {
+class AddComment extends Migration {
 
     public function up() {
+
+
+        $this->db->disableForeignKeyChecks();
         $this->forge->addField([
             'id' => [
                 'type' => 'int',
@@ -14,12 +17,17 @@ class AddComment extends CodeIgniter\Database\Migration {
             ],
             'fk_trainer' => [
                 'type' => 'int',
+                'null'=>true,
+                'unsigned' => true,
             ],
             'fk_acquisition_status' => [
                 'type' => 'int',
+                'null'=>true,
+                'unsigned' => true,
             ],
             'comment' => [
                 'type' => 'text',
+                'null'=>true,
             ],
             'date_creation datetime default current_timestamp',
         ]);

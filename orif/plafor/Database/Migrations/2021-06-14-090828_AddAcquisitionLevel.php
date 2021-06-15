@@ -2,9 +2,12 @@
 namespace Plafor\Database\Migrations;
 use CodeIgniter\Database\Migration;
 
-class AddAcquisitionLevel extends CodeIgniter\Database\Migration {
+class AddAcquisitionLevel extends Migration {
 
     public function up() {
+
+        $this->db->disableForeignKeyChecks();
+
         $this->forge->addField([
             'id' => [
                 'type' => 'int',

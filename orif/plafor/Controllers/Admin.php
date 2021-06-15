@@ -352,7 +352,7 @@ class Admin extends \App\Controllers\BaseController
                     'rules' => 'required|max_length['.config('\Plafor\Config\PlaforConfig')->SYMBOL_MAX_LENGTH.']'
                     ],
                     'name'=>[
-                    'label' => 'user_lang.field_operational_name',
+                    'label' => 'user_lang.field_operational_competence_name',
                     'rules' => 'required|max_length['.config('\Plafor\Config\PlaforConfig')->OPERATIONAL_COMPETENCE_NAME_MAX_LENGTH.']'
                     ],
                     'methodologic'=>[

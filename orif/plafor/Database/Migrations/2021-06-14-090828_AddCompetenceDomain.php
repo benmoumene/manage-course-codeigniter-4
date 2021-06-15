@@ -2,9 +2,11 @@
 namespace Plafor\Database\Migrations;
 use CodeIgniter\Database\Migration;
 
-class AddObjective extends CodeIgniter\Database\Migration {
+class AddCompetenceDomain extends Migration {
 
     public function up() {
+
+        $this->db->disableForeignKeyChecks();
         $this->forge->addField([
             'id' => [
                 'type' => 'int',
@@ -12,30 +14,28 @@ class AddObjective extends CodeIgniter\Database\Migration {
                 'unsigned' => true,
                 'auto_increment' => true,
             ],
-            'fk_operational_competence' => [
+            'fk_course_plan' => [
                 'type' => 'int',
+                'null'=>true,
+                'unsigned' => true,
             ],
             'symbol' => [
                 'type' => 'varchar',
                 'constraint' => '10',
             ],
-            'taxonomy' => [
-                'type' => 'int', 
-                'constraint' => '5',
-            ],
             'name' => [
                 'type' => 'varchar',
-                'constraint' => '350',
+                'constraint' => '100',
             ],
-            'archive timestamp default null',
+            'archive TIMESTAMP NULL',
         ]);
 
         $this->forge->addKey('id', true, true);
-        $this->forge->addKey('fk_operational_competence', false);
-        $this->forge->createTable('objective');
+        $this->forge->addForeignKey('fk_course_plan', 'course_plan','id');
+        $this->forge->createTable('competence_domain');
     }
 
     public function down() {
-        $this->forge->dropTable('objective');
+        $this->forge->dropTable('competence_domain');
     }
 }

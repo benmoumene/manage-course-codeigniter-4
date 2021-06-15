@@ -67,10 +67,10 @@ $validation=\CodeIgniter\Config\Services::validation();
 
         <!-- ERROR MESSAGES -->
         <?php
-        echo count($validation->getErrors())>0?'<div class="alert alert-danger">':null;
+        echo count($validation->getErrors())>0?'<div class="alert alert-danger"><ul>':null;
         foreach ($validation->getErrors() as $error)
-        echo $error;
-        echo count($validation->getErrors())>0?'</div>':null;
+        echo "<li>{$error}</li>";
+        echo count($validation->getErrors())>0?'</ul></div>':null;
         ?>
 
         <!-- USER FIELDS -->
