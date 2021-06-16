@@ -544,4 +544,28 @@ class Apprentice extends \App\Controllers\BaseController
 
         $this->display_view('\Plafor\user_course/view',$output);
     }
+    /*public function tester(){
+        $file=fopen(WRITEPATH.'plafor.json','r+');
+        $filedatas=fopen(WRITEPATH.'filedatas.txt','a+');
+        $decodedfile=json_decode(fread($file,filesize(WRITEPATH.'plafor.json')));
+        fclose($file);
+
+        $datasName=[];
+        for($i=2;$i<count($decodedfile);$i++){
+            $temptab=[];
+            foreach ($decodedfile[$i]->data as $row){
+                $temptab[]=(array)$row;
+            }
+            $datasName[$decodedfile[$i]->name]=$temptab;
+
+        }
+        d($datasName);
+        foreach ($datasName['user_type'] as $aclvl) {
+            $datastoappend=print_r($aclvl,true);
+            echo var_export($aclvl,true);
+            fwrite($filedatas,var_export($aclvl,true).";\n");
+        }
+        fclose($filedatas);
+    }
+    */
 }

@@ -20,6 +20,8 @@ class AddUserCourseStatus extends Migration{
         ]);
         $this->forge->addKey('id',true,true);
         $this->forge->createTable('user_course_status');
+        $seeder = \Config\Database::seeder();
+        $seeder->call('\Plafor\Database\Seeds\addUserCoursesStatusDatas');
     }
 
     public function down()

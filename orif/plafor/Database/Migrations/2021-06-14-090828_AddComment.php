@@ -36,6 +36,7 @@ class AddComment extends Migration {
         $this->forge->addKey('fk_trainer', false);
         $this->forge->addKey('fk_acquisition_status', false);
         $this->forge->createTable('Comment');
+
     }
 
     public function down() {

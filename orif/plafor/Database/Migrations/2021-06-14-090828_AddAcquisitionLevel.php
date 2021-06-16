@@ -23,6 +23,8 @@ class AddAcquisitionLevel extends Migration {
 
         $this->forge->addKey('id', true, true);
         $this->forge->createTable('acquisition_level');
+        $seeder = \Config\Database::seeder();
+        $seeder->call('\Plafor\Database\Seeds\addAcquisitionLevelDatas');
     }
 
     public function down() {

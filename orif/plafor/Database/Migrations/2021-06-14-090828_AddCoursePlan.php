@@ -32,6 +32,8 @@ class AddCoursePlan extends Migration {
 
         $this->forge->addKey('id', true, true);
         $this->forge->createTable('course_plan');
+        $seeder = \Config\Database::seeder();
+        $seeder->call('\Plafor\Database\Seeds\addCoursePlanDatas');
     }
 
     public function down() {

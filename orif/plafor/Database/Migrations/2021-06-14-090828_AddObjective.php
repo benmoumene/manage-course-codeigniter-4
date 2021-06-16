@@ -37,6 +37,8 @@ class AddObjective extends Migration {
         $this->forge->addKey('id', true, true);
         $this->forge->addForeignKey('fk_operational_competence','operational_competence','id');
         $this->forge->createTable('objective');
+        $seeder = \Config\Database::seeder();
+        $seeder->call('\Plafor\Database\Seeds\addObjectiveDatas');
     }
 
     public function down() {
