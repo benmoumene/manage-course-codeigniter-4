@@ -26,6 +26,9 @@ class AddTrainerApprentice extends Migration{
             ],
         ]);
         $this->forge->addKey('id',true,true);
+        $this->forge->addForeignKey('fk_trainer','user','id');
+        $this->forge->addForeignKey('fk_apprentice','user','id');
+
         $this->forge->createTable('trainer_apprentice');
         $seeder = \Config\Database::seeder();
         $seeder->call('\Plafor\Database\Seeds\addTrainerApprenticeDatas');
