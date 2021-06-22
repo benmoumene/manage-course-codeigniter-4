@@ -342,7 +342,6 @@ class Apprentice extends \App\Controllers\BaseController
         $acquisition_level=AcquisitionStatusModel::getAcquisitionLevel($acquisition_status['fk_acquisition_level']);
         if($acquisition_status == null){
             return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
-            exit();
         }
 
         $comments = CommentModel::getInstance()->where('fk_acquisition_status',$acquisition_status_id)->findAll();
@@ -410,10 +409,10 @@ class Apprentice extends \App\Controllers\BaseController
 
         return $this->display_view('Plafor\acquisition_status/save', $output);
     }
-    public function add_comment($acquisition_status_id = null){
+    public function add_comment($acquisition_status_id = null, $comment_id = null){
         $acquisition_status = AcquisitionStatusModel::getInstance()->find($acquisition_status_id);
 
-        if($acquisition_status == null || $_SESSION['user_access'] != config('\User\Config\UserConfig')->access_lvl_trainer){
+        if($acquisition_status == null || $_SESSION['user_access'] < config('\User\Config\UserConfig')->access_lvl_trainer){
             return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
         }
 
@@ -432,18 +431,31 @@ class Apprentice extends \App\Controllers\BaseController
                     'comment' => $this->request->getPost('comment'),
                     'date_creation' => date('Y-m-d H:i:s'),
                 );
+                if($comment_id == null)
                 CommentModel::getInstance()->insert($comment);
+                else
+                CommentModel::getInstance()->update($comment_id, $comment);
 
                 return redirect()->to(base_url('plafor/apprentice/view_acquisition_status/'.$acquisition_status['id']));
             }
+        
         }
+
+        $comment = CommentModel::getInstance()->find($comment_id);
 
         $output = array(
             'title'=>lang('plafor_lang.title_comment_save'),
             'acquisition_status' => $acquisition_status,
+            'comment_id' => $comment_id,
+            'commentValue' => ($comment['comment']??'')
         );
 
         return $this->display_view('\Plafor\comment/save',$output);
+    }
+
+    public function delete_comment($comment_id = 0, $acquisition_status_id = 0) {
+        CommentModel::getInstance()->delete($comment_id);
+        return redirect()->to(base_url('plafor/apprentice/view_acquisition_status/'.$acquisition_status_id));
     }
     /**
      * Show details of the selected operational competence

@@ -91,9 +91,19 @@ class User_model extends \CodeIgniter\Model{
      * @return array the list of trainers
      */
     public static function getTrainers(bool $withDelted=false){
-        if ($withDelted)
-            return User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('name','Formateur')->first()['id'])->withDeleted()->findAll();
-        return User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('name','Formateur')->first()['id'])->findAll();
+        $indexedTrainers = array();
+        if ($withDelted) {
+            $trainers = User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('name','Formateur')->first()['id'])->withDeleted()->findAll();
+            foreach ($trainers as $trainer) {
+                $indexedTrainers[$trainer['id']] = $trainer;
+            }
+            return $indexedTrainers;
+        }
+        $trainers = User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('name','Formateur')->first()['id'])->findAll();
+        foreach ($trainers as $trainer) {
+            $indexedTrainers[$trainer['id']] = $trainer;
+        }
+        return $indexedTrainers;
 
     }
 

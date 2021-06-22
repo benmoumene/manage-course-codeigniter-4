@@ -21,7 +21,7 @@
         <div class="col-md-12">
             <p class="bg-primary text-white"><?=lang('user_lang.field_linked_comments')?></p>
 		</div>
-		<?php if($_SESSION['user_access'] >= config('\User\Config\UserConfig')->ACCESS_LVL_TRAINER) { ?>
+		<?php if($_SESSION['user_access'] >= config('\User\Config\UserConfig')->access_lvl_trainer) { ?>
 		<a href="<?= base_url('plafor/apprentice/add_comment/'.$acquisition_status['id']); ?>" class="btn btn-primary"><?= lang('user_lang.title_comment_new'); ?></a>
 		<?php } ?>
         <div class="col-md-12">
@@ -42,16 +42,22 @@
 				foreach ($comments as $comment):
 				?>
                     <tr>
-                        <td><?= $comment['comment']; ?></td>
+                        <td><a href="<?= base_url('plafor/apprentice/add_comment/'.$acquisition_status['id'].'/'.$comment['id'])?>"><?= $comment['comment']; ?></a></td>
 						<?php
 						if (isset($trainersSorted[$comment['fk_trainer']])): ?>
-                        <th><?= $trainer['username']; ?></th>
+                        <th><?= $trainers[$comment['fk_trainer']]['username']; ?></th>
 						<?php endif; ?>
                         <td><?= $comment['date_creation']; ?></td>
-                    </tr>
+                        <td><a class="bi bi-trash" id="<?=$comment['id']?>" onClick="
+                        let obj={yes: '<?= lang('common_lang.yes')?>',no: '<?=lang('common_lang.no')?>',message: '<?=lang('plafor_lang.comment_delete')?>',url: '<?=base_url('plafor/apprentice/delete_comment/'.$comment['id'].'/'.($acquisition_status['id']??''))?>'};
+                        displayNotif(event.pageX, event.pageY,obj)"></a></td>
+
+                    </tr> 
                 <?php endforeach; ?>
                 </tbody>
             </table>
         </div>
     </div>
 </div>
+<script src="<?=base_url('notif.js')?>">
+</script>

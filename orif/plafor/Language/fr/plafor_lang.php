@@ -67,6 +67,7 @@
         'title_acquisition_status_save' =>'Ajouter un statut d\'acquisition',
         //Comment
         'title_comment_save'=>'Ajouter un commentaire',
+        'comment_delete' => 'souhaitez-vous supprimer le commentaire ?',
 
 
     ];

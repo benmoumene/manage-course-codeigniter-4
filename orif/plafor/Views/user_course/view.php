@@ -45,7 +45,8 @@
                     </tr>
                 </thead>
                 <tbody>
-                <?php foreach($acquisition_status as $acquisition): ?>
+                <?php
+                foreach($acquisition_status as $acquisition): ?>
                     <tr>
                         <td><a href="<?= base_url('plafor/apprentice/view_acquisition_status/'.$acquisition['id'])?>"><?= $objectives[$acquisition['fk_objective']]['symbol']; ?></a></td>
                         <td><a href="<?= base_url('plafor/apprentice/view_acquisition_status/'.$acquisition['id'])?>"><?= $objectives[$acquisition['fk_objective']]['name']; ?></a></td>
