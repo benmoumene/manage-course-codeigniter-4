@@ -387,7 +387,7 @@ class Apprentice extends \App\Controllers\BaseController
 
             $this->validation->setRules(['field_acquisition_level'=>[
                 'label'=>'user_lang.field_acquisition_level',
-                'rules'=>'required in_list['.implode(',', array_keys($acquisitionLevels)).']'
+                'rules'=>'required|in_list['.implode(',', array_keys($acquisitionLevels)).']'
             ]]);
 
             if ($this->validation->withRequest($this->request)->run()) {
