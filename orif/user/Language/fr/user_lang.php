@@ -161,6 +161,7 @@ return[
 'field_objectives_taxonomies'    =>'Taxonomie des objectifs',
 'field_objective_name'           =>'Nom de l\'objectif',
 'field_objectives_names'         =>'Nom des objectifs',
+'field_linked_objectives'        =>'Objectifs liés à la compétence opérationnelle',
 'field_user_course_date_begin'   =>'Date du début de la formation',
 'field_user_course_date_end'     =>'Date de fin de la formation',
 'field_user_course_course_plan'  =>'Formation',

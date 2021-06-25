@@ -101,7 +101,7 @@ class Admin extends \App\Controllers\BaseController
                 }
                 return redirect()->to(base_url('/plafor/admin/list_course_plan'));
             }
-            else {
+            else {//lastdatas takes the last datas if they arent't valid
                 $lastDatas = array(
                     'formation_number' => $this->request->getPost('formation_number'),
                     'official_name' => ' '.$this->request->getPost('official_name'),
@@ -115,7 +115,7 @@ class Admin extends \App\Controllers\BaseController
         $formTitle = $course_plan_id<>0?'update' : 'new';
         $output = array(
             'title' => (lang('plafor_lang.title_course_plan_'.$formTitle)),
-            'course_plan' => CoursePlanModel::getInstance()->find($course_plan_id)==null?$lastDatas:CoursePlanModel::getInstance()->find($course_plan_id)
+            'course_plan' => $lastDatas!=null?$lastDatas:CoursePlanModel::getInstance()->withDeleted()->find($course_plan_id)
         );
 
         $this->display_view('\Plafor\course_plan\save', $output);
@@ -158,9 +158,12 @@ class Admin extends \App\Controllers\BaseController
                     //get all operationnal competences in an array($operational_competences) which format is [[:competencedomainid]=>[operationalCompetence id, name, etc...],[:competencedomainid]=>[operationalCompetence id, name, etc...]
                     $operationalCompetences[$competence_domain['id']]=CompetenceDomainModel::getOperationalCompetences($competence_domain['id']);
                     //get all objectives assiociated with an operational_competence in an array($objectives) which format is [[operationalcompetenceid]=>[objectives id,fkop, symbol, etc...]
-                    foreach ($operationalCompetences as list($operationalCompetence)){
-                        $objectives[$operationalCompetence['id']]=OperationalCompetenceModel::getObjectives($operationalCompetence['id']);
-                    }
+                    try {
+                        foreach ($operationalCompetences as list($operationalCompetence)) {
+                            $objectives[$operationalCompetence['id']] = OperationalCompetenceModel::getObjectives($operationalCompetence['id']);
+                        }
+                    }catch (\Exception $e){};
+
                 }
                 //get all ids
                 $competenceDomainIds=array_column($competenceDomains,'id');
@@ -199,7 +202,7 @@ class Admin extends \App\Controllers\BaseController
             $competence_domains = CompetenceDomainModel::getCompetenceDomains($with_archived);
         }else{
             $course_plan = CoursePlanModel::getInstance()->find($id_course_plan);
-            $competence_domains = CompetenceDomainModel::getCompetenceDomains($with_archived, $course_plan['id']);
+            $competence_domains = CompetenceDomainModel::getCompetenceDomains((bool)$with_archived, $id_course_plan);
 
         }
 
@@ -369,6 +372,9 @@ class Admin extends \App\Controllers\BaseController
                     ],
             );
             $this->validation->setRules($rules);
+
+
+
             if ($this->validation->withRequest($this->request)->run()) {
                 $operational_competence = array(
                     'symbol' => $this->request->getPost('symbol'),
@@ -387,12 +393,13 @@ class Admin extends \App\Controllers\BaseController
             }
         }
         $competenceDomains=[];
+        foreach (CompetenceDomainModel::getInstance()->withDeleted()->findAll() as $competenceDomain){
+            $competenceDomains[CompetenceDomainModel::getInstance()->withDeleted()->where('id',$competenceDomain['id'])->first()['id']]=$competenceDomain['name'];
 
-        foreach (CompetenceDomainModel::getInstance()->findAll() as $competenceDomain)
-            $competenceDomains[CompetenceDomainModel::getInstance()->where('id',$competenceDomain['id'])->first()['id']]=$competenceDomain['name'];
+        }
         $output = array(
             'title' => lang('plafor_lang.title_operational_competence_'.((bool)$operational_competence_id ? 'update' : 'new')),
-            'operational_competence' => OperationalCompetenceModel::getInstance()->find($operational_competence_id),
+            'operational_competence' => OperationalCompetenceModel::getInstance()->withDeleted()->find($operational_competence_id),
             'competence_domains' => $competenceDomains,
             'competence_domain_id' => $competence_domain_id
         );
@@ -589,7 +596,6 @@ class Admin extends \App\Controllers\BaseController
         foreach (OperationalCompetenceModel::getInstance()->findAll() as $operationalCompetence) {
             $operationalCompetences[$operationalCompetence['id']]=$operationalCompetence['name'];
         }
-
         $output = array(
             'title' => lang('plafor_lang.title_objective_'.((bool)$objective_id ? 'update' : 'new')),
             'objective' => ObjectiveModel::getInstance()->withDeleted()->find($objective_id),

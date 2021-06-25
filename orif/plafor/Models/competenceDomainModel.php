@@ -28,9 +28,9 @@ class CompetenceDomainModel extends Model{
      * @param $fkCoursePlanId
      * @return array|null
      */
-    public static function getCoursePlan($fkCoursePlanId){
+    public static function getCoursePlan($fkCoursePlanId,$withArchived=false){
 
-        return CoursePlanModel::getInstance()->find($fkCoursePlanId);
+        return CoursePlanModel::getInstance()->withDeleted($withArchived)->find($fkCoursePlanId);
 
     }
 

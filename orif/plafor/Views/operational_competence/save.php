@@ -60,7 +60,7 @@ $validation=\CodeIgniter\Config\Services::validation();
         'id' => 'operational_competence_form',
         'name' => 'operational_competence_form'
     );
-    echo form_open('plafor/admin/save_operational_competence/'.($operational_competence['id'] ?? '0').'/'.($competence_domain_id>0?$competence_domain_id:''), $attributes, [
+    echo form_open(base_url('plafor/admin/save_operational_competence/'.($operational_competence['id'] ?? '0').'/'.($competence_domain_id>0?$competence_domain_id:'')), $attributes, [
         'id' => $operational_competence['id'] ?? 0
     ]);
     ?>

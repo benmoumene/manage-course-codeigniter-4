@@ -38,10 +38,10 @@ class Apprentice extends \App\Controllers\BaseController
     public function view_course_plan($course_plan_id = null)
     {
 
-        $course_plan = CoursePlanModel::getInstance()->find($course_plan_id);
+        $course_plan = CoursePlanModel::getInstance()->withDeleted(true)->find($course_plan_id);
         $competence_domains=CoursePlanModel::getCompetenceDomains($course_plan_id);
         if($course_plan == null){
-            return redirect()->to(base_url('plafor/apprentice/list_course_plan'));
+            return redirect()->to(base_url('plafor/admin/list_course_plan'));
         }
 
         $output = array(
@@ -140,7 +140,7 @@ class Apprentice extends \App\Controllers\BaseController
      */
     public function view_competence_domain($competence_domain_id = null)
     {
-        $competence_domain = CompetenceDomainModel::getInstance()->find($competence_domain_id);
+        $competence_domain = CompetenceDomainModel::getInstance()->withDeleted()->find($competence_domain_id);
 
         if($competence_domain == null){
             return redirect()->to(base_url('admin/list_competence_domain'));
@@ -148,7 +148,7 @@ class Apprentice extends \App\Controllers\BaseController
 
         $output = array(
             'title' =>lang('plafor_lang.title_view_competence_domain'),
-            'course_plan' =>CompetenceDomainModel::getCoursePlan($competence_domain['fk_course_plan'])
+            'course_plan' =>CompetenceDomainModel::getCoursePlan($competence_domain['fk_course_plan'],true)
         ,
             'competence_domain' => $competence_domain,
         );
@@ -465,7 +465,7 @@ class Apprentice extends \App\Controllers\BaseController
      */
     public function view_operational_competence($operational_competence_id = null)
     {
-        $operational_competence = OperationalCompetenceModel::getInstance()->find($operational_competence_id);
+        $operational_competence = OperationalCompetenceModel::getInstance()->withDeleted(true)->find($operational_competence_id);
 
         if($operational_competence == null){
             return redirect()->to(base_url('plafor/admin/list_operational_competence'));
@@ -491,13 +491,15 @@ class Apprentice extends \App\Controllers\BaseController
      */
     public function view_objective($objective_id = null)
     {
-        $objective = ObjectiveModel::getInstance()->find($objective_id);
+        $objective = ObjectiveModel::getInstance()->withDeleted()->find($objective_id);
 
         if($objective == null){
             return redirect()->to(base_url('plafor/admin/list_objective'));
         }
 
-        $operational_competence = ObjectiveModel::getOperationalCompetence($objective['fk_operational_competence']);
+
+        $operational_competence = ObjectiveModel::getOperationalCompetence($objective['fk_operational_competence'],true);
+
         $competence_domain = OperationalCompetenceModel::getCompetenceDomain($operational_competence['fk_competence_domain']);
         $course_plan = CompetenceDomainModel::getCoursePlan($competence_domain['fk_course_plan']);
 

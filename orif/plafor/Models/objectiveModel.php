@@ -30,8 +30,8 @@ class ObjectiveModel extends \CodeIgniter\Model
      * @param $fkOperationalCompetenceId
      * @return array|object|null
      */
-    public static function getOperationalCompetence($fkOperationalCompetenceId){
-        return OperationalCompetenceModel::getInstance()->find($fkOperationalCompetenceId);
+    public static function getOperationalCompetence($fkOperationalCompetenceId,$withDeleted=false){
+        return OperationalCompetenceModel::getInstance()->withDeleted($withDeleted)->find($fkOperationalCompetenceId);
     }
 
     /**
