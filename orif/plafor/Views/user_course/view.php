@@ -31,7 +31,7 @@
 
         if(($_SESSION['user_access'] == config('\User\Config\UserConfig')->access_lvl_admin)
         || ($_SESSION['user_access'] == config('\User\Config\UserConfig')->access_lvl_trainer && in_array($_SESSION['user_id'], $trainers_id))
-        || ($_SESSION['user_access'] == config('\User\Config\UserConfig')->access_lvl_apprentice && $user_course['fk_user'] == $apprentice['id'])): ?>
+        || ($_SESSION['user_access'] == config('\User\Config\UserConfig')->access_level_apprentice && $user_course['fk_user'] == $apprentice['id'])): ?>
     <div class="row">
         <p class="font-weight-bold"><?= lang('user_lang.field_user_course_objectives_status') ?></p>
         <div class="col-md-12">

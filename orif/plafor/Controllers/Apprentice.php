@@ -215,7 +215,11 @@ class Apprentice extends \App\Controllers\BaseController
                         $competenceDomainIds[] = $competence_domain['id'];
                     }
 
-                    $operational_competences = OperationalCompetenceModel::getInstance()->whereIn('fk_competence_domain',$competenceDomainIds)->findAll();
+                    $operational_competences=[];
+                    // si il n'y a pas de compétence operationnelles associées
+                    try {
+                        $operational_competences = OperationalCompetenceModel::getInstance()->withDeleted()->whereIn('fk_competence_domain', $competenceDomainIds)->findAll();
+                    }catch (\Exception $e){};
                     $objectiveIds = array();
                     foreach ($operational_competences as $operational_competence){
                         foreach (OperationalCompetenceModel::getObjectives($operational_competence['id']) as $objective){

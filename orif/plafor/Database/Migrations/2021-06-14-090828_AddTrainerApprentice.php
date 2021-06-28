@@ -11,6 +11,7 @@ class AddTrainerApprentice extends Migration{
             'id'=>[
                 'type'=>'int',
                 'constraint'=>'11',
+                'auto_increment'=>true,
             ],
             'fk_trainer'=>[
                 'type'=>'int',

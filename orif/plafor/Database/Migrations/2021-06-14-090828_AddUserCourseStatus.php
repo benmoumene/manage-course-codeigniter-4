@@ -11,6 +11,7 @@ class AddUserCourseStatus extends Migration{
             'id'=>[
                 'type'=>'int',
                 'unsigned' => true,
+                'auto_increment'=>true,
 
             ],
             'name'=>[

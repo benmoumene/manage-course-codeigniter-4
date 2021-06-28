@@ -12,6 +12,7 @@ class AddUserCourse extends Migration{
             'id'=>[
                 'type'=>'int',
                 'unsigned'  =>true,
+                'auto_increment'=>true,
 
             ],
             'fk_user'=>[

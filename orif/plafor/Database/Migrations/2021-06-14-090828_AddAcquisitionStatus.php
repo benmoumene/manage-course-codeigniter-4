@@ -17,6 +17,7 @@ class AddAcquisitionStatus extends \CodeIgniter\Database\Migration
             'id'=>[
                 'type'=>'int',
                 'unsigned' => true,
+                'auto_increment' => true,
             ],
             'fk_objective'=>[
                 'type'=>'int',
