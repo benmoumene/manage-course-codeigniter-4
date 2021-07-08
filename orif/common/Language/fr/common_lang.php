@@ -8,12 +8,6 @@
  */
 
 return[
-
-//TEXTS
-    'all_m'                         => 'Tous',
-    'all_f'                         => 'Toutes',
-    'reactivate'                    => 'Réactiver',
-
 // Application name
     'app_title'                      => 'Titre de l\'application',
 
@@ -37,8 +31,12 @@ return[
     'btn_show_disabled'              => 'Afficher les éléments désactivés',
     'btn_delete'                     => 'Supprimer',
     'btn_reactivate'                 => 'Réactiver',
-    'btn_search'                         => 'Rechercher',
+    'btn_search'                     => 'Rechercher',
+
 // Other common texts
     'yes'                            => 'Oui',
-    'no'                             => 'Non'
+    'no'                             => 'Non',
+    'all_m'                         => 'Tous',
+    'all_f'                         => 'Toutes',
+    'reactivate'                    => 'Réactiver'
 ];
