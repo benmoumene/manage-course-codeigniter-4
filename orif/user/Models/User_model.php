@@ -71,8 +71,8 @@ class User_model extends \CodeIgniter\Model{
      * @param $fkUserTypeId
      * @return mixed
      */
-    public static function get_access_level($fkUserTypeId){
-        return User_type_model::getInstance()->getWhere(['id'=>$fkUserTypeId])->getRow()->access_level;
+    public static function get_access_level($userID){
+        return User_type_model::getInstance()->getWhere(['id'=>User_model::getInstance()->find($userID)['fk_user_type']])->getRow()->access_level;
 
     }
 
