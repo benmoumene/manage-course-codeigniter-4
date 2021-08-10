@@ -49,7 +49,8 @@ class AddUser extends \CodeIgniter\Database\Migration
         $seeder=\Config\Database::seeder();
         //for plafor module
         //$seeder->call('\User\Database\Seeds\AddUserDatas');
-        $seeder->call('\Plafor\Database\Seeds\addUserDatas');
+        // only for application
+        //$seeder->call('\Plafor\Database\Seeds\addUserDatas');
     }
 
     /**
