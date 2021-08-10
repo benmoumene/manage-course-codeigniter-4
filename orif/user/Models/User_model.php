@@ -14,7 +14,7 @@ class User_model extends \CodeIgniter\Model{
     private static $userModel;
     protected $table='user';
     protected $primaryKey='id';
-    protected $allowedFields=['archive','date_creation','username','password','fk_user_type'];
+    protected $allowedFields=['archive','date_creation','username','password','fk_user_type','email'];
     protected $useSoftDeletes=true;
     protected $deletedField="archive";
 
