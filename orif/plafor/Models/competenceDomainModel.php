@@ -38,8 +38,8 @@ class CompetenceDomainModel extends Model{
      * @param $competenceDomainId
      * @return array|null
      */
-    public static function getOperationalCompetences($competenceDomainId){
-        return OperationalCompetenceModel::getInstance()->where('fk_competence_domain',$competenceDomainId)->findAll();
+    public static function getOperationalCompetences($competenceDomainId, $withArchived=false){
+        return OperationalCompetenceModel::getInstance()->withDeleted($withArchived)->where('fk_competence_domain',$competenceDomainId)->findAll();
     }
 
     public static function getCompetenceDomains($with_archived = false, $course_plan_id = 0) {
