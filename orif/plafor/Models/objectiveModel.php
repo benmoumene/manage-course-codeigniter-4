@@ -31,7 +31,7 @@ class ObjectiveModel extends \CodeIgniter\Model
      * @return array|object|null
      */
     public static function getOperationalCompetence($fkOperationalCompetenceId){
-        return OperationalCompetenceModel::getInstance()->find($fkOperationalCompetenceId);
+        return OperationalCompetenceModel::getInstance()->withDeleted(true)->find($fkOperationalCompetenceId);
     }
 
     /**
@@ -40,6 +40,14 @@ class ObjectiveModel extends \CodeIgniter\Model
      */
     public static function getAcquisitionStatus($objectiveId){
         return AcquisitionStatusModel::getInstance()->where('fk_objective',$objectiveId)->findAll();
+    }
+
+    public static function getObjectives($with_archived=false, $operational_competence_id=0) {
+        if($operational_competence_id==0) {
+            return ObjectiveModel::getInstance()->withDeleted($with_archived)->findAll();
+        } else {
+            return ObjectiveModel::getInstance()->where('fk_operational_competence', $operational_competence_id)->withDeleted($with_archived)->findAll();
+        }
     }
 
 
