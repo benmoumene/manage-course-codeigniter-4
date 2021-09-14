@@ -46,6 +46,8 @@
 
     <!-- Application styles -->
     <link rel="stylesheet" href="<?= base_url("css/MY_styles.css"); ?>" />
+    <link rel="stylesheet" href="<?= base_url("css/progressbarstyle.css"); ?>" />
+
 </head>
 <body>
     <?php

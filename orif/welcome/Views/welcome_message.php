@@ -328,6 +328,7 @@
 </script>
 
 <!-- -->
+<script type="text/babel" src="<?= base_url('jsComponents/progressStats.js')?>"></script>
 
 </body>
 </html>

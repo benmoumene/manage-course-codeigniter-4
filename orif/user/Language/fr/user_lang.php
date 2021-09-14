@@ -119,6 +119,7 @@ return[
 'title_comment_update'           =>'Modifer le commentaire',
 'title_comment_new'              =>'Ajouter un commentaire',
 'title_comment_delete'           =>'Supprimer le commentaire',
+'title_progress'                 => 'Avancement',
 
 // Details labels
 'details_apprentice'             =>'Détail de l\'apprenti',
@@ -128,6 +129,7 @@ return[
 'details_objective'              =>'Détail de l\'objectif',
 'details_user_course'            =>'Détail de la formation de l\'apprenti',
 'details_acquisition_status'     =>'Détail du statut d\'acquisition',
+'details_progress'               =>'En savoir plus',
 
 // Fields labels
 'field_apprentice_username'      =>'Nom de l\'apprenti',
