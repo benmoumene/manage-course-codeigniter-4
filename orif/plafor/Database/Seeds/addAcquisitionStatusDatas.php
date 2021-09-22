@@ -12,7 +12,7 @@ class addAcquisitionStatusDatas extends Seeder
     {
         //Acquisition status//
         $acquisition_status = array(
-            array('id' => '1','fk_objective' => '1','fk_user_course' => '1','fk_acquisition_level' => '4'),
+            array('id' => '1','fk_objective' => '1','fk_user_course' => '1','fk_acquisition_level' => '1'),
             array('id' => '2','fk_objective' => '2','fk_user_course' => '1','fk_acquisition_level' => '1'),
             array('id' => '3','fk_objective' => '3','fk_user_course' => '1','fk_acquisition_level' => '1'),
             array('id' => '4','fk_objective' => '4','fk_user_course' => '1','fk_acquisition_level' => '1'),
