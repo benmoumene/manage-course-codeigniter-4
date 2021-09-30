@@ -9,5 +9,7 @@
 
 $routes->add('plafor/admin/(:any)','\Plafor\Controllers\Admin::$1');
 $routes->add('plafor/apprentice/(:any)','\Plafor\Controllers\Apprentice::$1');
+$routes->add('migration/(:any)','\Plafor\Controllers\Migration::$1');
+$routes->add('migration','\Plafor\Controllers\Migration::index');
 
 ?>
