@@ -50,7 +50,7 @@ class AddUser extends \CodeIgniter\Database\Migration
         //for plafor module
         //$seeder->call('\User\Database\Seeds\AddUserDatas');
         // only for application
-        //$seeder->call('\Plafor\Database\Seeds\addUserDatas');
+        $seeder->call('\Plafor\Database\Seeds\addUserDatas');
     }
 
     /**
