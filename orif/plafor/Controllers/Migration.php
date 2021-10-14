@@ -8,6 +8,11 @@ use CodeIgniter\Config\Services;
 
 class Migration extends \CodeIgniter\Controller
 {
+    public function index()
+    {
+        echo view("Plafor\migrationIndex");
+    }
+
     public function init()
     {
         if ($this->request->getPost('password') === 'ys3vTFiR6gyGajz') {
