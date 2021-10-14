@@ -22,6 +22,7 @@
     flex-direction: row;
 
 }
+
 .disabled{
     filter: grayscale(80%);
 }

@@ -29,7 +29,6 @@ return[
 'btn_disable_user'               => 'Désactiver cet utilisateur',
 
 // Fields labels
-'field_identity'                 => 'id',
 'field_username'                 => 'Identifiant',
 'field_password'                 => 'Mot de passe',
 'field_email'                    => 'Addresse e-mail',
@@ -68,9 +67,6 @@ return[
 'user_update_usertype_himself'   => 'Vous ne pouvez pas modifier votre propre type d\'utilisateur. Cette opération doit être faite par un autre administrateur.',
 'user_delete_himself'            => 'Vous ne pouvez pas désactiver ou supprimer votre propre compte. Cette opération doit être faite par un autre administrateur.',
 'page_my_password_change'        => 'Modification de mon mot de passe',
-'title_administrator'            => 'Administrateur',
-'title_trainer'                  => 'Formateur',
-'title_apprentice'               => 'Apprenti',
 
 // User Course Status
 'title_in_progress'              => 'En cours',

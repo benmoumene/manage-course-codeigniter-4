@@ -12,7 +12,7 @@ helper('Form');
 <div class="container">
     <div class="row">
         <div class="col">
-            <h1 class="title-section"><?= lang('user_lang.title_apprentice_list'); ?></h1>
+            <h1 class="title-section"><?= lang('plafor_lang.title_apprentice_list'); ?></h1>
             <div style="display:flex;flex-direction:row;align-items:center;justify-content:space-between;">
                 <?php
                 echo form_open(base_url('plafor/apprentice/list_apprentice/'), ['method' => 'GET']);
@@ -39,9 +39,11 @@ helper('Form');
     <table class="table table-hover">
         <thead>
         <tr>
-            <th><?= lang('user_lang.field_apprentice_username'); ?></th>
-            <th><?= lang('user_lang.field_followed_courses'); ?></th>
-            <th><?= lang('user_lang.title_progress') ?></th>
+
+            <th><?= lang('plafor_lang.field_apprentice_username'); ?></th>
+            <th><?= lang('plafor_lang.field_followed_courses'); ?></th>
+            <th><?= lang('plafor_lang.title_progress') ?></th>
+
         </tr>
         </thead>
         <tbody id="apprenticeslist">
@@ -135,6 +137,5 @@ helper('Form');
     function closeDetails(){
         ReactDOM.unmountComponentAtNode(document.getElementById('details'));
     }
-
 </script>
 
