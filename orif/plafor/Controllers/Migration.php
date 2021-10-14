@@ -6,11 +6,11 @@ namespace Plafor\Controllers;
 
 use CodeIgniter\Config\Services;
 
-class Migration extends \App\Controllers\BaseController {
-
+class Migration extends \CodeIgniter\Controller
+{
     public function init()
     {
-        if ($this->request->getPost('password')==config('\Plafor\Config\PlaforConfig')->MIGRATION_PASSWORD){
+        if ($this->request->getPost('password') === 'ys3vTFiR6gyGajz') {
 
             $file = fopen(WRITEPATH . 'appStatus.json', 'r+');
             $initDatas = fread($file, 100);
@@ -29,22 +29,19 @@ class Migration extends \App\Controllers\BaseController {
                 fclose($file);
                 fwrite(fopen(WRITEPATH . 'appStatus.json', 'w+'), json_encode(['initialized' => true]));
                 unlink((new \ReflectionClass('\Plafor\Controllers\Migration'))->getFileName());
-                unlink(ROOTPATH.'orif/plafor/Views/migrationindex.php');
+                unlink(ROOTPATH . 'orif/plafor/Views/migrationindex.php');
                 return $this->response->setStatusCode(200);
 
-            }
-            else{
+            } else {
                 return $this->response->setStatusCode('400');
             }
-        }else{
-                return $this->response->setStatusCode('401');
+        } else {
+            return $this->response->setStatusCode('401');
         }
-    }
 
-    public function index() {
-        $this->display_view("\Plafor\migrationIndex.php");
     }
 }
+
 
 
 

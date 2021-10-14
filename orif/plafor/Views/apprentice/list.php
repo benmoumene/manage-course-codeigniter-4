@@ -39,11 +39,9 @@ helper('Form');
     <table class="table table-hover">
         <thead>
         <tr>
-
             <th><?= lang('plafor_lang.field_apprentice_username'); ?></th>
             <th><?= lang('plafor_lang.field_followed_courses'); ?></th>
             <th><?= lang('plafor_lang.title_progress') ?></th>
-
         </tr>
         </thead>
         <tbody id="apprenticeslist">
@@ -124,7 +122,6 @@ helper('Form');
 
 
                 //count all objectives by acquisition status
-
 
             })
             //use ~5% of items for group
