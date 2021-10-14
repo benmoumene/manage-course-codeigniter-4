@@ -8,6 +8,7 @@ helper('Form');
  * @copyright   Copyright (c) Orif (http://www.orif.ch)
  */
 ?>
+<div id="details"></div>
 <div class="container">
     <div class="row">
         <div class="col">
@@ -90,43 +91,50 @@ helper('Form');
         });
         //for each elements
         orderedArray.forEach((node, index) => {
-            console.log(index);
             $.get("<?=base_url('plafor/apprentice/getCoursePlanProgress')?>/" + index, function () {
 
-            }).done((element) => {
-                //response received
+            }).done((response) => {
+                //response received is json format
+                let coursePlans=Object.values(response);
+                coursePlans.forEach((coursePlan)=>{
+                    const coursePlanStats=getCoursePlanProgress(coursePlan)
+                    //in the case of multiple coursePlans
+                    let div=document.createElement('div');
+                    node.appendChild(div);
+                    ReactDOM.render(<div><Progressbar colors={['#6ca77f', '#AE9B70', '#d9af47', '#D9918D']}
+                                                      elements={coursePlanStats.progress}
+                                                      timeToRefresh="10" elementToGroup={3} disabled={coursePlanStats.status>2}
+                    />
+                        {
+                            coursePlanStats.status<=2?
+                                <button style={{marginLeft:'5px'}} onClick={(e)=>{
+                                    displayDetails(coursePlan);
+                                }} className="btn btn-secondary"><?=lang('user_lang.details_progress')?></button>
+                                :null
+                        }</div>, div);
 
-                const objectives = JSON.parse(element);
-                //count all objectives by acquisition status
-                let statusCount = new Map();
-
-                Object.keys(objectives).forEach((user_course_id) => {
-                    /**<--Here comes all user_courses_id associated --> */
-                    Object.keys(objectives[user_course_id]).forEach((objectiveId) => {
-                        //if statusCount contains already key
-                        try {
-                            if (statusCount.get(objectives[user_course_id][objectiveId]['acquisition_level']) !== undefined) {
-                                statusCount.set((objectives[user_course_id][objectiveId]['acquisition_level']), parseInt(statusCount.get((objectives[user_course_id][objectiveId]['acquisition_level']))) + 1);
-                            } else {
-                                statusCount.set((objectives[user_course_id][objectiveId]['acquisition_level']), 1);
-                            }
-                        } catch (e) {
-
-                        }
-                    })
                 })
-                ReactDOM.render(<Progressbar colors={['#6ca77f', '#AE9B70', '#d9af47', '#D9918D']}
-                                             elements={[statusCount.get('4') != undefined ? statusCount.get('4') : 0, statusCount.get('3') != undefined ? statusCount.get('3') : 0, statusCount.get('2') != undefined ? statusCount.get('2') : 0, statusCount.get('1') != undefined ? statusCount.get('1') : 0]}
-                                             timeToRefresh="10" elementToGroup={3} detailsLbl={"<?=lang('user_lang.details_progress')?>"}
-                                             clickAction={displayDetails}
-                />, node);
+
+
+
+                //render progressbar for each apprentice
+
+
+
+                //count all objectives by acquisition status
+
+
             })
             //use ~5% of items for group
 
         })
     });
-    function displayDetails(parentElement,colors,elements){
-        ReactDOM.render(<ProgressStats animatableImagePath={"<?=base_url('/images/floumin.svg');?>"} colors={colors} elements={elements}/>,parentElement)
+    function displayDetails(coursePlan){
+        ReactDOM.render(<ProgressView coursePlan={coursePlan} callback={closeDetails}></ProgressView>,document.getElementById('details'))
     }
+    function closeDetails(){
+        ReactDOM.unmountComponentAtNode(document.getElementById('details'));
+    }
+
 </script>
 

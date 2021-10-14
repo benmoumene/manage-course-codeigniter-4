@@ -16,6 +16,9 @@
 </script>
 <script type="text/babel" src="<?= base_url('jsComponents/progressbar.js') ?>" defer></script>
 <script type="text/babel" src="<?= base_url('jsComponents/progressStats.js') ?>" defer></script>
+<script type="text/babel" src="<?= base_url('jsComponents/progressView.js') ?>" defer></script>
+
+<script src="<?= base_url('commonUtils.js') ?>"></script>
 <script src="https://unpkg.com/react@16/umd/react.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js" crossorigin></script>
 <!-- for using JSX syntax -->

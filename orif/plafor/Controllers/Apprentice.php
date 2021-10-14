@@ -538,58 +538,26 @@ class Apprentice extends \App\Controllers\BaseController
 
         $this->display_view('\Plafor\user_course/view',$output);
     }
-    /*public function tester(){
-        $file=fopen(WRITEPATH.'plafor.json','r+');
-        $filedatas=fopen(WRITEPATH.'filedatas.txt','a+');
-        $decodedfile=json_decode(fread($file,filesize(WRITEPATH.'plafor.json')));
-        fclose($file);
 
-        $datasName=[];
-        for($i=2;$i<count($decodedfile);$i++){
-            $temptab=[];
-            foreach ($decodedfile[$i]->data as $row){
-                $temptab[]=(array)$row;
-            }
-            $datasName[$decodedfile[$i]->name]=$temptab;
-
-        }
-        d($datasName);
-        foreach ($datasName['user_type'] as $aclvl) {
-            $datastoappend=print_r($aclvl,true);
-            echo var_export($aclvl,true);
-            fwrite($filedatas,var_export($aclvl,true).";\n");
-        }
-        fclose($filedatas);
-    }
-    */
     /**
-     *
+     * @param null $userId the id of user
+     * If admin
      */
-    public function getCoursePlanProgress($id){
-        if (!isset($id)) {
-            return null;
-            }
-
-        $objectivesByStatusAnduserCourse=[];
-        $usercourseids=array_column(UserCourseModel::getInstance()->where('fk_user',$id)->findAll(),'id');
-        $AcquisitionLevels=AcquisitionLevelModel::getInstance()->findAll();
-        foreach ($usercourseids as $usercourseid) {
-            $AcquisitionStatus=AcquisitionStatusModel::getInstance()->where('fk_user_course',$usercourseid)->findAll();
-            $objecivesAssociated=[];
-            foreach ($AcquisitionStatus as $acquisitionStatus){
-                $tempaArray=ObjectiveModel::getInstance()->find($acquisitionStatus['fk_objective']);
-                try{
-                    $tempaArray=array_merge($tempaArray,['acquisition_level'=>$acquisitionStatus['fk_acquisition_level']]);
-                }catch (\Exception $e){
-
-                }
-                $objecivesAssociated[$acquisitionStatus['fk_objective']]=$tempaArray;
-            }
-         $objectivesByStatusAnduserCourse[$usercourseid]=$objecivesAssociated;
-
-
-
+    public function getCoursePlanProgress($userId=null){
+        if ($userId==null && $this->session->get('user_id')==null)
+            return;
+        //if user is admin
+        if($this->session->get('user_access')>=config('\User\UserConfig')->access_lvl_admin){
+            return $this->response->setContentType('application/json')->setBody(json_encode(CoursePlanModel::getInstance()->getCoursePlanProgress($userId),JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
         }
-        return json_encode($objectivesByStatusAnduserCourse,JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        else{
+            $response=null;
+            $userId!=$this->session->get('user_id')?$response=$this->response->setStatusCode(403):$response=$this->response->setContentType('application/json')->setBody(json_encode(CoursePlanModel::getInstance()->getCoursePlanProgress($userId),JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+            return $response;
+        }
+        //d(CoursePlanModel::getInstance()->getCoursePlanProgress($userId));
+
+
+
     }
 }

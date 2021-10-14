@@ -22,6 +22,9 @@
     flex-direction: row;
 
 }
+.disabled{
+    filter: grayscale(80%);
+}
 .positionedElement {
 
     display: block;
@@ -213,6 +216,23 @@
     transition-delay: 0.5s;
 }
 #fourthbar{
+}
+.viewtable tr{
+    padding: 10px;
+    transition: background-color 0.3s;
+
+}
+.viewtable tr:hover{
+    background-color: #AE9B70;
+    transition: background-color 0.3s;
+}
+.viewtable tr{
+}
+.viewtable tr th{
+
+}
+.viewtable th p{
+    margin: 0;
 }
 @media screen and (max-width: 600px){
     .frame main{
