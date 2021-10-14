@@ -4,6 +4,10 @@ namespace Plafor\Models;
 use CodeIgniter\Database\ConnectionInterface;
 use CodeIgniter\Model;
 use CodeIgniter\Validation\ValidationInterface;
+use function Plafor\Controllers\getCompetenceDomains;
+use function Plafor\Controllers\getCoursePlans;
+use function Plafor\Controllers\getObjectives;
+use function Plafor\Controllers\getOperationalCompetences;
 
 class CoursePlanModel extends Model{
     private static $coursePlanModel=null;
@@ -64,7 +68,81 @@ class CoursePlanModel extends Model{
     public static function getUserCourses($coursePlanId){
         return UserCourseModel::getInstance()->where('fk_course_plan',$coursePlanId)->findAll();
     }
+    /**
+     * @param $userId //is the apprentice id
+     * @return null|string|array // return jsonobjects list organized by course
+     *                               Plan contained compdom and opcomp
+     */
+    public function getCoursePlanProgress($userId){
+        $competenceDomainsAssociated=[];
+        $operationalCompetencesassociated=[];
+        $coursePlanAssociated=[];
+        function getCoursePlansDatas($userid){
+            $coursplans=[];
+            foreach (UserCourseModel::getInstance()->where('fk_user',$userid)->findAll() as $userCourse){
+                $coursplans[$userCourse['fk_course_plan']]=UserCourseModel::getCoursePlan($userCourse['fk_course_plan']);
+                $coursplans[$userCourse['fk_course_plan']]['fk_acquisition_status']=$userCourse['fk_status'];
+            }
+            return $coursplans;
+        }
 
+        function getCompetenceDomainsDatas($coursePlanId){
+                $indexedCompetenceDomains=[];
+                $competenceDomains=CompetenceDomainModel::getCompetenceDomains(false,$coursePlanId);
+                foreach ($competenceDomains as $competenceDomain) {
+                    $indexedCompetenceDomains[$competenceDomain['id']]=$competenceDomain;
+                }
+            return $indexedCompetenceDomains;
+        }
+        function getOperationalCompetencesDatas($competenceDomainId){
+            $operationalCompetences=[];
+            $indexedOperationalCompetences=[];
+            $operationalCompetences=OperationalCompetenceModel::getOperationalCompetences(false,$competenceDomainId);
+            foreach ($operationalCompetences as $operationalCompetence){
+                $indexedOperationalCompetences[$operationalCompetence['id']]=$operationalCompetence;
+            }
+            return $indexedOperationalCompetences;
+        }
+        function getObjectivesDatas($opCompId){
+            $intermediateArray=[];
+                    foreach (ObjectiveModel::getObjectives(false,$opCompId) as $objective){
+                        $objective['fk_acquisition_level']=ObjectiveModel::getAcquisitionStatus($objective['id'])[0]['fk_acquisition_level'];
+                        $intermediateArray[]=$objective;
+                    }
+                    $objectives=$intermediateArray;
+
+            return $objectives;
+        }
+        if (!isset($userId)) {
+            return null;
+        }
+        $coursePlans=getCoursePlansDatas($userId);
+        foreach ($coursePlans as $coursePlan){
+            $coursePlan['competenceDomains']=getCompetenceDomainsDatas($coursePlan['id']);
+            foreach ($coursePlan['competenceDomains'] as $competenceDomain){
+                $operationalCompetences=getOperationalCompetencesDatas($competenceDomain['id']);
+                $competenceDomain['operationalCompetences']=$operationalCompetences;
+                foreach ($competenceDomain['operationalCompetences'] as $operationalCompetence){
+                    $objectives=getObjectivesDatas($operationalCompetence['id']);
+                    $operationalCompetence['objectives']=$objectives;
+                    $competenceDomain['operationalCompetences'][$operationalCompetence['id']]=$operationalCompetence;
+
+                }
+                $coursePlan['competenceDomains'][$competenceDomain['id']]= $competenceDomain;
+            }
+            $coursePlans[$coursePlan['id']]=$coursePlan;
+            }
+
+
+        return $coursePlans;
+
+
+
+
+
+
+
+    }
 }
 
 
