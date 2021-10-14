@@ -111,7 +111,7 @@ helper('Form');
                             coursePlanStats.status<=2?
                                 <button style={{marginLeft:'5px'}} onClick={(e)=>{
                                     displayDetails(coursePlan);
-                                }} className="btn btn-secondary"><?=lang('user_lang.details_progress')?></button>
+                                }} className="btn btn-secondary"><?=lang('plafor_lang.details_progress')?></button>
                                 :null
                         }</div>, div);
 
