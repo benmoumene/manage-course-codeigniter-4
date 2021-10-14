@@ -3,19 +3,19 @@ class Progressbar extends React.Component{
         super(props);
         this.displayProgress=this.displayProgress.bind(this);
         this.removeProgress=this.removeProgress.bind(this);
-        this.showDetails=this.showDetails.bind(this);
+
         this.progressContainer=React.createRef()
     }
     componentDidMount(){
         this.displayProgress();
+
+
     }
     render(){
     return (
-        <span style={{backgroundColor:'unset!important'}}>
-            <div id="progressContainer" ref={this.progressContainer}>
+        <span key={this.props.key}>
+            <div id="progressContainer" className={this.props.disabled?'disabled':null }ref={this.progressContainer}>
             </div>
-            <a style={{marginLeft:'10px',marginTop:'5px'}} className={'btn btn-secondary'} onClick={(ev)=>{this.showDetails(ev);}
-            }>{this.props.detailsLbl}</a><span></span>
         </span>
     )
 }
@@ -23,11 +23,15 @@ class Progressbar extends React.Component{
      * this function is called when need to load progressBar
      * @param props
      */
+
     displayProgress() {
         //Get container for progressbar
         this.progressContainer.current.style.animation = '';
         //set value of container to empty
         this.progressContainer.current.innerHTML = '';
+
+
+
         let total = 0;
         //element color is a map indexed by color
         let elementColor = new Map();
@@ -67,7 +71,9 @@ class Progressbar extends React.Component{
         const interval = setInterval((e) => {
             if (i <= elementArray.length) {
                 //i===elementArray.length-1?elementArray[i-1].style.setProperty('width',parseFloat(percentUnit) +'%','important'):i-1>=0?elementArray[i-1].style.setProperty('width',parseFloat(percentUnit)  + '%','important'):'';
-                i===elementArray.length-1?elementArray[i-1].style.setProperty('transform','translate(0)','important'):i-1>=0?elementArray[i-1].style.setProperty('transform','translate(0)','important'):'';
+
+                i===elementArray.length-1?elementArray[i!==0?i-1:0].style.setProperty('transform','translate(0)','important'):i-1>=0?elementArray[i!==0?i-1:0].style.setProperty('transform','translate(0)','important'):'';
+
                 try {
                     this.progressContainer.current.appendChild(elementArray[i]);
                 }catch (e){
@@ -98,7 +104,9 @@ class Progressbar extends React.Component{
                     const node=document.createElement('div');
                     node.classList.add('positionedElement');
                     node.style.backgroundColor=color;
-                    node.style.setProperty('width',(size)+'%','important');
+
+                    node.style.setProperty('width',(size+1)+'%','important');
+
                     node.style.setProperty('transform','translate(0)','important');
                     this.progressContainer.current.appendChild(node);
                 })
@@ -125,13 +133,5 @@ class Progressbar extends React.Component{
             }
             i--;
         },this.props.timeToRefresh!=null?this.props.timeToRefresh:10)
-    }
-    /**
-     * this function is called when need to show details (callback)
-     * @param ev the event to handle
-     */
-    showDetails(ev){
-        this.props.clickAction!=null?
-            this.props.clickAction(ev.target.nextSibling,this.props.colors,this.props.elements):null
     }
 }

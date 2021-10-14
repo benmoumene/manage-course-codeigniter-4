@@ -16,7 +16,6 @@ var Progressbar = function (_React$Component) {
 
         _this.displayProgress = _this.displayProgress.bind(_this);
         _this.removeProgress = _this.removeProgress.bind(_this);
-        _this.showDetails = _this.showDetails.bind(_this);
         _this.progressContainer = React.createRef();
         return _this;
     }
@@ -29,20 +28,12 @@ var Progressbar = function (_React$Component) {
     }, {
         key: 'render',
         value: function render() {
-            var _this2 = this;
 
             return React.createElement(
                 'span',
-                { style: { backgroundColor: 'unset!important' } },
-                React.createElement('div', { id: 'progressContainer', ref: this.progressContainer }),
-                React.createElement(
-                    'a',
-                    { style: { marginLeft: '10px', marginTop: '5px' }, className: 'btn btn-secondary', onClick: function onClick(ev) {
-                            _this2.showDetails(ev);
-                        } },
-                    this.props.detailsLbl
-                ),
-                React.createElement('span', null)
+                { key: this.props.key },
+                React.createElement('div', { id: 'progressContainer', className: this.props.disabled ? 'disabled' : null, ref: this.progressContainer })
+
             );
         }
         /**
@@ -53,23 +44,29 @@ var Progressbar = function (_React$Component) {
     }, {
         key: 'displayProgress',
         value: function displayProgress() {
-            var _this3 = this;
+            var _this2 = this;
+
 
             //Get container for progressbar
             this.progressContainer.current.style.animation = '';
             //set value of container to empty
             this.progressContainer.current.innerHTML = '';
+
+
+
             var total = 0;
             //element color is a map indexed by color
             var elementColor = new Map();
             //add total number of objectives to total variable
             this.props.colors.forEach(function (color, idx) {
-                total += parseInt(_this3.props.elements[idx]);
+
+                total += parseInt(_this2.props.elements[idx]);
                 //if there is many element with same color add to number
                 if (elementColor.get(color) != null) {
-                    elementColor.set(color, elementColor.get(color) + parseInt(_this3.props.elements[idx]));
+                    elementColor.set(color, elementColor.get(color) + parseInt(_this2.props.elements[idx]));
                 } else {
-                    elementColor.set(color, parseInt(_this3.props.elements[idx]));
+                    elementColor.set(color, parseInt(_this2.props.elements[idx]));
+
                 }
             });
             //width to use for one element
@@ -98,9 +95,11 @@ var Progressbar = function (_React$Component) {
             var interval = setInterval(function (e) {
                 if (i <= elementArray.length) {
                     //i===elementArray.length-1?elementArray[i-1].style.setProperty('width',parseFloat(percentUnit) +'%','important'):i-1>=0?elementArray[i-1].style.setProperty('width',parseFloat(percentUnit)  + '%','important'):'';
-                    i === elementArray.length - 1 ? elementArray[i - 1].style.setProperty('transform', 'translate(0)', 'important') : i - 1 >= 0 ? elementArray[i - 1].style.setProperty('transform', 'translate(0)', 'important') : '';
+
+                    i === elementArray.length - 1 ? elementArray[i !== 0 ? i - 1 : 0].style.setProperty('transform', 'translate(0)', 'important') : i - 1 >= 0 ? elementArray[i !== 0 ? i - 1 : 0].style.setProperty('transform', 'translate(0)', 'important') : '';
                     try {
-                        _this3.progressContainer.current.appendChild(elementArray[i]);
+                        _this2.progressContainer.current.appendChild(elementArray[i]);
+
                     } catch (e) {
                         i++;
                     }
@@ -109,8 +108,10 @@ var Progressbar = function (_React$Component) {
                     clearInterval(interval);
                     var testedColor = void 0;
                     var arraywidth = new Map();
-                    for (var _i2 = 0; _i2 < _this3.progressContainer.current.childNodes.length; _i2++) {
-                        var child = _this3.progressContainer.current.childNodes[_i2];
+
+                    for (var _i2 = 0; _i2 < _this2.progressContainer.current.childNodes.length; _i2++) {
+                        var child = _this2.progressContainer.current.childNodes[_i2];
+
                         //When the child has the same bkcolor as last element, increase width
                         if (child.style.backgroundColor == testedColor) {
                             arraywidth.set(testedColor, arraywidth.get(testedColor) + Math.round(parseFloat(child.style.width) * 10) / 10);
@@ -122,14 +123,16 @@ var Progressbar = function (_React$Component) {
                             }
                         testedColor = child.style.backgroundColor;
                     }
-                    _this3.progressContainer.current.innerHTML = '';
+
+                    _this2.progressContainer.current.innerHTML = '';
                     arraywidth.forEach(function (size, color) {
                         var node = document.createElement('div');
                         node.classList.add('positionedElement');
                         node.style.backgroundColor = color;
-                        node.style.setProperty('width', size + '%', 'important');
+                        node.style.setProperty('width', size + 1 + '%', 'important');
                         node.style.setProperty('transform', 'translate(0)', 'important');
-                        _this3.progressContainer.current.appendChild(node);
+                        _this2.progressContainer.current.appendChild(node);
+
                     });
                 }
             }, this.props.timeToRefresh != null ? this.props.timeToRefresh : 10);
@@ -154,16 +157,8 @@ var Progressbar = function (_React$Component) {
                 i--;
             }, this.props.timeToRefresh != null ? this.props.timeToRefresh : 10);
         }
-        /**
-         * this function is called when need to show details (callback)
-         * @param ev the event to handle
-         */
 
-    }, {
-        key: 'showDetails',
-        value: function showDetails(ev) {
-            this.props.clickAction != null ? this.props.clickAction(ev.target.nextSibling, this.props.colors, this.props.elements) : null;
-        }
+
     }]);
 
     return Progressbar;
