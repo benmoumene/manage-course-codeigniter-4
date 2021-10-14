@@ -122,7 +122,9 @@
             body:formdata,
         }).then((response)=>{
             if (response.ok){
+
                 window.location.href='<?=base_url()?>';
+
             }
             else{
                 removeSpinner();
