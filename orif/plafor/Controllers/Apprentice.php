@@ -560,35 +560,4 @@ class Apprentice extends \App\Controllers\BaseController
 
 
     }
-    */
-    /**
-     *
-     */
-    public function getCoursePlanProgress($id){
-        if (!isset($id)) {
-            return null;
-            }
-
-        $objectivesByStatusAnduserCourse=[];
-        $usercourseids=array_column(UserCourseModel::getInstance()->where('fk_user',$id)->findAll(),'id');
-        $AcquisitionLevels=AcquisitionLevelModel::getInstance()->findAll();
-        foreach ($usercourseids as $usercourseid) {
-            $AcquisitionStatus=AcquisitionStatusModel::getInstance()->where('fk_user_course',$usercourseid)->findAll();
-            $objecivesAssociated=[];
-            foreach ($AcquisitionStatus as $acquisitionStatus){
-                $tempaArray=ObjectiveModel::getInstance()->find($acquisitionStatus['fk_objective']);
-                try{
-                    $tempaArray=array_merge($tempaArray,['acquisition_level'=>$acquisitionStatus['fk_acquisition_level']]);
-                }catch (\Exception $e){
-
-                }
-                $objecivesAssociated[$acquisitionStatus['fk_objective']]=$tempaArray;
-            }
-         $objectivesByStatusAnduserCourse[$usercourseid]=$objecivesAssociated;
-
-
-
-        }
-        return json_encode($objectivesByStatusAnduserCourse,JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-    }
 }
