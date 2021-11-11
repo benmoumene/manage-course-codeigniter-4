@@ -30,6 +30,29 @@ class Apprentice extends \App\Controllers\BaseController
         parent::initController($request, $response, $logger);
         $this->validation=Services::validation();
     }
+
+    /**
+     * Default method, redirect to a homepage depending on the type of user
+     */
+    public function index() {
+        if(isset($_SESSION['logged_in']) && $_SESSION['logged_in'] == true) {
+            // Session is set, redirect depending on the type of user
+            if($_SESSION['user_access'] >= config('\User\Config\UserConfig')->access_lvl_admin) {
+                // User is administrator
+                return redirect()->to(base_url('user/admin/list_user'));
+            } elseif ($_SESSION['user_access'] >= config('\User\Config\UserConfig')->access_lvl_trainer) {
+                // User is trainer
+                return redirect()->to(base_url('plafor/apprentice/list_apprentice?trainer_id='.$_SESSION['user_id']));
+            } else {
+                // User is apprentice
+                return redirect()->to(base_url('plafor/apprentice/view_apprentice/'.$_SESSION['user_id']));
+            }
+        } else {
+            // No session is set, redirect to login page
+            return redirect()->to(base_url('user/auth/login'));
+        }
+    }
+
     /**
      * Show details of the selected course plan
      *
