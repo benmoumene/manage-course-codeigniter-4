@@ -51,4 +51,11 @@ class TrainerApprenticeModel extends \CodeIgniter\Model
         return User_model::getInstance()->find($fkApprenticeId);
 
     }
+    /**
+     * @param $fkTrainerId
+     * @return array
+     */
+    public static function getApprenticeIdsFromTrainer($fkTrainerId){
+        return TrainerApprenticeModel::getInstance()->where('fk_trainer',$fkTrainerId)->findColumn('fk_apprentice');
+    }
 }
