@@ -19,7 +19,7 @@ class TrainerApprenticeModel extends \CodeIgniter\Model
     public function __construct(ConnectionInterface &$db = null, ValidationInterface $validation = null)
     {
         $this->validationRules=array(
-            'trainer'=>[
+            'fk_trainer'=>[
                 'label' => 'plafor_lang.field_trainer_link',
                 'rules' => 'required|numeric'
             ]);
