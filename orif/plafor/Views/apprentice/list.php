@@ -33,7 +33,6 @@ helper('Form');
 
         </div>
     </div>
-</div>
 
 <div class="row mt-2">
     <table class="table table-hover">
@@ -66,7 +65,7 @@ helper('Form');
     </table>
 </div>
 </div>
-
+</div>
 <script>
     $(document).ready(function () {
         $('#toggle_deleted').change(e => {

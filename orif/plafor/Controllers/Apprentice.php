@@ -80,7 +80,7 @@ class Apprentice extends \App\Controllers\BaseController
     public function list_apprentice($withDeleted=0)
     {
         $trainer_id = $this->request->getGet('trainer_id');
-        if ($trainer_id==null && $this->session->get('user_access')==2){
+        if ($trainer_id==null && $this->session->get('user_access')==config('\User\Config\UserConfig')->access_lvl_trainer){
             $trainer_id=$this->session->get('user_id');
         }
         $trainersList = array();
@@ -118,7 +118,7 @@ class Apprentice extends \App\Controllers\BaseController
             'with_archived' => $withDeleted
         );
 
-        $this->display_view(['Plafor\templates/admin_menu','Plafor\apprentice/list'], $output);
+        $this->display_view(['Plafor\apprentice/list'], $output);
     }
 
     public function view_apprentice($apprentice_id = null)

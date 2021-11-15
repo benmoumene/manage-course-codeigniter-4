@@ -1,3 +1,6 @@
+<?php
+if ($_SESSION['user_access']>=config('\User\Config\UserConfig')->access_lvl_trainer){
+?>
 <div class="container">
     <div class="row">
         <div class="col">
@@ -17,3 +20,6 @@
         }
     })
 </script>
+<?php
+}
+    ?>
