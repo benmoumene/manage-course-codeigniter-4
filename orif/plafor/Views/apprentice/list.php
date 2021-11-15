@@ -16,7 +16,7 @@ helper('Form');
             <div style="display:flex;flex-direction:row;align-items:center;justify-content:space-between;">
                 <?php
                 echo form_open(base_url('plafor/apprentice/list_apprentice/'), ['method' => 'GET']);
-                echo form_dropdown('trainer_id', $trainers, $trainer_id, ['class' => 'form-control', 'style' => 'width:unset!important;display:unset!important;margin-left:-10px;']);
+                echo form_dropdown('trainer_id', $trainers, strval($trainer_id), ['class' => 'form-control', 'style' => 'width:unset!important;display:unset!important;margin-left:-10px;']);
                 echo form_submit(null, lang('common_lang.btn_search'), ['class' => 'btn btn-primary', 'style' => 'vertical-align:unset!important;']); ?>
                 <?php
                 echo form_close();

@@ -80,6 +80,9 @@ class Apprentice extends \App\Controllers\BaseController
     public function list_apprentice($withDeleted=0)
     {
         $trainer_id = $this->request->getGet('trainer_id');
+        if ($trainer_id==null && $this->session->get('user_access')==2){
+            $trainer_id=$this->session->get('user_id');
+        }
         $trainersList = array();
         $trainersList[0] = lang('common_lang.all_m');
         $apprentice_level = User_type_model::getInstance()->where('access_level', config("\User\Config\UserConfig")->access_level_apprentice)->find();

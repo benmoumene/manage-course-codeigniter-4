@@ -26,6 +26,7 @@ return [
     'title_trainer_linked' => 'Formateur(s) lié(s)',
     'title_apprentice_followed_courses' => 'Formation(s) suivie(s)',
     'title_apprentice_link_delete'  => 'Supprimer un apprenti lié',
+    'title_my_apprentices'                => 'Mes apprentis',
 
     //Course Plan
     'title_list_course_plan' => 'Liste des plans de formation',
