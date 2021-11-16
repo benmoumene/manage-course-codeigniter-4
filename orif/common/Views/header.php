@@ -53,14 +53,9 @@
             $(document).ready(async () => {
                 //execute jquery code under
                 const nodeList = document.querySelectorAll('.progressContainer');
-                //add all nodes containing apprentice_id attribute
-                let orderedArray = [];
-                nodeList.forEach((element) => {
-                    orderedArray[parseInt(element.getAttribute('apprentice_id'))] = element;
-                });
                 //for each elements
-                orderedArray.forEach((node, index) => {
-                    $.get("<?=base_url('plafor/apprentice/getCoursePlanProgress')?>/" + index, function () {
+                nodeList.forEach((node) => {
+                    $.get("<?=base_url('plafor/apprentice/getCoursePlanProgress')?>/" + node.getAttribute('apprentice_id')+'/'+(node.getAttribute('course_plan_id')!=null?node.getAttribute('course_plan_id'):''), function () {
 
                     }).done((response) => {
                         //response received is json format

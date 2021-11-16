@@ -569,16 +569,17 @@ class Apprentice extends \App\Controllers\BaseController
      * @param null $userId the id of user
      * If admin
      */
-    public function getCoursePlanProgress($userId=null){
+    public function getCoursePlanProgress($userId=null,$coursePlanId=null){
         if ($userId==null && $this->session->get('user_id')==null)
             return;
         //if user is admin
         if($this->session->get('user_access')>=config('\User\UserConfig')->access_lvl_admin){
-            return $this->response->setContentType('application/json')->setBody(json_encode(CoursePlanModel::getInstance()->getCoursePlanProgress($userId),JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+            return $this->response->setContentType('application/json')->setBody(json_encode($coursePlanId!=null?[(CoursePlanModel::getInstance()->getCoursePlanProgress($userId))[$coursePlanId]]:CoursePlanModel::getInstance()->getCoursePlanProgress($userId),JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
         }
         //in the case of a trainer see only his apprentices
         elseif ($this->session->get('user_access')>=config('\User\UserConfig')->access_lvl_trainer&&in_array($userId,TrainerApprenticeModel::getApprenticeIdsFromTrainer($this->session->get('user_id')))){
-            return $this->response->setContentType('application/json')->setBody(json_encode(CoursePlanModel::getInstance()->getCoursePlanProgress($userId),JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+            return $this->response->setContentType('application/json')->setBody(json_encode($coursePlanId!=null?[(CoursePlanModel::getInstance()->getCoursePlanProgress($userId))[$coursePlanId]]:CoursePlanModel::getInstance()->getCoursePlanProgress($userId),JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+
         }
         else{
             $response=null;
