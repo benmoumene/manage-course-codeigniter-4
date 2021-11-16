@@ -48,7 +48,66 @@
     <!-- Application styles -->
     <link rel="stylesheet" href="<?= base_url("css/MY_styles.css"); ?>" />
     <link rel="stylesheet" href="<?= base_url("css/progressbarstyle.css"); ?>" />
+    <script type="text/babel">
+        function initProgress() {
+            $(document).ready(async () => {
+                //execute jquery code under
+                const nodeList = document.querySelectorAll('.progressContainer');
+                //add all nodes containing apprentice_id attribute
+                let orderedArray = [];
+                nodeList.forEach((element) => {
+                    orderedArray[parseInt(element.getAttribute('apprentice_id'))] = element;
+                });
+                //for each elements
+                orderedArray.forEach((node, index) => {
+                    $.get("<?=base_url('plafor/apprentice/getCoursePlanProgress')?>/" + index, function () {
 
+                    }).done((response) => {
+                        //response received is json format
+                        let coursePlans = Object.values(response);
+                        coursePlans.forEach((coursePlan) => {
+                            const coursePlanStats = getCoursePlanProgress(coursePlan)
+                            //in the case of multiple coursePlans
+                            let div = document.createElement('div');
+                            node.appendChild(div);
+                            ReactDOM.render(<div><Progressbar colors={['#6ca77f', '#AE9B70', '#d9af47', '#D9918D']}
+                                                              elements={coursePlanStats.progress}
+                                                              timeToRefresh="10" elementToGroup={3}
+                                                              disabled={coursePlanStats.status > 2}
+                            />
+                                {
+                                    coursePlanStats.status <= 2 ?
+                                        <button style={{marginLeft: '5px'}} onClick={(e) => {
+                                            displayDetails(coursePlan);
+                                        }} className="btn btn-secondary"><?=lang('plafor_lang.details_progress')?></button>
+                                        : null
+                                }</div>, div);
+
+                        })
+
+
+                        //render progressbar for each apprentice
+
+
+                        //count all objectives by acquisition status
+
+                    })
+                    //use ~5% of items for group
+
+                })
+            });
+        }
+        function displayDetails(coursePlan){
+            const detailsPanel=document.createElement('div');
+            detailsPanel.id='details';
+            document.body.append(detailsPanel);
+            ReactDOM.render(<ProgressView coursePlan={coursePlan} callback={closeDetails}></ProgressView>,detailsPanel)
+        }
+        function closeDetails(){
+            ReactDOM.unmountComponentAtNode(document.getElementById('details'));
+            document.body.removeChild(document.getElementById('details'));
+        }
+    </script>
 </head>
 <body>
     <?php

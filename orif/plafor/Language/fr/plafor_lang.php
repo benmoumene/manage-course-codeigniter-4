@@ -132,7 +132,7 @@ return [
     'details_objective'              =>'Détail de l\'objectif',
     'details_user_course'            =>'Détail de la formation de l\'apprenti',
     'details_acquisition_status'     =>'Détail du statut d\'acquisition',
-    'details_progress'               =>'En savoir plus',
+    'details_progress'               =>'Détails',
 
     // Fields labels
     'field_apprentice_username'      =>'Nom de l\'apprenti',

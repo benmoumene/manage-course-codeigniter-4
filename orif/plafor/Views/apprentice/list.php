@@ -8,7 +8,6 @@ helper('Form');
  * @copyright   Copyright (c) Orif (http://www.orif.ch)
  */
 ?>
-<div id="details"></div>
 <div class="container">
     <div class="row">
         <div class="col">
@@ -66,7 +65,7 @@ helper('Form');
 </div>
 </div>
 </div>
-<script type="text/babel">
+<script type="text/babel" defer>
     initProgress();
     $(document).ready(function () {
         $('#toggle_deleted').change(e => {
@@ -79,59 +78,5 @@ helper('Form');
             });
         });
     });
-    function initProgress() {
-        $(document).ready(async () => {
-            //execute jquery code under
-            const nodeList = document.querySelectorAll('.progressContainer');
-            //add all nodes containing apprentice_id attribute
-            let orderedArray = [];
-            nodeList.forEach((element) => {
-                orderedArray[parseInt(element.getAttribute('apprentice_id'))] = element;
-            });
-            //for each elements
-            orderedArray.forEach((node, index) => {
-                $.get("<?=base_url('plafor/apprentice/getCoursePlanProgress')?>/" + index, function () {
-
-                }).done((response) => {
-                    //response received is json format
-                    let coursePlans = Object.values(response);
-                    coursePlans.forEach((coursePlan) => {
-                        const coursePlanStats = getCoursePlanProgress(coursePlan)
-                        //in the case of multiple coursePlans
-                        let div = document.createElement('div');
-                        node.appendChild(div);
-                        ReactDOM.render(<div><Progressbar colors={['#6ca77f', '#AE9B70', '#d9af47', '#D9918D']}
-                                                          elements={coursePlanStats.progress}
-                                                          timeToRefresh="10" elementToGroup={3}
-                                                          disabled={coursePlanStats.status > 2}
-                        />
-                            {
-                                coursePlanStats.status <= 2 ?
-                                    <button style={{marginLeft: '5px'}} onClick={(e) => {
-                                        displayDetails(coursePlan);
-                                    }} className="btn btn-secondary"><?=lang('plafor_lang.details_progress')?></button>
-                                    : null
-                            }</div>, div);
-
-                    })
-
-
-                    //render progressbar for each apprentice
-
-
-                    //count all objectives by acquisition status
-
-                })
-                //use ~5% of items for group
-
-            })
-        });
-    }
-    function displayDetails(coursePlan){
-        ReactDOM.render(<ProgressView coursePlan={coursePlan} callback={closeDetails}></ProgressView>,document.getElementById('details'))
-    }
-    function closeDetails(){
-        ReactDOM.unmountComponentAtNode(document.getElementById('details'));
-    }
 </script>
 

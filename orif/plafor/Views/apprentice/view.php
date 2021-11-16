@@ -68,10 +68,14 @@
                 ?><tr>
                     <td><a class="font-weight-bold" href="<?= base_url('plafor/apprentice/view_course_plan/'.$course_plans[$user_course['fk_course_plan']]['id'])?>"><?=$course_plans[$user_course['fk_course_plan']]['formation_number']?></a></td>
                     <td><a href="<?= base_url('plafor/apprentice/view_course_plan/'.$course_plans[$user_course['fk_course_plan']]['id'])?>"><?=$course_plans[$user_course['fk_course_plan']]['official_name']?></a></td>
-                    <td><a href="<?= base_url('plafor/apprentice/view_user_course/'.$user_course['id']) ?>"><?=$user_course_status[$user_course['fk_status']]['name']?></a></td><?php
+                    <td><a href="<?= base_url('plafor/apprentice/view_user_course/'.$user_course['id']) ?>"><?=$user_course_status[$user_course['fk_status']]['name']?></a><div class="progressContainer" apprentice_id="<?= $apprentice['id'] ?>"></div></td>
+                <?php
                 }?></tr>
             </tbody>
             </table>
         </div>
     </div>
 </div>
+<script type="text/babel">
+    initProgress();
+</script>
