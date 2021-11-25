@@ -3,8 +3,7 @@
     min-width: 300px;
     flex-direction: column;
     margin-bottom: 10px;
-    max-width: 360px;
-    width: 50%;
+    width: 80%;
 
 }
 .accordionContainer > div > .compdomContainer{
@@ -37,6 +36,9 @@
 }
 .accordionContainer > .opcompContainerList{
     width: 100%;
+}
+.accordionContainer > .opcompContainerList > .opcompList > .opcompContainer p{
+    width: 80%;
 }
 .accordionContainer > .opcompContainerList > .opcompContainerHeader > .openLogo{
     transition: color 200ms;
