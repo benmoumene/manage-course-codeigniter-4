@@ -94,7 +94,7 @@
                 })
             });
         }
-        async function displayDetails(coursePlan,integrated=false){
+        async function displayDetails(coursePlan,userCourse=null,integrated=false){
             const detailsPanel=document.createElement('div');
             detailsPanel.id='details';
             if(integrated&&coursePlan==null){
@@ -107,7 +107,7 @@
             else{
             document.body.append(detailsPanel);
             }
-            ReactDOM.render(<ProgressView coursePlan={coursePlan} callback={closeDetails} integrated={integrated}></ProgressView>,integrated===false?detailsPanel:document.getElementById('detailsArray'));
+            ReactDOM.render(<ProgressView coursePlan={coursePlan} callback={closeDetails} integrated={integrated} baseUrl={"<?=base_url('plafor/apprentice/view_user_course')?>"} userCourseId={userCourse.id}></ProgressView>,integrated===false?detailsPanel:document.getElementById('detailsArray'));
 
 
         }

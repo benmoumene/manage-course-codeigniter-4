@@ -526,6 +526,8 @@ class Apprentice extends \App\Controllers\BaseController
      * @return void
      */
     public function view_user_course($id_user_course = null){
+        $objectives = null;
+        $acquisition_levels = null;
         $user_course = UserCourseModel::getInstance()->find($id_user_course);
         if($user_course == null){
             return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
@@ -538,17 +540,39 @@ class Apprentice extends \App\Controllers\BaseController
         $user_course_status = UserCourseModel::getUserCourseStatus($user_course['fk_status']);
         $course_plan = UserCourseModel::getCoursePlan($user_course['fk_course_plan']);
         $trainers_apprentice = TrainerApprenticeModel::getInstance()->where('fk_apprentice',$apprentice['id'])->findAll();
-        $acquisition_status = UserCourseModel::getAcquisitionStatus($id_user_course);
         if($user_course == null){
             return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
         }
-        $objectives=[];
-        foreach ($acquisition_status as $acquisitionstatus){
-            $objectives[$acquisitionstatus['fk_objective']]=AcquisitionStatusModel::getObjective($acquisitionstatus['fk_objective']);
+        //if url parameters contains filter operationalCompetenceId
+        if ($this->request->getGet('operationalCompetenceId')!=null){
+            $objectives=[];
+            $acquisition_status=[];
+            foreach(CoursePlanModel::getCompetenceDomains(UserCourseModel::getInstance()->find($id_user_course)['fk_course_plan'])as $competenceDomain) {
+                foreach (CompetenceDomainModel::getOperationalCompetences($competenceDomain['id']) as $operationalCompetence) {
+                    if ($operationalCompetence['id'] == $this->request->getGet('operationalCompetenceId')) {
+                        foreach (OperationalCompetenceModel::getObjectives($operationalCompetence['id']) as $objective){
+                            $objectives[$objective['id']]=$objective;
+                        }
+                    }
+                }
+            }
+            foreach (UserCourseModel::getAcquisitionStatus($id_user_course) as $acquisition_statuse){
+                foreach ($objectives as $objective){
+                    if ($acquisition_statuse['fk_objective'] ==$objective['id']){
+                        $acquisition_status[]=$acquisition_statuse;
+                    }
+                }
+            }
         }
-        $acquisition_levels=[];
-        foreach (AcquisitionLevelModel::getInstance()->findAll() as $acquisitionLevel){
-            $acquisition_levels[$acquisitionLevel['id']]=$acquisitionLevel;
+        else {
+            $acquisition_status = UserCourseModel::getAcquisitionStatus($id_user_course);
+
+            foreach ($acquisition_status as $acquisitionstatus) {
+                $objectives[$acquisitionstatus['fk_objective']] = AcquisitionStatusModel::getObjective($acquisitionstatus['fk_objective']);
+            }
+        }
+        foreach (AcquisitionLevelModel::getInstance()->findAll() as $acquisitionLevel) {
+            $acquisition_levels[$acquisitionLevel['id']] = $acquisitionLevel;
         }
         $output = array(
             'title'=>lang('plafor_lang.title_user_course_view'),

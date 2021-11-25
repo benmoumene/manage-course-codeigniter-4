@@ -105,7 +105,7 @@ var ProgressView = function (_React$Component) {
                                     } }));
                                 intermediateList = [];
                                 Object.values(competenceDomain.operationalCompetences).forEach(function (operationalCompetence) {
-                                    intermediateList.push(React.createElement(OperationalCompetenceView, { key: operationalCompetence.id, operationalCompetenceSymbol: operationalCompetence.symbol, operationalCompetenceName: operationalCompetence.name, operationalCompetenceDatas: operationalCompetence, mobiledisplay: true }));
+                                    intermediateList.push(React.createElement(OperationalCompetenceView, { key: operationalCompetence.id, operationalCompetenceSymbol: operationalCompetence.symbol, operationalCompetenceName: operationalCompetence.name, operationalCompetenceDatas: operationalCompetence, mobiledisplay: true, baseUrl: _this2.props.baseUrl }));
                                 });
                                 _this2.operationalCompetences[competenceDomain.id] = intermediateList;
                             }),
@@ -189,7 +189,7 @@ var ProgressView = function (_React$Component) {
                         this.coursePlanProgress.map(function (progress) {
                             accordions.push(
                             //here comes tag to modify display
-                            React.createElement(Accordion, { datas: progress }));
+                            React.createElement(Accordion, { datas: progress, baseUrl: _this2.props.baseUrl, userCourseId: _this2.props.userCourseId }));
                         }),
                         accordions
                     );
@@ -458,8 +458,8 @@ var OperationalCompetenceAccordion = function (_React$Component6) {
                 'div',
                 { className: 'opcompContainer' },
                 React.createElement(
-                    'span',
-                    { className: 'opcompSymbol text-secondary' },
+                    'a',
+                    { className: 'opcompSymbol text-secondary', href: this.props.baseUrl + ('/' + this.props.userCourseId + '?operationalCompetenceId=' + this.props.operationnalCompetence.operationnalCompetence.id) },
                     this.props.operationnalCompetence.symbol
                 ),
                 React.createElement(
@@ -490,7 +490,7 @@ var Accordion = function (_React$Component7) {
 
         _this10.openAccordion = _this10.openAccordion.bind(_this10);
         props.datas.operationnalCompetences.forEach(function (operationalCompetence) {
-            _this10.operationnalCompetencesAccordion.push(React.createElement(OperationalCompetenceAccordion, { operationnalCompetence: operationalCompetence }));
+            _this10.operationnalCompetencesAccordion.push(React.createElement(OperationalCompetenceAccordion, { operationnalCompetence: operationalCompetence, baseUrl: _this10.props.baseUrl, userCourseId: _this10.props.userCourseId }));
         });
 
         return _this10;

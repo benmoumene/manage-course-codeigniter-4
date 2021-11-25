@@ -80,7 +80,7 @@ class ProgressView extends React.Component {
                                 }/>);
                                 intermediateList=[];
                                 Object.values(competenceDomain.operationalCompetences).forEach((operationalCompetence)=>{
-                                    intermediateList.push(<OperationalCompetenceView key={operationalCompetence.id} operationalCompetenceSymbol={operationalCompetence.symbol} operationalCompetenceName={operationalCompetence.name} operationalCompetenceDatas={operationalCompetence} mobiledisplay={true}/>)
+                                    intermediateList.push(<OperationalCompetenceView key={operationalCompetence.id} operationalCompetenceSymbol={operationalCompetence.symbol} operationalCompetenceName={operationalCompetence.name} operationalCompetenceDatas={operationalCompetence} mobiledisplay={true} baseUrl={this.props.baseUrl}/>)
                                 })
                                 this.operationalCompetences[competenceDomain.id]=intermediateList;
                             })}
@@ -154,7 +154,7 @@ class ProgressView extends React.Component {
                     {this.coursePlanProgress.map((progress)=>{
                         accordions.push(
                             //here comes tag to modify display
-                            <Accordion datas={progress}/>
+                            <Accordion datas={progress} baseUrl={this.props.baseUrl} userCourseId={this.props.userCourseId}/>
                         )
                     })}
                     {accordions}
@@ -339,9 +339,9 @@ class OperationalCompetenceAccordion extends React.Component{
     render(){
         return(
             <div className="opcompContainer">
-                <span className="opcompSymbol text-secondary">
+                <a className="opcompSymbol text-secondary" href={this.props.baseUrl+`/${this.props.userCourseId}?operationalCompetenceId=${this.props.operationnalCompetence.operationnalCompetence.id}`}>
                     {this.props.operationnalCompetence.symbol}
-                </span>
+                </a>
                 <p style={{paddingLeft:'2rem',paddingRight:'2rem'}}>
                     {this.props.operationnalCompetence.name}
                     <Progressbar colors={['#6ca77f', '#AE9B70', '#d9af47', '#D9918D']}
@@ -360,7 +360,7 @@ class Accordion extends React.Component{
         super(props);
         this.openAccordion=this.openAccordion.bind(this);
         props.datas.operationnalCompetences.forEach((operationalCompetence)=>{
-            this.operationnalCompetencesAccordion.push(<OperationalCompetenceAccordion operationnalCompetence={operationalCompetence}/>);
+            this.operationnalCompetencesAccordion.push(<OperationalCompetenceAccordion operationnalCompetence={operationalCompetence} baseUrl={this.props.baseUrl} userCourseId={this.props.userCourseId}/>);
         })
 
     }

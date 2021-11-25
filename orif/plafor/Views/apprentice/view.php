@@ -105,7 +105,7 @@
 </div>
 <script type="text/babel">
     $(document).ready(()=>{
-            displayDetails(null,'integrated');
+            displayDetails(null,<?=json_encode($userCourseMax)?>,'integrated');
     })
 
 </script>
