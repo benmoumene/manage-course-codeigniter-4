@@ -13,10 +13,8 @@ class Progressbar extends React.Component{
     }
     render(){
     return (
-        <span key={this.props.key}>
             <div id="progressContainer" className={this.props.disabled?'disabled':null }ref={this.progressContainer}>
             </div>
-        </span>
     )
 }
     /**

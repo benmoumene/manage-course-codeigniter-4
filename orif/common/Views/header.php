@@ -30,6 +30,8 @@
     <!-- Orif Bootstrap CSS personalized with https://bootstrap.build/app -->
     <link rel="stylesheet" href="<?= base_url("css/bootstrap.min.css"); ?>" />
     <link rel="stylesheet" href="<?= base_url("css/progressview.css"); ?>" />
+    <link rel="stylesheet" href="<?= base_url("css/progressview_accordion.css"); ?>" />
+
     <!-- Bootstrap icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
     <!-- jquery, popper and Bootstrap javascript -->
@@ -92,11 +94,22 @@
                 })
             });
         }
-        function displayDetails(coursePlan){
+        async function displayDetails(coursePlan,integrated=false){
             const detailsPanel=document.createElement('div');
             detailsPanel.id='details';
+            if(integrated&&coursePlan==null){
+                const node=document.getElementById('detailsArray');
+                await $.get("<?=base_url('plafor/apprentice/getCoursePlanProgress')?>/" + node.getAttribute('apprentice_id')+'/'+(node.getAttribute('course_plan_id')!=null?node.getAttribute('course_plan_id'):''), function () {}).done((response)=>{
+                    coursePlan=(response[0]);
+                })
+
+            }
+            else{
             document.body.append(detailsPanel);
-            ReactDOM.render(<ProgressView coursePlan={coursePlan} callback={closeDetails}></ProgressView>,detailsPanel)
+            }
+            ReactDOM.render(<ProgressView coursePlan={coursePlan} callback={closeDetails} integrated={integrated}></ProgressView>,integrated===false?detailsPanel:document.getElementById('detailsArray'));
+
+
         }
         function closeDetails(){
             ReactDOM.unmountComponentAtNode(document.getElementById('details'));

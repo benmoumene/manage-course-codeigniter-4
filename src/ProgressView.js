@@ -1,58 +1,6 @@
-class TableRow extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            operationnalCompetences: []
-        }
-    }
-
-    render() {
-        return (<tr>
-
-                <CompetenceDomainView mobiledisplay={this.props.mobiledisplay}
-                                      competenceDomainSymbol={this.props.coursePlanRows.competenceDomainSymbol}
-                                      competenceDomainName={this.props.coursePlanRows.competenceDomainName}
-                                      competenceDomainDatas={this.props.coursePlanRows.competenceDomain}/>
-                {this.props.coursePlanRows.operationnalCompetences.forEach((operationalCompetence) => {
-                    this.state.operationnalCompetences.push(<OperationalCompetenceView
-                        mobiledisplay={this.props.mobiledisplay}
-                        operationalCompetenceSymbol={operationalCompetence.symbol}
-                        operationalCompetenceName={operationalCompetence.name}
-                        operationalCompetenceDatas={operationalCompetence.operationnalCompetence}/>);
-
-                })}
-
-                {this.state.operationnalCompetences}
-
-            </tr>
-        )
-
-    }
-
-}
-class Frame extends React.Component{
-
-    constructor(props) {
-        super(props);
-
-    }
-    componentDidMount(){
-
-
-    }
-    render(){
-        this.list=[];
-        Object.values(this.props.operationnalCompetences).forEach((opcomp)=>{
-        });
-        return (
-            <div style={{display:'contents'}}>
-                {this.list}
-            </div>
-        )
-    }
-}
-
 class ProgressView extends React.Component {
+    coursePlanProgress=[];
+    accordion=[];
     openMenuListener;
     closeMenuListener;
     tableRows = [];
@@ -80,7 +28,22 @@ class ProgressView extends React.Component {
         }
         this.hideMenu=this.hideMenu.bind(this);
         this.showMenu=this.showMenu.bind(this);
+        //init courseplanProgress On construct
+        Object.values(props.coursePlan.competenceDomains).forEach((competenceDomain) => {
+            let coursePlanProgress = new Object();
+            coursePlanProgress.competenceDomain = competenceDomain;
+            coursePlanProgress.competenceDomainSymbol = competenceDomain.symbol;
+            coursePlanProgress.competenceDomainName = competenceDomain.name;
+            Object.values(competenceDomain.operationalCompetences).forEach((operationalCompetence) => {
+                let opComp = new Object();
+                opComp.operationnalCompetence = operationalCompetence;
+                opComp.symbol = operationalCompetence.symbol;
+                opComp.name = operationalCompetence.name;
+                coursePlanProgress.operationnalCompetences !== undefined ? coursePlanProgress.operationnalCompetences.push(opComp) : coursePlanProgress.operationnalCompetences = [opComp];
+            })
+            this.coursePlanProgress.push(coursePlanProgress);
 
+        })
     }
 
     componentDidMount() {
@@ -103,7 +66,7 @@ class ProgressView extends React.Component {
         this.competenceDomains=[];
         let intermediateList=[];
         this.tableRows=[];
-        if (this.state.mobiledisplay) {
+        if (this.state.mobiledisplay &&!this.props.integrated) {
             return (
                 <div id={'detailsFrame'}>
                     <div id="opcompList">
@@ -135,7 +98,7 @@ class ProgressView extends React.Component {
                     </div>
                 </div>
             );
-        } else {
+        } else if(!this.state.mobiledisplay &&!this.props.integrated) {
             return (
 
                 <div id={'detailsFrame'}>
@@ -183,6 +146,24 @@ class ProgressView extends React.Component {
 
             );
         }
+        //when integrated props is true
+        else{
+            const accordions=[]
+            return (
+                <div style={{display:'contents'}}>
+                    {this.coursePlanProgress.map((progress)=>{
+                        accordions.push(
+                            //here comes tag to modify display
+                            <Accordion datas={progress}/>
+                        )
+                    })}
+                    {accordions}
+                </div>
+
+
+
+            );
+        }
     }
     hideMenu(){
         document.getElementById('leftColumn').style.transform='translateX(-100%)';
@@ -202,6 +183,7 @@ class ProgressView extends React.Component {
     }
 
 }
+
 
 class CompetenceDomainView extends React.Component {
     competenceDomainProgress;
@@ -227,8 +209,8 @@ class CompetenceDomainView extends React.Component {
             )
         }
         else
-        return (
-            <span style={{display: 'contents'}}>
+            return (
+                <span style={{display: 'contents'}}>
                 <td className="competenceDomainSymbol" colSpan={1}>{this.props.competenceDomainSymbol}</td>
                 <td className="competenceDomainName" colSpan={3}><div style={{
                     display: 'flex',
@@ -242,11 +224,10 @@ class CompetenceDomainView extends React.Component {
                     />
                 </div></td>
                 </span>
-        );
+            );
     }
 
 }
-
 class OperationalCompetenceView extends React.Component {
     operationalCompetenceProgress;
 
@@ -256,6 +237,7 @@ class OperationalCompetenceView extends React.Component {
     }
 
     render() {
+        console.log(this.props.operationalCompetenceDatas)
         if (this.props.mobiledisplay) {
             return (
                 <div className="operationalCompetence">
@@ -287,5 +269,130 @@ class OperationalCompetenceView extends React.Component {
         }
     }
 }
+class TableRow extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            operationnalCompetences: []
+        }
+    }
 
+    render() {
+        return (<tr>
+
+                <CompetenceDomainView mobiledisplay={this.props.mobiledisplay}
+                                      competenceDomainSymbol={this.props.coursePlanRows.competenceDomainSymbol}
+                                      competenceDomainName={this.props.coursePlanRows.competenceDomainName}
+                                      competenceDomainDatas={this.props.coursePlanRows.competenceDomain}/>
+                {this.props.coursePlanRows.operationnalCompetences.forEach((operationalCompetence) => {
+                    this.state.operationnalCompetences.push(<OperationalCompetenceView
+                        mobiledisplay={this.props.mobiledisplay}
+                        operationalCompetenceSymbol={operationalCompetence.symbol}
+                        operationalCompetenceName={operationalCompetence.name}
+                        operationalCompetenceDatas={operationalCompetence.operationnalCompetence}/>);
+
+                })}
+
+                {this.state.operationnalCompetences}
+
+            </tr>
+        )
+
+    }
+
+}
+class CompetenceDomainAccordion extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+    render(){
+        return(
+            <div>
+            <div className="compdomContainer">
+
+                    <span className="compdomSymbol text-primary">
+                        {this.props.competenceDomain.symbol}
+                    </span>
+                <p>{this.props.competenceDomain.name}
+                </p>
+            </div>
+                <span style={{width:'100%',display:'flex',justifyContent:'center',paddingLeft:'3rem',paddingRight:'3rem'}}>
+                <Progressbar colors={['#6ca77f', '#AE9B70', '#d9af47', '#D9918D']}
+                             elements={getCompDomainProgress(this.props.competenceDomain)}
+                             timeToRefresh="10" elementToGroup={1} disabled={false}
+                />
+                </span>
+            </div>
+
+
+        )
+
+
+
+
+}
+}
+class OperationalCompetenceAccordion extends React.Component{
+    constructor(props) {
+        super(props);
+    }
+    render(){
+        return(
+            <div className="opcompContainer">
+                <span className="opcompSymbol text-secondary">
+                    {this.props.operationnalCompetence.symbol}
+                </span>
+                <p style={{paddingLeft:'2rem',paddingRight:'2rem'}}>
+                    {this.props.operationnalCompetence.name}
+                    <Progressbar colors={['#6ca77f', '#AE9B70', '#d9af47', '#D9918D']}
+                                 elements={getOpCompProgress(this.props.operationnalCompetence.operationnalCompetence)}
+                                 timeToRefresh="10" elementToGroup={1} disabled={false}
+                    />
+                </p>
+
+            </div>
+        );
+    }
+}
+class Accordion extends React.Component{
+    operationnalCompetencesAccordion=[];
+    constructor(props) {
+        super(props);
+        this.openAccordion=this.openAccordion.bind(this);
+        props.datas.operationnalCompetences.forEach((operationalCompetence)=>{
+            this.operationnalCompetencesAccordion.push(<OperationalCompetenceAccordion operationnalCompetence={operationalCompetence}/>);
+        })
+
+    }
+    openAccordion(event){
+        event=event.currentTarget;
+        if (event.classList.contains('bi-arrow-down-square')){
+            event.classList.remove('bi-arrow-down-square');
+            event.classList.add('bi-arrow-up-square')
+        }
+        else{
+            event.classList.remove('bi-arrow-up-square')
+            event.classList.add('bi-arrow-down-square');
+        }
+
+        event.parentElement.nextElementSibling.classList.toggle('ac-hidden');
+
+    }
+    render(){
+        return(
+        <div className="accordionContainer">
+            <header className="compdomContainerHeader bg-primary text-white"><b>Domaine de competence</b></header>
+                <CompetenceDomainAccordion competenceDomain={this.props.datas.competenceDomain}></CompetenceDomainAccordion>
+            <div className="opcompContainerList">
+                <header className="opcompContainerHeader bg-secondary text-white"><b>Competences operationnelles </b>
+                    <i className="bi bi-arrow-down-square openLogo" onClick={(e)=>this.openAccordion(e)}></i>
+                </header>
+                <div className="opcompList ac-hidden">
+                    {this.operationnalCompetencesAccordion}
+                </div>
+            </div>
+        </div>
+        );
+    }
+}
 
