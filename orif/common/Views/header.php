@@ -107,7 +107,7 @@
             else{
             document.body.append(detailsPanel);
             }
-            ReactDOM.render(<ProgressView coursePlan={coursePlan} callback={closeDetails} integrated={integrated} baseUrl={"<?=base_url('plafor/apprentice/view_user_course')?>"} userCourseId={userCourse.id}></ProgressView>,integrated===false?detailsPanel:document.getElementById('detailsArray'));
+            ReactDOM.render(<ProgressView coursePlan={coursePlan} callback={closeDetails} integrated={integrated} baseUrl={"<?=base_url('plafor/apprentice/view_user_course')?>"} userCourseId={userCourse!=null?userCourse.id:null}></ProgressView>,integrated===false?detailsPanel:document.getElementById('detailsArray'));
 
 
         }
