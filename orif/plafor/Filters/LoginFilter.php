@@ -6,6 +6,7 @@ namespace Plafor\Filters;
 
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
+use CodeIgniter\View\View;
 
 class LoginFilter implements \CodeIgniter\Filters\FilterInterface
 {
@@ -28,7 +29,8 @@ class LoginFilter implements \CodeIgniter\Filters\FilterInterface
             }
 
         }catch (\mysqli_sql_exception $e){
-
+            echo view('\Plafor\migrationIndex');
+            exit();
         }
 
     }
