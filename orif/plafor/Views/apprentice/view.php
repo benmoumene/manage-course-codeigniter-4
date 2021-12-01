@@ -4,52 +4,47 @@
             <p class="bg-primary text-white"><?=lang('plafor_lang.title_view_apprentice')?></p>
         </div>
         <div class="col-md-6">
-            <p class="font-weight-bold"><?=lang('plafor_lang.field_apprentice_username')?></p>
-            <p><?=$apprentice['username']?></p>
+            <p class="font-weight-bold"><?=$apprentice['username']?></p>
+            <p><?=$apprentice['email']?></p>
         </div>
         <div class="col-md-6">
-            <p class="font-weight-bold"><?=lang('plafor_lang.field_apprentice_date_creation')?></p>
-            <p><?=$apprentice['date_creation']?></p>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <p class="bg-primary text-white"><?=lang('plafor_lang.title_trainer_linked')?></p>
+            <p class="font-weight-bold"><?=lang('plafor_lang.title_trainer_linked')?></p>
+
             <?php if(service('session')->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_trainer):?>
-            <a class="btn btn-primary text-white" href="<?= base_url('plafor/apprentice/save_apprentice_link/'.$apprentice['id'])?>"><?= lang('plafor_lang.title_apprentice_link_new') ?></a>
+                <!-- List with ADMIN buttons, accessible for trainers or admin only -->
+                <table class="table table-hover">
+                <tbody>
+                    <?php
+                    foreach ($links as $link):
+                        foreach ($trainers as $trainer):
+                            if($link['fk_trainer'] == $trainer['id']): ?>
+                                <tr>
+                                    <td><a href="<?= base_url('plafor/apprentice/list_apprentice/'.$trainer['id']); ?>"><?= $trainer['username']; ?></a></td>
+                                    <td><a href="<?= base_url('plafor/apprentice/save_apprentice_link/'.$apprentice['id'].'/'.$link['id']) ?>"><i class="bi-pencil" style="font-size: 20px;"></i></a></td>
+                                    <td><a href="<?= base_url('plafor/admin/delete_apprentice_link/'.$link['id']) ?>"><i class="bi-trash" style="font-size: 20px;"></i></a></td>
+                                </tr>
+                            <?php endif;
+                        endforeach;
+                    endforeach;
+                    ?>
+                </tbody>
+                </table>
+
+                <a class="btn btn-primary text-white" href="<?= base_url('plafor/apprentice/save_apprentice_link/'.$apprentice['id'])?>"><?= lang('plafor_lang.title_apprentice_link_new') ?></a>
+            <?php else:?>
+                <?php
+                foreach ($links as $link):
+                    foreach ($trainers as $trainer):
+                        if($link['fk_trainer'] == $trainer['id']): ?>
+                            <p><?= $trainer['username']; ?></p>
+                        <?php endif;
+                    endforeach;
+                endforeach;
+                ?>
             <?php endif ?>
         </div>
-        <div class="col-md-12">
-            <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th><?= lang('plafor_lang.field_trainers_name') ?></th>
-                    <?php if($_SESSION['user_access']): ?>
-                    <th></th>
-                    <th></th>
-                    <?php endif; ?>
-                </tr>
-            </thead>
-            <tbody>
-            <?php
-            foreach ($links as $link):
-                foreach ($trainers as $trainer):
-                    if($link['fk_trainer'] == $trainer['id']): ?>
-                <tr>
-                    <td><a href="<?= base_url('plafor/apprentice/list_apprentice/'.$trainer['id']); ?>"><?= $trainer['username']; ?></a></th>
-                    <?php if($_SESSION['user_access']): ?>
-                    <th><a href="<?= base_url('plafor/apprentice/save_apprentice_link/'.$apprentice['id'].'/'.$link['id']) ?>"><?= lang('plafor_lang.title_apprentice_link_update'); ?></a></th>
-                    <th><a href="<?= base_url('plafor/admin/delete_apprentice_link/'.$link['id']) ?>"><?= lang('plafor_lang.title_apprentice_link_delete');?></a></th>
-                    <?php endif; ?>
-                </tr><?php
-                    endif;
-                endforeach;
-            endforeach;
-            ?>
-            </tbody>
-            </table>
-        </div>
     </div>
+    
     <div class="row">
         <?php 
             $maxdate=null;
@@ -63,15 +58,11 @@
                     $maxdate=$user_course['date_begin'];
                     $userCourseMax=$user_course;
                 }
-                
             }
-
-
-        
         ?>
 
         <div class="col-md-12">
-            <p class="bg-primary text-white">Details du plan de formation</p>
+            <p class="bg-primary text-white"><?=lang('plafor_lang.title_course_plan_status')?></p>
             <div id="detailsArray" apprentice_id="<?= $apprentice['id'] ?>" course_plan_id="<?=$userCourseMax['fk_course_plan']?>"></div>
         </div>
     </div>
@@ -107,9 +98,9 @@
         </div>
     </div>
 </div>
+
 <script type="text/babel">
     $(document).ready(()=>{
             displayDetails(null,<?=json_encode($userCourseMax)?>,'integrated');
     })
-
 </script>
