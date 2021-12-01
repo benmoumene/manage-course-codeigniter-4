@@ -42,7 +42,7 @@ helper('Form');
             <tbody id="course_planslist">
             <?php foreach($course_plans as $course_plan) { ?>
                 <tr>
-                    <td><a href="<?= base_url('plafor/admin/list_competence_domain/'.$course_plan['id'].($course_plan['archive']==null?'':'/1')); ?>"><span class="font-weight-bold"><?= $course_plan['formation_number']?></span><?= $course_plan['official_name']; ?></td>
+                    <td><a href="<?= base_url('plafor/apprentice/view_course_plan/'.$course_plan['id']) ?>"><span class="font-weight-bold"><?= $course_plan['formation_number']?></span><?= $course_plan['official_name']; ?></td>
                     <td><a href="<?= base_url('plafor/apprentice/view_course_plan/'.$course_plan['id'])?>"><?= lang('common_lang.btn_details')?></a></td>
                     <td><a href="<?= base_url('plafor/admin/save_course_plan/'.$course_plan['id']); ?>"><?= lang('common_lang.btn_edit')?></a></td>
                     <td><a href="<?= base_url('plafor/admin/delete_course_plan/'.$course_plan['id']); ?>" class="<?=$course_plan['archive']==null?'bi bi-trash':'bi bi-reply-all-fill'?>"></td>
