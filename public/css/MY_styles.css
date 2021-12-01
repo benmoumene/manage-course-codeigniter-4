@@ -1,5 +1,10 @@
 /* ADD CUSTOM STYLES HERE */
-
+#detailsArray{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+}
 /* Login bar styles */
 @media screen and (max-width: 768px) {
     #login-bar h1 {

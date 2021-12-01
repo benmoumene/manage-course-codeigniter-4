@@ -26,6 +26,7 @@ return [
     'title_trainer_linked' => 'Formateur(s) lié(s)',
     'title_apprentice_followed_courses' => 'Formation(s) suivie(s)',
     'title_apprentice_link_delete'  => 'Supprimer un apprenti lié',
+    'title_my_apprentices'                => 'Mes apprentis',
 
     //Course Plan
     'title_list_course_plan' => 'Liste des plans de formation',
@@ -131,7 +132,7 @@ return [
     'details_objective'              =>'Détail de l\'objectif',
     'details_user_course'            =>'Détail de la formation de l\'apprenti',
     'details_acquisition_status'     =>'Détail du statut d\'acquisition',
-    'details_progress'               =>'En savoir plus',
+    'details_progress'               =>'Détails',
 
     // Fields labels
     'field_apprentice_username'      =>'Nom de l\'apprenti',

@@ -5,6 +5,7 @@ namespace Plafor\Controllers;
 
 
 use CodeIgniter\Validation\Validation;
+use Plafor\Models\AcquisitionStatusModel;
 use Plafor\Models\CompetenceDomainModel;
 use Plafor\Models\CoursePlanModel;
 use Plafor\Models\ObjectiveModel;
@@ -473,9 +474,10 @@ class Admin extends \App\Controllers\BaseController
                 );
                 $this->display_view('Plafor\user_course/delete', $output);
                 break;
-            case 1: // Delete course plan
+            case 1: // Delete user course
                 /**@todo delete course plan
                  * **/
+                AcquisitionStatusModel::getInstance()->where('fk_user_course',$user_course_id)->delete();
                 UserCourseModel::getInstance()->delete($user_course_id, false);
                 return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
             default: // Do nothing

@@ -19,7 +19,7 @@ class TrainerApprenticeModel extends \CodeIgniter\Model
     public function __construct(ConnectionInterface &$db = null, ValidationInterface $validation = null)
     {
         $this->validationRules=array(
-            'trainer'=>[
+            'fk_trainer'=>[
                 'label' => 'plafor_lang.field_trainer_link',
                 'rules' => 'required|numeric'
             ]);
@@ -50,5 +50,12 @@ class TrainerApprenticeModel extends \CodeIgniter\Model
     public static function getApprentice($fkApprenticeId){
         return User_model::getInstance()->find($fkApprenticeId);
 
+    }
+    /**
+     * @param $fkTrainerId
+     * @return array
+     */
+    public static function getApprenticeIdsFromTrainer($fkTrainerId){
+        return TrainerApprenticeModel::getInstance()->where('fk_trainer',$fkTrainerId)->findColumn('fk_apprentice');
     }
 }

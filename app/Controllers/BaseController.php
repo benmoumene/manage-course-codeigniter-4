@@ -1,15 +1,13 @@
 <?php
-/**
- * BaseController
- *
- * @author      Orif (ViDi)
- * @link        https://github.com/OrifInformatique
- * @copyright   Copyright (c), Orif (https://www.orif.ch)
- */
 
 namespace App\Controllers;
+
 use CodeIgniter\Controller;
-use CodeIgniter\Session\Session;
+use CodeIgniter\HTTP\CLIRequest;
+use CodeIgniter\HTTP\IncomingRequest;
+use CodeIgniter\HTTP\RequestInterface;
+use CodeIgniter\HTTP\ResponseInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Class BaseController
@@ -20,12 +18,16 @@ use CodeIgniter\Session\Session;
  *     class Home extends BaseController
  *
  * For security be sure to declare any new methods as protected or private.
- *
- * @package CodeIgniter
  */
-
 class BaseController extends Controller
 {
+    /**
+     * Instance of the main Request object.
+     *
+     * @var CLIRequest|IncomingRequest
+     */
+    protected $request;
+
     /**
      * An array of helpers to be loaded automatically upon
      * class instantiation. These helpers will be available
