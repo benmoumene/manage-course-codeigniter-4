@@ -16,18 +16,20 @@ class LoginFilter implements \CodeIgniter\Filters\FilterInterface
      */
     public function before(RequestInterface $request, $arguments = null)
     {
-        // TODO: Implement before() method.
-        $session=service('session');
-        if ($arguments!==null){
-            if($session->get('user_access')!==null&&$session->get('user_access')<$arguments[0]){
+        try {
+            // TODO: Implement before() method.
+            $session = service('session');
+            if ($arguments !== null) {
+                if ($session->get('user_access') !== null && $session->get('user_access') < $arguments[0]) {
 
+                } elseif ($session->get('logged_in') != true) {
+                    return redirect()->to(base_url('user/auth/login'));
+                }
             }
-            elseif($session->get('logged_in')!=true){
-                return redirect()->to(base_url('user/auth/login'));
-            }
+
+        }catch (\mysqli_sql_exception $e){
+
         }
-
-
 
     }
 
