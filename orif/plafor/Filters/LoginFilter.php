@@ -29,8 +29,7 @@ class LoginFilter implements \CodeIgniter\Filters\FilterInterface
             }
 
         }catch (\mysqli_sql_exception $e){
-            echo view('\Plafor\migrationIndex');
-            exit();
+
         }
 
     }
