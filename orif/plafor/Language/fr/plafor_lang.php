@@ -186,9 +186,6 @@ return [
     // Admin texts
     'admin_apprentices'              =>'Apprentis',
     'admin_course_plans'             =>'Plans de formations',
-    'admin_competence_domains'       =>'Domaines de compétences',
-    'admin_objectives'               =>'Objectifs',
-    'admin_operational_competences'  =>'Compétences opérationnelles',
 
     // Error messages
     'msg_err_course_plan_not_exist'  =>'Le plan de formation sélectionné n\'existe pas',
