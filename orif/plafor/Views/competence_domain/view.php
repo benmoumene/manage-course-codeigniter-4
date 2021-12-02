@@ -30,6 +30,9 @@
             <p class="bg-primary text-white"><?=lang('plafor_lang.title_view_operational_competence_linked')?></p>
         </div>
         <div class="col-md-12">
+            <?php if(service('session')->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_admin):?>
+            <a href="<?=base_url('plafor/admin/save_operational_competence/0/'.$competence_domain['id'])?>" class="btn btn-primary"><?=lang('common_lang.btn_new_f')?></a>
+            <?php endif?>
             <table class="table table-hover">
             <thead>
                 <tr>

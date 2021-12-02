@@ -61,6 +61,9 @@
             <p class="bg-primary text-white"><?=lang('plafor_lang.field_linked_objectives')?></p>
         </div>
         <div class="col-md-12">
+            <?php if (service('session')->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_admin): ?>
+            <a href="<?=base_url('plafor/admin/save_objective/0/'.$operational_competence['id']) ?>" class="btn btn-primary"><?= lang('common_lang.btn_new_m')?></a>
+            <?php endif;?>
             <table class="table table-hover">
             <thead>
                 <tr>

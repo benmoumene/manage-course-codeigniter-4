@@ -461,7 +461,7 @@ class Admin extends \App\Controllers\BaseController
             }
             if (ObjectiveModel::getInstance()->errors()==null) {
                 //if ok
-                return redirect()->to(base_url('plafor/courseplan/view_operational_competence/'.ObjectiveModel::getOperationalCompetence(ObjectiveModel::getInstance()->find($objective_id)['fk_operational_competence'])));
+                return redirect()->to(base_url('plafor/courseplan/view_operational_competence/'.$operational_competence_id));
             }
         }
         $operationalCompetences=[];
