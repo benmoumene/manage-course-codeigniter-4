@@ -10,7 +10,7 @@
                     <div class = "alert alert-info" ><?= lang('plafor_lang.operational_competence_'.($operational_competence['archive']==null?'disable_explanation':'enable_explanation'))?></div>
                 </div>
                 <div class="text-right">
-                    <a href="<?= base_url('plafor/admin/list_operational_competence'); ?>" class="btn btn-default">
+                    <a href="<?= base_url('plafor/courseplan/view_competence_domain/'.\Plafor\Models\CompetenceDomainModel::getCoursePlan(\Plafor\Models\CompetenceDomainModel::getInstance()->find($operational_competence['fk_competence_domain'])['fk_course_plan'])['id']); ?>" class="btn btn-default">
                         <?= lang('common_lang.btn_cancel'); ?>
                     </a>
                     <?php 

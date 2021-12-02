@@ -73,7 +73,7 @@ $data_date_begin = array(
     <div class="row">
         <div class="col text-right">
             <input type="hidden" name="coursePlanId" value="<?=$course_plan['id']?>">
-            <a class="btn btn-default" href="<?= base_url('plafor/admin/list_course_plan'); ?>"><?= lang('common_lang.btn_cancel'); ?></a>
+            <a class="btn btn-default" href="<?= base_url('plafor/courseplan/list_course_plan'); ?>"><?= lang('common_lang.btn_cancel'); ?></a>
             <?= form_submit('save', lang('common_lang.btn_save'), ['class' => 'btn btn-primary']); ?>
         </div>
     </div>

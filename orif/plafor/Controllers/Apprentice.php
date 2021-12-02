@@ -53,29 +53,6 @@ class Apprentice extends \App\Controllers\BaseController
         }
     }
 
-    /**
-     * Show details of the selected course plan
-     *
-     * @param int (SQL PRIMARY KEY) $course_plan_id
-     *
-     */
-    public function view_course_plan($course_plan_id = null)
-    {
-
-        $course_plan = CoursePlanModel::getInstance()->withDeleted(true)->find($course_plan_id);
-        $competence_domains=CoursePlanModel::getCompetenceDomains($course_plan_id);
-        if($course_plan == null){
-            return redirect()->to(base_url('plafor/admin/list_course_plan'));
-        }
-
-        $output = array(
-            'title'=>lang('plafor_lang.title_course_plan_view'),
-            'course_plan' => $course_plan,
-            'competence_domains'=>$competence_domains
-        );
-
-        $this->display_view('\Plafor\course_plan\view',$output);
-    }
     
     public function list_apprentice($withDeleted=0)
     {
@@ -159,29 +136,7 @@ class Apprentice extends \App\Controllers\BaseController
         );
         $this->display_view('Plafor\apprentice/view',$output);
     }
-    /**
-     * Show details of the selected competence domain
-     *
-     * @param int (SQL PRIMARY KEY) $competence_domain_id
-     *
-     */
-    public function view_competence_domain($competence_domain_id = null)
-    {
-        $competence_domain = CompetenceDomainModel::getInstance()->withDeleted()->find($competence_domain_id);
 
-        if($competence_domain == null){
-            return redirect()->to(base_url('admin/list_competence_domain'));
-        }
-
-        $output = array(
-            'title' =>lang('plafor_lang.title_view_competence_domain'),
-            'course_plan' =>CompetenceDomainModel::getCoursePlan($competence_domain['fk_course_plan'],true)
-        ,
-            'competence_domain' => $competence_domain,
-        );
-
-        return $this->display_view('\Plafor/competence_domain/view',$output);
-    }
     /**
      * Form to create a link between a apprentice and a course plan
      *
@@ -402,7 +357,7 @@ class Apprentice extends \App\Controllers\BaseController
             if (AcquisitionStatusModel::getInstance()->errors()==null) {
 
                 //if ok
-                return redirect()->to(base_url('plafor/apprentice/view_acquisition_status/'.$acquisition_status_id));
+                return redirect()->to(base_url('plafor/courseplan/view_acquisition_status/'.$acquisition_status_id));
             }
         }
 
@@ -438,7 +393,7 @@ class Apprentice extends \App\Controllers\BaseController
             if (CommentModel::getInstance()->errors()==null) {
                 //if ok
 
-                return redirect()->to(base_url('plafor/apprentice/view_acquisition_status/'.$acquisition_status['id']));
+                return redirect()->to(base_url('plafor/courseplan/view_acquisition_status/'.$acquisition_status['id']));
             }
         
         }
@@ -458,71 +413,37 @@ class Apprentice extends \App\Controllers\BaseController
 
     public function delete_comment($comment_id = 0, $acquisition_status_id = 0) {
         CommentModel::getInstance()->delete($comment_id);
-        return redirect()->to(base_url('plafor/apprentice/view_acquisition_status/'.$acquisition_status_id));
+        return redirect()->to(base_url('plafor/courseplan/view_acquisition_status/'.$acquisition_status_id));
     }
+
+
+
     /**
-     * Show details of the selected operational competence
-     *
-     * @param int $operational_competence_id = ID of the operational competence to view
-     * @return void
+     * @param null $userId the id of user
+     * If admin
      */
-    public function view_operational_competence($operational_competence_id = null)
-    {
-        $operational_competence = OperationalCompetenceModel::getInstance()->withDeleted(true)->find($operational_competence_id);
-
-        if($operational_competence == null){
-            return redirect()->to(base_url('plafor/admin/list_operational_competence'));
+    public function getCoursePlanProgress($userId=null,$coursePlanId=null){
+        if ($userId==null && $this->session->get('user_id')==null)
+            return;
+        //if user is admin
+        if($this->session->get('user_access')>=config('\User\UserConfig')->access_lvl_admin){
+            return $this->response->setContentType('application/json')->setBody(json_encode($coursePlanId!=null?[(CoursePlanModel::getInstance()->getCoursePlanProgress($userId))[$coursePlanId]]:CoursePlanModel::getInstance()->getCoursePlanProgress($userId),JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
         }
-
-        $competence_domain=null;
-        $course_plan=null;
-        try {
-            $competence_domain = OperationalCompetenceModel::getCompetenceDomain($operational_competence['fk_competence_domain']);
-            $course_plan = CompetenceDomainModel::getCoursePlan($competence_domain['fk_course_plan']);
-        }catch (Exception $exception){
+        //in the case of a trainer see only his apprentices
+        elseif ($this->session->get('user_access')>=config('\User\UserConfig')->access_lvl_trainer&&in_array($userId,TrainerApprenticeModel::getApprenticeIdsFromTrainer($this->session->get('user_id')))){
+            return $this->response->setContentType('application/json')->setBody(json_encode($coursePlanId!=null?[(CoursePlanModel::getInstance()->getCoursePlanProgress($userId))[$coursePlanId]]:CoursePlanModel::getInstance()->getCoursePlanProgress($userId),JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
 
         }
-        $objectives=OperationalCompetenceModel::getObjectives($operational_competence['id']);
-        $output = array(
-            'title'=>lang('plafor_lang.title_view_operational_competence'),
-            'operational_competence' => $operational_competence,
-            'competence_domain' => $competence_domain,
-            'course_plan' => $course_plan,
-            'objectives' => $objectives
-        );
-
-        return $this->display_view('\Plafor/operational_competence/view',$output);
-    }
-    /**
-     * Show details of the selected objective
-     * @param int $objective_id = ID of the objective to view
-     * @return void
-     */
-    public function view_objective($objective_id = null)
-    {
-        $objective = ObjectiveModel::getInstance()->withDeleted()->find($objective_id);
-
-        if($objective == null){
-            return redirect()->to(base_url('plafor/admin/list_objective'));
+        else{
+            $response=null;
+            //In the case of a student let him only see his coursePlanProgress else return 403
+            $userId!=$this->session->get('user_id')?$response=$this->response->setStatusCode(403):$response=$this->response->setContentType('application/json')->setBody(json_encode($coursePlanId!=null?[(CoursePlanModel::getInstance()->getCoursePlanProgress($userId))[$coursePlanId]]:CoursePlanModel::getInstance()->getCoursePlanProgress($userId),JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+            return $response;
         }
+        //d(CoursePlanModel::getInstance()->getCoursePlanProgress($userId));
 
 
-        $operational_competence = ObjectiveModel::getOperationalCompetence($objective['fk_operational_competence'],true);
 
-        $competence_domain = OperationalCompetenceModel::getCompetenceDomain($operational_competence['fk_competence_domain']);
-        $course_plan=null;
-        if (isset($competence_domain))
-        $course_plan = CompetenceDomainModel::getCoursePlan($competence_domain['fk_course_plan']);
-
-        $output = array(
-            'title' => lang('plafor_lang.title_view_objective'),
-            'objective' => $objective,
-            'operational_competence' => $operational_competence,
-            'competence_domain' => $competence_domain,
-            'course_plan' => $course_plan
-        );
-
-        $this->display_view('Plafor\objective/view',$output);
     }
     /**
      * Show a user course's details
@@ -592,33 +513,5 @@ class Apprentice extends \App\Controllers\BaseController
         );
 
         $this->display_view('\Plafor\user_course/view',$output);
-    }
-
-    /**
-     * @param null $userId the id of user
-     * If admin
-     */
-    public function getCoursePlanProgress($userId=null,$coursePlanId=null){
-        if ($userId==null && $this->session->get('user_id')==null)
-            return;
-        //if user is admin
-        if($this->session->get('user_access')>=config('\User\UserConfig')->access_lvl_admin){
-            return $this->response->setContentType('application/json')->setBody(json_encode($coursePlanId!=null?[(CoursePlanModel::getInstance()->getCoursePlanProgress($userId))[$coursePlanId]]:CoursePlanModel::getInstance()->getCoursePlanProgress($userId),JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
-        }
-        //in the case of a trainer see only his apprentices
-        elseif ($this->session->get('user_access')>=config('\User\UserConfig')->access_lvl_trainer&&in_array($userId,TrainerApprenticeModel::getApprenticeIdsFromTrainer($this->session->get('user_id')))){
-            return $this->response->setContentType('application/json')->setBody(json_encode($coursePlanId!=null?[(CoursePlanModel::getInstance()->getCoursePlanProgress($userId))[$coursePlanId]]:CoursePlanModel::getInstance()->getCoursePlanProgress($userId),JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
-
-        }
-        else{
-            $response=null;
-            //In the case of a student let him only see his coursePlanProgress else return 403
-            $userId!=$this->session->get('user_id')?$response=$this->response->setStatusCode(403):$response=$this->response->setContentType('application/json')->setBody(json_encode($coursePlanId!=null?[(CoursePlanModel::getInstance()->getCoursePlanProgress($userId))[$coursePlanId]]:CoursePlanModel::getInstance()->getCoursePlanProgress($userId),JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
-            return $response;
-        }
-        //d(CoursePlanModel::getInstance()->getCoursePlanProgress($userId));
-
-
-
     }
 }

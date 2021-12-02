@@ -34,8 +34,8 @@
             <tbody><?php
             foreach ($competence_domains as $competence_domain){
                 ?><tr>
-                    <td><a class="font-weight-bold" href="<?= base_url('plafor/apprentice/view_competence_domain/'.$competence_domain['id'])?>"><?=$competence_domain['symbol']?></a></td>
-                    <td><a href="<?= base_url('plafor/apprentice/view_competence_domain/'.$competence_domain['id'])?>"><?=$competence_domain['name']?></a></td><?php
+                    <td><a class="font-weight-bold" href="<?= base_url('plafor/courseplan/view_competence_domain/'.$competence_domain['id'])?>"><?=$competence_domain['symbol']?></a></td>
+                    <td><a href="<?= base_url('plafor/courseplan/view_competence_domain/'.$competence_domain['id'])?>"><?=$competence_domain['name']?></a></td><?php
                 }?></tr>
             </tbody>
             </table>

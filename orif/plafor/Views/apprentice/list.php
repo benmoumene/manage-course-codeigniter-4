@@ -48,7 +48,7 @@ helper('Form');
                 <td>
                     <a href="<?= base_url('plafor/apprentice/view_apprentice/' . $apprentice['id']); ?>"><?= $apprentice['username']; ?>
                 </td>
-                <td><a href="<?= base_url('plafor/admin/list_course_plan/' . $apprentice['id']) ?>"><?php
+                <td><a href="<?= base_url('plafor/courseplan/list_course_plan/' . $apprentice['id']) ?>"><?php
                         $linkedCourses = "";
                         foreach ($courses as $course) {
                             $linkedCourses .= ($course['fk_user'] == $apprentice['id'] ? $coursesList[$course['fk_course_plan']]['official_name'] . "," : "");

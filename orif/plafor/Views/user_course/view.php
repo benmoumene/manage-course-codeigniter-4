@@ -21,7 +21,7 @@
         </div>
         <div class="col-md-6">
             <p class="font-weight-bold"><?= lang('plafor_lang.course_plan') ?></p>
-            <a href="<?= base_url('plafor/apprentice/view_course_plan/'.$course_plan['id'])?>"><span class="font-weight-bold"><?=$course_plan['formation_number']?> </span><?=$course_plan['official_name']?></a>
+            <a href="<?= base_url('plafor/courseplan/view_course_plan/'.$course_plan['id'])?>"><span class="font-weight-bold"><?=$course_plan['formation_number']?> </span><?=$course_plan['official_name']?></a>
         </div>
     </div>
     <?php $trainers_id = array();

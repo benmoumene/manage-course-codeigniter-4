@@ -6,11 +6,11 @@
         <?php if(isset($course_plan)): ?>
         <div class="col-md-6">
             <p class="font-weight-bold"><?=lang('plafor_lang.field_course_plan_formation_number')?></p>
-            <a href="<?= base_url('plafor/apprentice/view_course_plan/'.$course_plan['id'])?>"><?=$course_plan['formation_number']?></a>
+            <a href="<?= base_url('plafor/courseplan/view_course_plan/'.$course_plan['id'])?>"><?=$course_plan['formation_number']?></a>
         </div>
         <div class="col-md-6">
             <p class="font-weight-bold"><?=lang('plafor_lang.field_course_plan_official_name')?></p>
-            <a href="<?= base_url('plafor/apprentice/view_course_plan/'.$course_plan['id'])?>"><?=$course_plan['official_name']?></a>
+            <a href="<?= base_url('plafor/courseplan/view_course_plan/'.$course_plan['id'])?>"><?=$course_plan['official_name']?></a>
         </div>
         <?php endif; ?>
     </div>
@@ -21,11 +21,11 @@
         <?php if(isset($competence_domain)):?>
         <div class="col-md-6">
             <p class="font-weight-bold"><?=lang('plafor_lang.field_competence_domain_symbol')?></p>
-            <a href="<?= base_url('plafor/apprentice/view_competence_domain/'.$competence_domain['id']) ?>"><?=$competence_domain['symbol']?></a>
+            <a href="<?= base_url('plafor/courseplan/view_competence_domain/'.$competence_domain['id']) ?>"><?=$competence_domain['symbol']?></a>
         </div>
         <div class="col-md-6">
             <p class="font-weight-bold"><?=lang('plafor_lang.field_competence_domain_name')?></p>
-            <a href="<?= base_url('plafor/apprentice/view_competence_domain/'.$competence_domain['id']) ?>"><?=$competence_domain['name']?></a>
+            <a href="<?= base_url('plafor/courseplan/view_competence_domain/'.$competence_domain['id']) ?>"><?=$competence_domain['name']?></a>
         </div>
         <?php endif; ?>
     </div>
@@ -73,9 +73,9 @@
             if (isset($objectives)):
             foreach ($objectives as $objective){
                 ?><tr>
-                    <td><a class="font-weight-bold" href="<?= base_url('plafor/apprentice/view_objective/'.$objective['id'])?>"><?=$objective['symbol']?></a></td>
-                    <td><a href="<?= base_url('plafor/apprentice/view_objective/'.$objective['id'])?>"><?=$objective['taxonomy']?></a></td>
-                    <td><a href="<?= base_url('plafor/apprentice/view_objective/'.$objective['id'])?>"><?=$objective['name']?></a></td><?php
+                    <td><a class="font-weight-bold" href="<?= base_url('plafor/courseplan/view_objective/'.$objective['id'])?>"><?=$objective['symbol']?></a></td>
+                    <td><a href="<?= base_url('plafor/courseplan/view_objective/'.$objective['id'])?>"><?=$objective['taxonomy']?></a></td>
+                    <td><a href="<?= base_url('plafor/courseplan/view_objective/'.$objective['id'])?>"><?=$objective['name']?></a></td><?php
                 }?></tr>
             <?php endif; ?>
             </tbody>
