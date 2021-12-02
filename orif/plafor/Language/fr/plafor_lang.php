@@ -94,6 +94,7 @@ return [
     'title_course_plan_update'       => 'Modifier le plan de formation',
     'title_course_plan_new'          => 'Ajouter un plan de formation',
     'title_course_plan_delete'       => 'Supprimer le plan de formation',
+    'title_course_plan_status'       => 'Avancement du plan de formation',
     'title_competence_domain_list'   => 'Liste des domaines de compétence',
     'title_competence_domain_update' => 'Modifier le domaine de compétence',
     'title_competence_domain_new'    => 'Ajouter un domaine de compétence',
