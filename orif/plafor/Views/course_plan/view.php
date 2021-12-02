@@ -29,13 +29,23 @@
                 <tr>
                     <th><span class="font-weight-bold"><?=lang('plafor_lang.field_competence_domains_symbols')?></span></th>
                     <th><span class="font-weight-bold"><?=lang('plafor_lang.field_competence_domains_names')?></span></th>
+                    <?php if(service('session')->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_admin):?>
+                    <th></th>
+                    <th></th>
+                    <?php endif;?>
                 </tr>
             </thead>
             <tbody><?php
             foreach ($competence_domains as $competence_domain){
                 ?><tr>
                     <td><a class="font-weight-bold" href="<?= base_url('plafor/courseplan/view_competence_domain/'.$competence_domain['id'])?>"><?=$competence_domain['symbol']?></a></td>
-                    <td><a href="<?= base_url('plafor/courseplan/view_competence_domain/'.$competence_domain['id'])?>"><?=$competence_domain['name']?></a></td><?php
+                    <td><a href="<?= base_url('plafor/courseplan/view_competence_domain/'.$competence_domain['id'])?>"><?=$competence_domain['name']?></a></td>
+                    <?php if(service('session')->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_admin):?>
+                        <td><a href="<?= base_url('plafor/admin/save_competence_domain/'.$competence_domain['id'].'/'.$course_plan['id']); ?>"><?= lang('common_lang.btn_edit')?></a></td>
+                        <td><a href="<?= base_url('plafor/admin/delete_competence_domain/'.$competence_domain['id']); ?>" class="<?=$course_plan['archive']==null?'bi bi-trash':'bi bi-reply-all-fill'?>"></td>
+
+                    <?php endif;?>
+                <?php
                 }?></tr>
             </tbody>
             </table>
