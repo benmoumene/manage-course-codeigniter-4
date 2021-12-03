@@ -16,6 +16,12 @@ use User\Models\User_model;
 
 class CoursePlan extends \App\Controllers\BaseController
 {
+    public function initController(\CodeIgniter\HTTP\RequestInterface $request, \CodeIgniter\HTTP\ResponseInterface $response, \Psr\Log\LoggerInterface $logger)
+    {
+        $this->access_level=config('\User\Config\UserConfig')->access_lvl_admin;
+        parent::initController($request, $response, $logger);
+    }
+
     /**
      * Displays the list of course plans
      *
