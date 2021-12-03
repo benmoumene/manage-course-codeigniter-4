@@ -18,7 +18,7 @@ class CoursePlan extends \App\Controllers\BaseController
 {
     public function initController(\CodeIgniter\HTTP\RequestInterface $request, \CodeIgniter\HTTP\ResponseInterface $response, \Psr\Log\LoggerInterface $logger)
     {
-        $this->access_level=config('\User\Config\UserConfig')->access_lvl_admin;
+        $this->access_level="@";
         parent::initController($request, $response, $logger);
     }
 
