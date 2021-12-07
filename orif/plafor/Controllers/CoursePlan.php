@@ -3,7 +3,7 @@
 
 namespace Plafor\Controllers;
 
-
+use CodeIgniter\I18n\Time;
 use Plafor\Models\AcquisitionLevelModel;
 use Plafor\Models\AcquisitionStatusModel;
 use Plafor\Models\CompetenceDomainModel;
@@ -201,13 +201,19 @@ class CoursePlan extends \App\Controllers\BaseController
      *  - 2 for deleting (hard delete)
      * @return void
      */
-    public function delete_competence_domain($competence_domain_id, $action = 0)
+    public function delete_competence_domain($competence_domain_id = null, $action = 0)
     {
         if ($_SESSION['user_access'] >= config('\User\Config\UserConfig')->access_lvl_admin) {
 
-            $competence_domain = CompetenceDomainModel::getInstance()->withDeleted()->find($competence_domain_id);
-            if (is_null($competence_domain)) {
-                return redirect()->to('plafor/courseplan/competence_domain/list');
+            if (!isset($competence_domain_id)) {
+                // Back to course plans list
+                return redirect()->to('plafor/courseplan/list_course_plan');
+            } else {
+                $competence_domain = CompetenceDomainModel::getInstance()->withDeleted()->find($competence_domain_id);
+                if (is_null($competence_domain)) {
+                    // Back to course plans list
+                    return redirect()->to('plafor/courseplan/list_course_plan');
+                }
             }
 
             switch ($action) {
@@ -216,6 +222,7 @@ class CoursePlan extends \App\Controllers\BaseController
                         'competence_domain' => $competence_domain,
                         'title' => lang('plafor_lang.title_competence_domain_delete')
                     );
+                    
                     $this->display_view('\Plafor/competence_domain/delete', $output);
                     break;
                 case 1: // Deactivate (soft delete) competence domain
@@ -532,21 +539,32 @@ class CoursePlan extends \App\Controllers\BaseController
      */
     public function view_course_plan($course_plan_id = null)
     {
-
-        $course_plan = CoursePlanModel::getInstance()->withDeleted(true)->find($course_plan_id);
-        $competence_domains=CoursePlanModel::getCompetenceDomains($course_plan_id);
-        if($course_plan == null){
+        if(!isset($course_plan_id)) {
+            // Back to course plans list
             return redirect()->to(base_url('plafor/courseplan/list_course_plan'));
+        } else {
+            $course_plan = CoursePlanModel::getInstance()->withDeleted(true)->find($course_plan_id);
+            if(is_null($course_plan)) {
+                // Back to course plans list
+                return redirect()->to(base_url('plafor/courseplan/list_course_plan'));
+            }
         }
+
+        $competence_domains=CoursePlanModel::getCompetenceDomains($course_plan_id);
+
+        // Format date
+        $date_begin = Time::createFromFormat('Y-m-d', $course_plan['date_begin']);
+        $course_plan['date_begin'] = $date_begin->toLocalizedString('dd.MM.Y');
 
         $output = array(
             'title'=>lang('plafor_lang.title_course_plan_view'),
-            'course_plan' => $course_plan,
+            'course_plan'=>$course_plan,
             'competence_domains'=>$competence_domains
         );
 
-        $this->display_view('\Plafor\course_plan\view',$output);
+        return $this->display_view('\Plafor\course_plan\view',$output);
     }
+
     /**
      * Show details of the selected competence domain
      *

@@ -31,3 +31,8 @@ li.nav-item {
     transition: all 0.4s;
     color: unset!important;
 }
+
+/* Section titles style */
+p.bg-primary {
+    padding-left: 5px;
+}
