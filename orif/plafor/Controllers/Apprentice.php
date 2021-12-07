@@ -238,7 +238,7 @@ class Apprentice extends \App\Controllers\BaseController
 
         $apprentice = User_model::getInstance()->find($id_apprentice);
 
-        if($_SESSION['user_access'] < config('\User\Config\UserConfig')->access_lvl_admin
+        if($_SESSION['user_access'] < config('\User\Config\UserConfig')->access_lvl_trainer
             || $apprentice == null
             || $apprentice['fk_user_type'] != User_type_model::getInstance()->
             where('name',lang('plafor_lang.title_apprentice'))->first()['id']){
@@ -293,6 +293,47 @@ class Apprentice extends \App\Controllers\BaseController
         );
 
         $this->display_view('Plafor\apprentice/link',$output);
+    }
+    /**
+     * Deletes a trainer_apprentice link depending on $action
+     *
+     * @param integer $link_id = ID of the trainer_apprentice_link to affect
+     * @param integer $action = Action to apply on the trainer_apprentice link :
+     *  - 0 for displaying the confirmation
+     *  - 1 for deleting (hard delete)
+     * @return void
+     */
+    public function delete_apprentice_link($link_id, $action = 0)
+    {
+
+        if ($_SESSION['user_access'] >= config('\User\Config\UserConfig')->access_lvl_trainer) {
+            $link = TrainerApprenticeModel::getInstance()->find($link_id);
+            $apprentice = TrainerApprenticeModel::getApprentice($link['fk_apprentice']);
+            $trainer = TrainerApprenticeModel::getTrainer($link['fk_trainer']);
+            if (is_null($link)) {
+                return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
+            }
+
+            switch ($action) {
+                case 0: // Display confirmation
+                    $output = array(
+                        'link' => $link,
+                        'apprentice' => $apprentice,
+                        'trainer' => $trainer,
+                        'title' => lang('plafor_lang.title_apprentice_link_delete')
+                    );
+                    $this->display_view('\Plafor\apprentice/delete', $output);
+                    break;
+                case 1: // Delete apprentice link
+                    TrainerApprenticeModel::getInstance()->delete($link_id, TRUE);
+                    return redirect()->to(base_url('plafor/apprentice/list_apprentice/' . $apprentice['id']));
+                default: // Do nothing
+                    return redirect()->to(base_url('plafor/apprentice/list_apprentice/' . $apprentice['id']));
+            }
+        }
+        else{
+            return $this->display_view('\User\errors\403error');
+        }
     }
     /**
      * Show details of the selected acquisition status

@@ -15,7 +15,7 @@ $session=\CodeIgniter\Config\Services::session();
                         <?= lang('common_lang.btn_cancel'); ?>
                     </a>
                     <?php 
-                    echo $competence_domain['archive']!=null?"<a href=".base_url('plafor/admin/delete_competence_domain/'.$competence_domain['id'].'/3').">".lang('common_lang.reactivate')."</a>"
+                    echo $competence_domain['archive']!=null?"<a href=".base_url('plafor/courseplan/delete_competence_domain/'.$competence_domain['id'].'/3').">".lang('common_lang.reactivate')."</a>"
                     :
                     "<a href=".base_url(uri_string().'/1')." class={btn btn-danger} >".
                         lang('common_lang.btn_disable');"

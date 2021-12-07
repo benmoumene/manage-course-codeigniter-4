@@ -63,7 +63,7 @@
     <div class="row">
         <div class="col-md-12">
             <a class="btn btn-primary text-white" href="<?= base_url('plafor/apprentice/save_user_course/'.$apprentice['id']."/".$user_course['id'])?>"><?= lang('plafor_lang.title_user_course_update') ?></a>
-            <a class="btn btn-danger text-white" href="<?= base_url('plafor/admin/delete_user_course/'.$user_course['id'])?>"><?= lang('plafor_lang.title_user_course_delete') ?></a>
+            <a class="btn btn-danger text-white" href="<?= base_url('plafor/courseplan/delete_user_course/'.$user_course['id'])?>"><?= lang('plafor_lang.title_user_course_delete') ?></a>
         </div>
     </div>
     <?php endif; ?>

@@ -62,7 +62,7 @@
         </div>
         <div class="col-md-12">
             <?php if (service('session')->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_admin): ?>
-            <a href="<?=base_url('plafor/admin/save_objective/0/'.$operational_competence['id']) ?>" class="btn btn-primary"><?= lang('common_lang.btn_new_m')?></a>
+            <a href="<?=base_url('plafor/courseplan/save_objective/0/'.$operational_competence['id']) ?>" class="btn btn-primary"><?= lang('common_lang.btn_new_m')?></a>
             <?php endif;?>
             <table class="table table-hover">
             <thead>
@@ -84,8 +84,8 @@
                     <td><a href="<?= base_url('plafor/courseplan/view_objective/'.$objective['id'])?>"><?=$objective['taxonomy']?></a></td>
                     <td><a href="<?= base_url('plafor/courseplan/view_objective/'.$objective['id'])?>"><?=$objective['name']?></a></td>
                 <?php if(service('session')->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_admin):?>
-                    <td><a href="<?= base_url('plafor/admin/save_objective/'.$objective['id'].'/'.$operational_competence['id']); ?>"><?= lang('common_lang.btn_edit')?></a></td>
-                    <td><a href="<?= base_url('plafor/admin/delete_objective/'.$objective['id']); ?>" class="<?=$operational_competence['archive']==null?'bi bi-trash':'bi bi-reply-all-fill'?>"></td>
+                    <td><a href="<?= base_url('plafor/courseplan/save_objective/'.$objective['id'].'/'.$operational_competence['id']); ?>"><?= lang('common_lang.btn_edit')?></a></td>
+                    <td><a href="<?= base_url('plafor/courseplan/delete_objective/'.$objective['id']); ?>" class="<?=$operational_competence['archive']==null?'bi bi-trash':'bi bi-reply-all-fill'?>"></td>
                 <?php endif;?>
                 <?php
                 }?></tr>

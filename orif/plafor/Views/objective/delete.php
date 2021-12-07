@@ -14,7 +14,7 @@
                         <?= lang('common_lang.btn_cancel'); ?>
                     </a>
                     <?php 
-                    echo $objective['archive']!=null?"<a href=".base_url('plafor/admin/delete_objective/'.$objective['id'].'/3').">".lang('common_lang.reactivate')."</a>"
+                    echo $objective['archive']!=null?"<a href=".base_url('plafor/courseplan/delete_objective/'.$objective['id'].'/3').">".lang('common_lang.reactivate')."</a>"
                     :
                     "<a href=".base_url(uri_string().'/1')." class={btn btn-danger} >".
                         lang('common_lang.btn_disable');"

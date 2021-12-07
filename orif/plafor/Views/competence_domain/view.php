@@ -31,7 +31,7 @@
         </div>
         <div class="col-md-12">
             <?php if(service('session')->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_admin):?>
-            <a href="<?=base_url('plafor/admin/save_operational_competence/0/'.$competence_domain['id'])?>" class="btn btn-primary"><?=lang('common_lang.btn_new_f')?></a>
+            <a href="<?=base_url('plafor/courseplan/save_operational_competence/0/'.$competence_domain['id'])?>" class="btn btn-primary"><?=lang('common_lang.btn_new_f')?></a>
             <?php endif?>
             <table class="table table-hover">
             <thead>
@@ -50,8 +50,8 @@
                     <td><a class="font-weight-bold" href="<?= base_url('plafor/courseplan/view_operational_competence/'.$operational_competence['id'])?>"><?=$operational_competence['symbol']?></a></td>
                     <td><a href="<?= base_url('plafor/courseplan/view_operational_competence/'.$operational_competence['id'])?>"><?=$operational_competence['name']?></a></td>
                 <?php if(service('session')->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_admin):?>
-                    <td><a href="<?= base_url('plafor/admin/save_operational_competence/'.$operational_competence['id'].'/'.$competence_domain['id']); ?>"><?= lang('common_lang.btn_edit')?></a></td>
-                    <td><a href="<?= base_url('plafor/admin/delete_operational_competence/'.$operational_competence['id']); ?>" class="<?=$competence_domain['archive']==null?'bi bi-trash':'bi bi-reply-all-fill'?>"></td>
+                    <td><a href="<?= base_url('plafor/courseplan/save_operational_competence/'.$operational_competence['id'].'/'.$competence_domain['id']); ?>"><?= lang('common_lang.btn_edit')?></a></td>
+                    <td><a href="<?= base_url('plafor/courseplan/delete_operational_competence/'.$operational_competence['id']); ?>" class="<?=$competence_domain['archive']==null?'bi bi-trash':'bi bi-reply-all-fill'?>"></td>
                 <?php endif;?>
                 <?php
                 }?>
