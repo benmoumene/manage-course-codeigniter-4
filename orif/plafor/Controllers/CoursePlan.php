@@ -17,6 +17,12 @@ use User\Models\User_model;
 
 class CoursePlan extends \App\Controllers\BaseController
 {
+    public function initController(\CodeIgniter\HTTP\RequestInterface $request, \CodeIgniter\HTTP\ResponseInterface $response, \Psr\Log\LoggerInterface $logger)
+    {
+        $this->access_level="@";
+        parent::initController($request, $response, $logger);
+    }
+
     /**
      * Adds or modify a course plan
      *

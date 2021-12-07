@@ -3,22 +3,23 @@
     min-width: 300px;
     flex-direction: column;
     margin-bottom: 10px;
-    width: 80%;
-
+    width: 100%;
 }
 .accordionContainer > div > .compdomContainer{
     display: flex;
     flex-direction: row;
+    border-top: 2px #dbceb1 solid;
 }
 .accordionContainer > div > .compdomContainer > p{
     padding: .75rem;
+    margin: 0;
 }
 .accordionContainer > div > .compdomContainer >.compdomSymbol{
     padding: .75rem;
     text-align: center;
 }
 .accordionContainer > .compdomContainerHeader{
-    display: flex;
+    display: none;
     text-align: center;
     justify-content: center;
     align-items: center;
@@ -32,6 +33,9 @@
     text-align: center;
     justify-content: center;
     align-items: center;
+    margin-top: 5px;
+    color: #dbceb1 !important;
+    background-color: transparent !important;
 }
 .accordionContainer > .opcompContainerList{
     width: 100%;
