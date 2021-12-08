@@ -1,4 +1,22 @@
 <div class="container">
+    <?php
+    $maxdate=null;
+    $userCourseMax=null;
+    foreach ($user_courses as $user_course){
+        if($maxdate==null){
+            $maxdate=$user_course['date_begin'];
+            $userCourseMax=$user_course;
+        }
+        if(strtotime($user_course['date_begin'])>=strtotime($maxdate)&&$user_course['id']>$userCourseMax['id']){
+            $maxdate=$user_course['date_begin'];
+            $userCourseMax=$user_course;
+        }
+        elseif (strtotime($user_course['date_begin'])>strtotime($maxdate)){
+            $maxdate=$user_course['date_begin'];
+            $userCourseMax=$user_course;
+        }
+    }
+    ?>
     <!-- Apprentice details -->
     <div class="row">
         <div class="col-md-12">
@@ -52,14 +70,19 @@
 
             <?php if(service('session')->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_trainer):?>
                 <!-- List with ADMIN buttons, accessible for trainers or admin only -->
-                <table class="table table-hover table-borderless">
+            <select class="form-control" id="usercourseSelector">
+                <?php foreach ($user_courses as $user_course) { ?>
+                   <option value="<?=$user_course['id']?>"><?=$course_plans[$user_course['fk_course_plan']]['official_name']?></option>
+                <?php } ?>
+            </select>
+                <table class="table table-hover table-borderless user-course-details-table">
                 <tbody>
-                    <?php foreach ($user_courses as $user_course) { ?>
-                        <tr>
-                            <td><?=$user_course_status[$user_course['fk_status']]['name']?></td>
-                            <td><a href="<?= base_url('plafor/apprentice/view_user_course/'.$user_course['id']) ?>"><?=$course_plans[$user_course['fk_course_plan']]['official_name']?></a></td>
-                        </tr>
-                    <?php } ?>
+                <tr>
+                    <td class="user-course-details-begin-date"><?=$userCourseMax['date_begin']?></td>
+                    <td class="user-course-details-end-date"><?=$userCourseMax['date_end']?></td>
+                    <td class="user-course-details-status"><?=$user_course_status[$userCourseMax['fk_status']]['name']?></td>
+
+                </tr>
                 </tbody>
                 </table>
 
@@ -75,30 +98,17 @@
                     <?php } ?>
                 </tbody>
                 </table>
-            <?php endif ?>
+            <?php endif;
+
+            ?>
         </div>
     </div>
     
     <!-- Current course plan detailed status -->
     <div class="row mt-2">
-        <?php 
-            $maxdate=null;
-            $userCourseMax=null;
-            foreach ($user_courses as $user_course){
-                if($maxdate==null){
-                    $maxdate=$user_course['date_begin'];
-                    $userCourseMax=$user_course;
-                }
-                if(strtotime($user_course['date_begin'])>strtotime($maxdate)){
-                    $maxdate=$user_course['date_begin'];
-                    $userCourseMax=$user_course;
-                }
-            }
-        ?>
-
         <div class="col-md-12">
             <p class="bg-primary text-white"><?=lang('plafor_lang.title_course_plan_status')?></p>
-            <p class="font-weight-bold"><?= $course_plans[$userCourseMax['fk_course_plan']]['official_name'] ?></p>
+            <p class="font-weight-bold user-course-details-course-plan-name"><?= $course_plans[$userCourseMax['fk_course_plan']]['official_name'] ?></p>
             <div id="detailsArray" apprentice_id="<?= $apprentice['id'] ?>" course_plan_id="<?=$userCourseMax['fk_course_plan']?>"></div>
         </div>
     </div>
@@ -106,6 +116,28 @@
 
 <script type="text/babel">
     $(document).ready(()=>{
-            displayDetails(null,<?=json_encode($userCourseMax)?>,'integrated');
+        $('#usercourseSelector').val(<?=$userCourseMax['id']?>);
+        console.log(<?=$userCourseMax['id']?>)
+            displayDetails(null,<?=json_encode($userCourseMax)?>,'integrated',"<?=base_url("plafor/apprentice/getcourseplanprogress")?>"+'/');
+            $('#usercourseSelector').change((event)=>{
+                let userCourses=<?= json_encode($user_courses)?>;
+                let coursePlans=<?= json_encode($course_plans)?>;
+                let userCoursesStatus=<?= json_encode($user_course_status)?>;
+                document.querySelectorAll('.user-course-details-course-plan-name').forEach((node)=>{
+                    node.innerHTML=`${coursePlans[userCourses[event.target.value].fk_course_plan].official_name}`;
+                })
+                document.querySelectorAll('.user-course-details-begin-date').forEach((node)=>{
+                    node.innerHTML=`${userCourses[event.target.value].date_begin}`;
+                })
+                document.querySelectorAll('.user-course-details-end-date').forEach((node)=>{
+                    node.innerHTML=`${userCourses[event.target.value].date_end}`;
+                })
+                document.querySelectorAll('.user-course-details-status').forEach((node)=>{
+                    node.innerHTML=`${userCoursesStatus[userCourses[event.target.value].fk_status].name}`;
+                })
+                document.getElementById('detailsArray').setAttribute('course_plan_id',userCourses[event.target.value].fk_course_plan);
+                displayDetails(null,userCourses[event.target.value],'integrated',"<?=base_url("plafor/apprentice/getcourseplanprogress")?>"+'/');
+
+            })
     })
 </script>
