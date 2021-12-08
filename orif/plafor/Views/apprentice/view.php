@@ -117,7 +117,7 @@
 <script type="text/babel">
     $(document).ready(()=>{
         $('#usercourseSelector').val(<?=$userCourseMax['id']?>);
-            displayDetails(null,<?=json_encode($userCourseMax)?>,'integrated',"<?=base_url("plafor/apprentice/getcourseplanprogress")?>"+'/');
+            displayDetails(null,<?=json_encode($userCourseMax)?>,'integrated',"<?=base_url("plafor/apprentice/getcourseplanprogress")?>"+'/',"<?=base_url('plafor/apprentice/view_user_course')?>");
             $('#usercourseSelector').change((event)=>{
                 let userCourses=<?= json_encode($user_courses)?>;
                 let coursePlans=<?= json_encode($course_plans)?>;
@@ -135,7 +135,7 @@
                     node.innerHTML=`${userCoursesStatus[userCourses[event.target.value].fk_status].name}`;
                 })
                 document.getElementById('detailsArray').setAttribute('course_plan_id',userCourses[event.target.value].fk_course_plan);
-                displayDetails(null,userCourses[event.target.value],'integrated',"<?=base_url("plafor/apprentice/getcourseplanprogress")?>"+'/');
+                displayDetails(null,userCourses[event.target.value],'integrated',"<?=base_url("plafor/apprentice/getcourseplanprogress")?>"+'/',"<?=base_url('plafor/apprentice/view_user_course')?>");
 
             })
     })
