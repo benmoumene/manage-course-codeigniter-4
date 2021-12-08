@@ -66,8 +66,9 @@ helper('Form');
 </div>
 </div>
 <script type="text/babel" defer>
-    initProgress();
+
     $(document).ready(function () {
+        initProgress("<?=base_url("plafor/apprentice/getcourseplanprogress")?>"+'/',"<?=lang('plafor_lang.details_progress')?>");
         $('#toggle_deleted').change(e => {
             let checked = e.currentTarget.checked;
             $.post('<?php echo base_url("plafor/apprentice/list_apprentice") . '/'?>' + ((checked == true ? '1' : '0')), {}, data => {

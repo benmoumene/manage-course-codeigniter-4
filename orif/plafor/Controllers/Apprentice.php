@@ -5,6 +5,7 @@ namespace Plafor\Controllers;
 
 
 use CodeIgniter\Config\Services;
+use CodeIgniter\I18n\Time;
 use CodeIgniter\Validation\Validation;
 use Exception;
 use Plafor\Models\AcquisitionLevelModel;
@@ -106,8 +107,13 @@ class Apprentice extends \App\Controllers\BaseController
             return redirect()->to(base_url("/plafor/apprentice/list_apprentice"));
         }
         $user_courses=[];
-        foreach (UserCourseModel::getInstance()->where('fk_user',$apprentice_id)->findall() as $usercourse)
-        $user_courses[$usercourse['id']] = $usercourse ;
+        foreach (UserCourseModel::getInstance()->where('fk_user',$apprentice_id)->findall() as $usercourse) {
+            $date_begin = Time::createFromFormat('Y-m-d', $usercourse['date_begin']);
+            $date_end = Time::createFromFormat('Y-m-d', $usercourse['date_end']);
+            $usercourse['date_begin'] = $date_begin->toLocalizedString('dd.MM.Y');
+            $usercourse['date_end']!=='0000-00-00'? $usercourse['date_end'] = $date_end->toLocalizedString('dd.MM.Y'):null;
+            $user_courses[$usercourse['id']] = $usercourse;
+        }
 
         $user_course_status=[];
         foreach (UserCourseStatusModel::getInstance()->findAll() as $usercoursetatus)
