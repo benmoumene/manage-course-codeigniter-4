@@ -117,7 +117,6 @@
 <script type="text/babel">
     $(document).ready(()=>{
         $('#usercourseSelector').val(<?=$userCourseMax['id']?>);
-        console.log(<?=$userCourseMax['id']?>)
             displayDetails(null,<?=json_encode($userCourseMax)?>,'integrated',"<?=base_url("plafor/apprentice/getcourseplanprogress")?>"+'/');
             $('#usercourseSelector').change((event)=>{
                 let userCourses=<?= json_encode($user_courses)?>;
