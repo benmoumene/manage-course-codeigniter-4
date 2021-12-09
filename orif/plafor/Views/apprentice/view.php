@@ -67,15 +67,12 @@
         <!-- Linked course plans -->
         <div class="col-12 mt-2">
             <p><span class="font-weight-bold"><?=lang('plafor_lang.title_apprentice_followed_courses')?></span></p>
-
-            <?php if(service('session')->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_trainer):?>
-                <!-- List with ADMIN buttons, accessible for trainers or admin only -->
             <select class="form-control" id="usercourseSelector">
                 <?php foreach ($user_courses as $user_course) { ?>
-                   <option value="<?=$user_course['id']?>"><?=$course_plans[$user_course['fk_course_plan']]['official_name']?></option>
+                    <option value="<?=$user_course['id']?>"><?=$course_plans[$user_course['fk_course_plan']]['official_name']?></option>
                 <?php } ?>
             </select>
-                <table class="table table-hover table-borderless user-course-details-table">
+            <table class="table table-hover table-borderless user-course-details-table">
                 <tbody>
                 <tr>
                     <td class="user-course-details-begin-date"><?=$userCourseMax['date_begin']?></td>
@@ -84,8 +81,9 @@
 
                 </tr>
                 </tbody>
-                </table>
-
+            </table>
+            <?php if(service('session')->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_trainer):?>
+                <!-- List with ADMIN buttons, accessible for trainers or admin only -->
                 <a class="btn btn-primary text-white" href="<?= base_url('plafor/apprentice/save_user_course/'.$apprentice['id'])?>"><?= lang('plafor_lang.title_user_course_new') ?></a>
             <?php else:?>
                 <table class="table table-hover table-borderless">
