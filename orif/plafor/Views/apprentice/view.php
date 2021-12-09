@@ -86,16 +86,7 @@
                 <!-- List with ADMIN buttons, accessible for trainers or admin only -->
                 <a class="btn btn-primary text-white" href="<?= base_url('plafor/apprentice/save_user_course/'.$apprentice['id'])?>"><?= lang('plafor_lang.title_user_course_new') ?></a>
             <?php else:?>
-                <table class="table table-hover table-borderless">
-                <tbody>
-                    <?php foreach ($user_courses as $user_course) { ?>
-                        <tr>
-                            <td><?=$user_course_status[$user_course['fk_status']]['name']?></td>
-                            <td><a href="<?= base_url('plafor/apprentice/view_user_course/'.$user_course['id']) ?>"><?=$course_plans[$user_course['fk_course_plan']]['official_name']?></a></td>
-                        </tr>
-                    <?php } ?>
-                </tbody>
-                </table>
+
             <?php endif;
 
             ?>
