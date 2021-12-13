@@ -404,7 +404,7 @@ class Apprentice extends \App\Controllers\BaseController
             if (AcquisitionStatusModel::getInstance()->errors()==null) {
 
                 //if ok
-                return redirect()->to(base_url('plafor/courseplan/view_acquisition_status/'.$acquisition_status_id));
+                return $this->response->setStatusCode(200,'OK');
             }
         }
 
@@ -485,9 +485,9 @@ class Apprentice extends \App\Controllers\BaseController
             $response=null;
             //In the case of a student let him only see his coursePlanProgress else return 403
             $userId!=$this->session->get('user_id')?$response=$this->response->setStatusCode(403):$response=$this->response->setContentType('application/json')->setBody(json_encode($coursePlanId!=null?[(CoursePlanModel::getInstance()->getCoursePlanProgress($userId))[$coursePlanId]]:CoursePlanModel::getInstance()->getCoursePlanProgress($userId),JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+
             return $response;
         }
-        //d(CoursePlanModel::getInstance()->getCoursePlanProgress($userId));
 
 
 
