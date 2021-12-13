@@ -36,3 +36,76 @@ li.nav-item {
 p.bg-primary {
     padding-left: 5px;
 }
+/*view_user_course style*/
+.objectiveCardContainer{
+    max-width: 350px;
+    width: calc(50% - .4rem);
+    min-width: 240px;
+    margin-bottom: .5rem;
+    margin-left: .2rem;
+    margin-right: .2rem;
+}
+.objectiveCardHeader{
+    padding-left: .75rem;
+    padding-right: .75rem;
+}
+.objectiveCardHeader a{
+    color: white!important;
+}
+.objectiveCardContentContainer{
+
+}
+.objectiveCardDescription{
+    padding-left: .75rem;
+    padding-right: .75rem;
+    display: flex;
+    align-items: center;
+}
+.objectiveCardFooter{
+    display: flex;
+    align-items: center;
+    padding-left: .3rem;
+    padding-right: .3rem;
+    justify-content: space-around;
+    width: 100%;
+    padding-bottom: .2rem;
+}
+.objectiveCardTaxonomy{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    aspect-ratio: 1 / 1;
+    border-radius: 100%;
+    margin: 0;
+    margin-right: .5rem;
+
+}
+.objectiveCardTaxonomy a{
+    color: white!important;
+
+}
+#objectiveListContentResponsive{
+    display: none!important;
+}
+.acquisitionStatusSelect{
+    min-width: 130px;
+}
+@media screen and (max-width: 770px){
+    #objectiveListContent{
+        display: none;
+    }
+    #objectiveListContentResponsive{
+        display: flex!important;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+    }
+}
+@media screen and (max-width: 520px){
+    .objectiveCardContainer{
+        min-width: 280px;
+        width: 65%;
+    }
+}
