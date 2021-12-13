@@ -103,10 +103,13 @@ class CoursePlanModel extends Model{
             }
             return $indexedOperationalCompetences;
         }
-        function getObjectivesDatas($opCompId){
+        function getObjectivesDatas($opCompId,$userCourse){
             $intermediateArray=[];
+
                     foreach (ObjectiveModel::getObjectives(false,$opCompId) as $objective){
-                        $objective['fk_acquisition_level']=ObjectiveModel::getAcquisitionStatus($objective['id'])[0]['fk_acquisition_level'];
+
+                        ObjectiveModel::getAcquisitionStatus($objective['id'],$userCourse['id'])['fk_acquisition_level'];
+                        $objective['fk_acquisition_level']=ObjectiveModel::getAcquisitionStatus($objective['id'],$userCourse['id'])['fk_acquisition_level'];
                         $intermediateArray[]=$objective;
                     }
                     $objectives=$intermediateArray;
@@ -119,11 +122,14 @@ class CoursePlanModel extends Model{
         $coursePlans=getCoursePlansDatas($userId);
         foreach ($coursePlans as $coursePlan){
             $coursePlan['competenceDomains']=getCompetenceDomainsDatas($coursePlan['id']);
+
             foreach ($coursePlan['competenceDomains'] as $competenceDomain){
                 $operationalCompetences=getOperationalCompetencesDatas($competenceDomain['id']);
                 $competenceDomain['operationalCompetences']=$operationalCompetences;
+
                 foreach ($competenceDomain['operationalCompetences'] as $operationalCompetence){
-                    $objectives=getObjectivesDatas($operationalCompetence['id']);
+                    UserCourseModel::getInstance()->where(['fk_user'=>$userId,'fk_course_plan'=>$coursePlan['id']])->first();
+                    $objectives=getObjectivesDatas($operationalCompetence['id'],UserCourseModel::getInstance()->where('fk_user',$userId)->where('fk_course_plan',$coursePlan['id'])->first());
                     $operationalCompetence['objectives']=$objectives;
                     $competenceDomain['operationalCompetences'][$operationalCompetence['id']]=$operationalCompetence;
 
@@ -132,7 +138,6 @@ class CoursePlanModel extends Model{
             }
             $coursePlans[$coursePlan['id']]=$coursePlan;
             }
-
 
         return $coursePlans;
 
