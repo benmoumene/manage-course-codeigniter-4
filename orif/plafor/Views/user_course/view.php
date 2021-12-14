@@ -1,4 +1,6 @@
 <div class="container">
+    <?=view('\Plafor\templates\navigator',['title'=>lang('plafor_lang.title_view_user_course')])?>
+
     <div class="row">
         <div class="col-md-12">
             <p class="bg-primary text-white"><?=lang('plafor_lang.title_view_user_course')?></p>

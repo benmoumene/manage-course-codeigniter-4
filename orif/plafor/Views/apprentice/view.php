@@ -1,4 +1,5 @@
 <div class="container">
+    <?=view('\Plafor\templates\navigator',['title'=>lang('plafor_lang.title_view_apprentice')])?>
     <?php
     $maxdate=null;
     $userCourseMax=null;
