@@ -1,4 +1,5 @@
 <?php
+view('\Plafor\templates\navigator',['reset'=>true]);
 helper('Form');
 /**
  * Users List View

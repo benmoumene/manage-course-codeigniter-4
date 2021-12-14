@@ -1,4 +1,8 @@
 <?php
+if (isset($reset)){
+    service('session')->remove('navigator');
+}
+else{
 $navigatorLink=service('session')->get('navigator');
 if (isset($navigatorLink)){
     $index=null;
@@ -37,3 +41,4 @@ else{
     <a class="btn btn-primary bi bi-arrow-left-circle" style="margin-left: 0.5rem" href="<?=$navigatorLink[count($navigatorLink)-2]['link']?>"></a>
     <?php endif;?>
 </span>
+<?php } ?>
