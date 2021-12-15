@@ -17,8 +17,8 @@ if (file_exists(SYSTEMPATH . 'Config/Routes.php'))
  * Router Setup
  * --------------------------------------------------------------------
  */
-$routes->setDefaultNamespace('App\Controllers');
-$routes->setDefaultController('Home');
+$routes->setDefaultNamespace('Plafor\Controllers');
+$routes->setDefaultController('Apprentice');
 $routes->setDefaultMethod('index');
 $routes->setTranslateURIDashes(false);
 $routes->set404Override();
@@ -32,8 +32,7 @@ $routes->setAutoRoute(true);
 
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
-$routes->get('/', '\Welcome\Controllers\Home::index');
-
+$routes->get('/', '\Plafor\Controllers\Apprentice::index');
 /*
  * --------------------------------------------------------------------
  * Additional Routing

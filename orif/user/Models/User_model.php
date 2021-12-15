@@ -11,18 +11,20 @@ use CodeIgniter\Database\ConnectionInterface;
 use CodeIgniter\Validation\ValidationInterface;
 
 class User_model extends \CodeIgniter\Model{
+    private static $userModel;
     protected $table='user';
     protected $primaryKey='id';
-    protected $allowedFields=['archive','date_creation','email','username','password','fk_user_type'];
+    protected $allowedFields=['archive','date_creation','username','password','fk_user_type','email'];
     protected $useSoftDeletes=true;
     protected $deletedField="archive";
-    private $user_type_model=null;
 
-
-    public function __construct(ConnectionInterface &$db = null, ValidationInterface $validation = null)
-    {
-        parent::__construct($db, $validation);
-        $this->user_type_model=new User_type_model();
+    /**
+     * @return User_model
+     */
+    public static function getInstance(){
+        if (User_model::$userModel==null)
+            User_model::$userModel=new User_model();
+        return User_model::$userModel;
     }
 
     /**
@@ -32,8 +34,8 @@ class User_model extends \CodeIgniter\Model{
      * @param string $password
      * @return boolean true on success false otherwise
      */
-    public function check_password_name($username, $password){
-        $user=$this->where("username",$username)->first();
+    public static function check_password_name($username, $password){
+        $user=User_model::getInstance()->where("username",$username)->first();
         //If a user is found we can verify his password because if his archive is not empty, he is not in the array
         if (!is_null($user)){
             return password_verify($password,$user['password']);
@@ -51,11 +53,11 @@ class User_model extends \CodeIgniter\Model{
      * @param string $password
      * @return bool true on success false otherwise
      */
-    public function check_password_email($email,$password){
+   public static function check_password_email($email,$password){
         if (!filter_var($email,FILTER_VALIDATE_EMAIL)){
             return false;
         }
-        $user = $this->where('email',$email)->first();
+        $user = User_model::getInstance()->where('email',$email)->first();
         if (!is_null($user)){
             return password_verify($password,$user['password']);
         }
@@ -66,16 +68,44 @@ class User_model extends \CodeIgniter\Model{
 
     /**
      * return the access level of an user
-     * @param $user
+     * @param $fkUserTypeId
      * @return mixed
      */
-    public function get_access_level($user){
-        if ($this->user_type_model==null){
-            $this->user_type_model=new User_type_model();
-
-        }
-        $user->access_level=$this->user_type_model->getWhere(['id'=>$user->fk_user_type])->getRow()->access_level;
-        return $user->access_level;
+    public static function get_access_level($userID){
+        return User_type_model::getInstance()->getWhere(['id'=>User_model::getInstance()->find($userID)['fk_user_type']])->getRow()->access_level;
 
     }
+
+    /**
+     * @return array the list of apprentices
+     */
+    public static function getApprentices(bool $withDeleted=false){
+
+        if ($withDeleted)
+            return User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('access_level', config("\User\Config\UserConfig")->access_level_apprentice)->first()['id'])->withDeleted()->findAll();
+        return User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('name','Apprenti')->first()['id'])->findAll();
+
+    }
+
+    /**
+     * @return array the list of trainers
+     */
+    public static function getTrainers(bool $withDelted=false){
+        $indexedTrainers = array();
+        if ($withDelted) {
+            $trainers = User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('name','Formateur')->first()['id'])->withDeleted()->findAll();
+            foreach ($trainers as $trainer) {
+                $indexedTrainers[$trainer['id']] = $trainer;
+            }
+            return $indexedTrainers;
+        }
+        $trainers = User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('name','Formateur')->first()['id'])->findAll();
+        foreach ($trainers as $trainer) {
+            $indexedTrainers[$trainer['id']] = $trainer;
+        }
+        return $indexedTrainers;
+
+    }
+
+
 }

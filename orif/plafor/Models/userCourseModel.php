@@ -10,33 +10,71 @@ use User\Models\User_model;
 
 class UserCourseModel extends \CodeIgniter\Model
 {
+    private static $userCourseModel=null;
     protected $table='user_course';
     protected $primaryKey='id';
     protected $allowedFields=['fk_user','fk_course_plan','fk_status','date_begin','date_end'];
-    private User_model $userModel;
-    private CoursePlanModel $coursePlanModel;
-    private AcquisitionStatusModel $acquisitionStatusModel;
-    /** create function to get user, course plan and status */
+    protected $validationRules;
     public function __construct(ConnectionInterface &$db = null, ValidationInterface $validation = null)
     {
+        $this->validationRules=array(
+            'fk_course_plan'=>[
+                'label' => 'plafor_lang.course_plan',
+                'rules' => 'required|numeric',
+            ],
+            'fk_status'=>[
+                'label' => 'plafor_lang.status',
+                'rules' => 'required|numeric',
+            ],
+            'date_begin'=>[
+                'label' => 'plafor_lang.field_user_course_date_begin',
+                'rules' => 'required',
+            ]
+        );
         parent::__construct($db, $validation);
+    }
 
+    /**
+     * @return UserCourseModel
+     */
+    public static function getInstance(){
+        if (UserCourseModel::$userCourseModel==null)
+            UserCourseModel::$userCourseModel=new UserCourseModel();
+        return UserCourseModel::$userCourseModel;
     }
-    public function getUser($userCourse){
-        if ($this->userModel==null)
-        $this->userModel=new User_model();
-        return $this->userModel->find($userCourse['fk_user']);
+
+    /**
+     * @param $fkUserId
+     * @return array
+     */
+    public static function getUser($fkUserId){
+        return User_model::getInstance()->find($fkUserId);
     }
-    public function getCoursePlan($userCourse){
-        if ($this->coursePlanModel==null)
-        $this->coursePlanModel=new CoursePlanModel();
-        return $this->coursePlanModel->find($userCourse['fk_course_plan']);
+
+    /**
+     * @param $fkCoursePlanId
+     * @return array
+     */
+    public static function getCoursePlan($fkCoursePlanId){
+        return CoursePlanModel::getInstance()->find($fkCoursePlanId);
     }
-    public function getStatut($userCourse){
-        if ($this->acquisitionStatusModel==null)
-        $this->acquisitionStatusModel=new AcquisitionStatusModel();
-        return $this->acquisitionStatusModel->find($userCourse['fk_status']);
+
+    /**
+     * @param $fkUserCourseStatusId
+     * @return array
+     */
+    public static function getUserCourseStatus($fkUserCourseStatusId){
+        return UserCourseStatusModel::getInstance()->find($fkUserCourseStatusId);
     }
+
+    /**
+     * @param $userCourseId
+     * @return array
+     */
+    public static function getAcquisitionStatus($userCourseId){
+        return AcquisitionStatusModel::getInstance()->where('fk_user_course',$userCourseId)->findAll();
+    }
+
 
 
 }

@@ -1,14 +1,13 @@
 <?php
-/**
- * BaseController
- *
- * @author      Orif (ViDi)
- * @link        https://github.com/OrifInformatique
- * @copyright   Copyright (c), Orif (https://www.orif.ch) 
- */
 
 namespace App\Controllers;
+
 use CodeIgniter\Controller;
+use CodeIgniter\HTTP\CLIRequest;
+use CodeIgniter\HTTP\IncomingRequest;
+use CodeIgniter\HTTP\RequestInterface;
+use CodeIgniter\HTTP\ResponseInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Class BaseController
@@ -19,12 +18,16 @@ use CodeIgniter\Controller;
  *     class Home extends BaseController
  *
  * For security be sure to declare any new methods as protected or private.
- * 
- * @package CodeIgniter
  */
-
 class BaseController extends Controller
 {
+    /**
+     * Instance of the main Request object.
+     *
+     * @var CLIRequest|IncomingRequest
+     */
+    protected $request;
+
     /**
      * An array of helpers to be loaded automatically upon
      * class instantiation. These helpers will be available
@@ -37,10 +40,10 @@ class BaseController extends Controller
     /**
      * Limit the accessibility to the entire controller.
      * Modify this value in constructor of child controllers, before calling parent::initController.
-     * 
+     *
      * '*' accessible for all users
      * '@' accessible for logged in users
-     * 
+     *
      * Other possible values are defined in User\Config\UserConfig
      * For example : $access_level = config('User\Config\UserConfig')->access_lvl_admin
      */
@@ -130,7 +133,17 @@ class BaseController extends Controller
 
         // Display common headers
         echo view('Common\header', $data);
+
+        // Display login bar
         echo view('Common\login_bar');
+
+        // Display admin menu if appropriate
+        foreach (config('Common\Config\AdminPanelConfig')->tabs as $tab){
+            if (strstr(current_url(), $tab['pageLink'])) {
+                $data['title'] = lang($tab['title']);
+                echo view('\Common\Adminmenu');
+            }
+        }
 
         if (is_array($view_parts)) {
             // Display multiple view parts

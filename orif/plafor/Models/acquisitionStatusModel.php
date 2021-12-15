@@ -6,45 +6,55 @@ use CodeIgniter\Model;
 use CodeIgniter\Validation\ValidationInterface;
 
 class AcquisitionStatusModel extends Model{
-
+    private static $acquisitionStatusModel=null;
     protected $table='acquisition_status';
     protected $primaryKey='id';
     protected $allowedFields=['fk_objective','fk_user_course','fk_acquisition_level'];
-    private ObjectiveModel $objectiveModel;
-    private UserCourseModel $userCourseModel;
-    private AcquisitionLevelModel $acquisitionLevelModel;
+    private $objectiveModel=null;
+    private $userCourseModel=null;
+    private $acquisitionLevelModel=null;
+    protected $validationRules;
 
     public function __construct(ConnectionInterface &$db = null, ValidationInterface $validation = null)
     {
+        $this->validationRules= ['fk_acquisition_level'=>[
+            'label'=>'plafor_lang.field_acquisition_level',
+            'rules'=>'required|in_list['.implode(',', AcquisitionLevelModel::getInstance()->findColumn('id')).']'
+        ]];
         parent::__construct($db, $validation);
     }
 
     /**
-     * @param $acquisitionStatut /the array obtained from this model
-     * @return array
+     * @return AcquisitionStatusModel
      */
-    public function getObjective($acquisitionStatut){
-        $this->objectiveModel = new ObjectiveModel();
-        return $this->objectiveModel->find($acquisitionStatut['fk_objective']);
+    public static function getInstance(){
+        if (AcquisitionStatusModel::$acquisitionStatusModel==null) {
+            AcquisitionStatusModel::$acquisitionStatusModel = new AcquisitionStatusModel();
+        }
+        return AcquisitionStatusModel::$acquisitionStatusModel;
+    }
+    /**
+     * @param $fkObjectiveId /the id of the fk_objective
+     * @return array|null
+     */
+    public static function getObjective($fkObjectiveId){
+        return ObjectiveModel::getInstance()->withDeleted()->find($fkObjectiveId);
 
     }
     /**
-     * @param $acquisitionStatut /the array obtained from this model
-     * @return array
+     * @param $fkUserCourseId /the id of the fk_user_course
+     * @return array|null
      */
-    public function getUserCourse($acquisitionStatut){
-        $this->userCourseModel=new UserCourseModel();
-        return $this->userCourseModel->find($acquisitionStatut['fk_user_course']);
+    public static function getUserCourse($fkUserCourseId){
+        return UserCourseModel::getInstance()->find($fkUserCourseId);
 
     }
     /**
-     * @param $acquisitionStatut /the array obtained from this model
-     * @return array
+     * @param $fkAcquisitionLevelId /the id of the fk_aquisition_level
+     * @return array|null
      */
-    public function getAcquisitionLevel($acquisitionStatut){
-        if ($this->acquisitionLevelModel==null)
-        $this->acquisitionLevelModel=new AcquisitionLevelModel();
-        return $this->acquisitionLevelModel->find($acquisitionStatut['fk_acquisition_level']);
+    public static function getAcquisitionLevel($fkAcquisitionLevelId){
+        return AcquisitionLevelModel::getInstance()->find($fkAcquisitionLevelId);
 
     }
 }
