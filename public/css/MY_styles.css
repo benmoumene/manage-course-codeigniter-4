@@ -52,9 +52,6 @@ p.bg-primary {
 .objectiveCardHeader a{
     color: white!important;
 }
-.objectiveCardContentContainer{
-
-}
 .objectiveCardDescription{
     padding-left: .75rem;
     padding-right: .75rem;
@@ -91,17 +88,7 @@ p.bg-primary {
 .acquisitionStatusSelect{
     min-width: 130px;
 }
-#navigator{
-    margin-bottom: .5rem;
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-}
-#navigator > a{
-}
-#navigator > a:last-child{
 
-}
 @media screen and (max-width: 770px){
     #objectiveListContent{
         display: none;
@@ -114,12 +101,14 @@ p.bg-primary {
         justify-content: center;
     }
 }
-@media screen and (max-width: 750px) {
-    #navigator{
-    }
-    #navigator > a {
-    }
+
+#navigator {
+    margin-bottom: .5rem;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
 }
+
 @media screen and (max-width: 520px){
     .objectiveCardContainer{
         min-width: 280px;

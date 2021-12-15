@@ -1,56 +1,32 @@
-# CodeIgniter 4 Framework
+# Plafor
 
-## What is CodeIgniter?
+Web application to manage course plans of students in computer science CFC.
 
-CodeIgniter is a PHP full-stack web framework that is light, fast, flexible and secure.
-More information can be found at the [official site](http://codeigniter.com).
+## Getting Started
 
-This repository holds the distributable version of the framework,
-including the user guide. It has been built from the
-[development repository](https://github.com/codeigniter4/CodeIgniter4).
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
-More information about the plans for version 4 can be found in [the announcement](http://forum.codeigniter.com/thread-62615.html) on the forums.
+### Prerequisites
 
-The user guide corresponding to this version of the framework can be found
-[here](https://codeigniter4.github.io/userguide/).
+This project is developed on a LAMP server with PHP 7.4 and MariaDB 10.4.
+It is based on the CodeIgniter 4.x framework.
 
+### Installing
 
-## Important Change with index.php
+1. Download [our latest release](https://github.com/OrifInformatique/plafor/tree/Release-4.0)
+2. Unzip your download in your project's directory (in your local PHP server)
+3. Rename env file to .env and adapt it for your server's parameters
+4. To init the project navigate to your server address, like ``http://localhost/plafor/public``
+and add migration at the end of url
+   ``http://localhost/plafor/public/migration``
+## Built With
 
-`index.php` is no longer in the root of the project! It has been moved inside the *public* folder,
-for better security and separation of components.
+* [CodeIgniter 4.x](https://www.codeigniter.com/) - PHP framework
+* [Bootstrap](https://getbootstrap.com/) - Design library with personalized css
+* [ReactJS v17.0.2](https://fr.reactjs.org/) - Design Library to add simple interactivity
 
-This means that you should configure your web server to "point" to your project's *public* folder, and
-not to the project root. A better practice would be to configure a virtual host to point there. A poor practice would be to point your web server to the project root and expect to enter *public/...*, as the rest of your logic and the
-framework are exposed.
+## Authors
 
-**Please** read the user guide for a better explanation of how CI4 works!
+* **Orif, domaine informatique** - *Initiating and following the project* - [GitHub account](https://github.com/OrifInformatique)
 
-## Repository Management
-
-We use Github issues, in our main repository, to track **BUGS** and to track approved **DEVELOPMENT** work packages.
-We use our [forum](http://forum.codeigniter.com) to provide SUPPORT and to discuss
-FEATURE REQUESTS.
-
-This repository is a "distribution" one, built by our release preparation script.
-Problems with it can be raised on our forum, or as issues in the main repository.
-
-## Contributing
-
-We welcome contributions from the community.
-
-Please read the [*Contributing to CodeIgniter*](https://github.com/codeigniter4/CodeIgniter4/blob/develop/contributing.md) section in the development repository.
-
-## Server Requirements
-
-PHP version 7.3 or higher is required, with the following extensions installed:
-
-- [intl](http://php.net/manual/en/intl.requirements.php)
-- [libcurl](http://php.net/manual/en/curl.requirements.php) if you plan to use the HTTP\CURLRequest library
-
-Additionally, make sure that the following extensions are enabled in your PHP:
-
-- json (enabled by default - don't turn it off)
-- [mbstring](http://php.net/manual/en/mbstring.installation.php)
-- [mysqlnd](http://php.net/manual/en/mysqlnd.install.php)
-- xml (enabled by default - don't turn it off)
+See also the list of [contributors](https://github.com/OrifInformatique/plafor/contributors) who participated in this project.

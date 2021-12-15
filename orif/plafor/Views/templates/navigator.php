@@ -32,13 +32,20 @@ else{
 }
 ?>
 <span id="navigator">
-<?php
+    <?php 
     $navigatorLink=service('session')->get('navigator');
-    for($i=0;$i<count($navigatorLink);$i++){?>
-        <a href="<?=$navigatorLink[$i]['link']?>"><?=$navigatorLink[$i]['title']?></a> <?php echo count($navigatorLink)>1&&$i!=count($navigatorLink)-1?'<i class="bi bi-arrow-right-short" style="color: #ae9b70"></i>':''?>
-<?php }?>
-    <?php if(count($navigatorLink)>1):?>
-    <a class="btn btn-primary bi bi-arrow-left-circle" style="margin-left: 0.5rem" href="<?=$navigatorLink[count($navigatorLink)-2]['link']?>"></a>
+    if(count($navigatorLink)>1):?>
+        <a id="navigator-back" class="btn btn-outline-primary mr-2 bi bi-arrow-left-circle" href="<?=$navigatorLink[count($navigatorLink)-2]['link']?>">
+            <?= lang("common_lang.btn_back") ?>
+        </a>
+        <?php for($i=0;$i<count($navigatorLink);$i++) {?>
+            <a href="<?=$navigatorLink[$i]['link']?>"><?=$navigatorLink[$i]['title']?></a>
+            <?php echo count($navigatorLink)>1 && $i!=count($navigatorLink)-1 ? '<span class="text-primary"><i class="bi bi-arrow-right-short" ></i></span>' : ''?>
+        <?php } ?>
+    <?php else : ?>
+        <a id="navigator-back" class="btn btn-outline-primary mr-2 bi bi-arrow-left-circle" href="<?= base_url("courseplan/list_course_plan") ?>">
+            <?= lang("common_lang.btn_back") ?>
+        </a>
     <?php endif;?>
 </span>
 <?php } ?>
