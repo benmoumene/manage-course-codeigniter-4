@@ -10,11 +10,11 @@
                     <div class = "alert alert-info" ><?= lang('plafor_lang.operational_competence_'.($operational_competence['archive']==null?'disable_explanation':'enable_explanation'))?></div>
                 </div>
                 <div class="text-right">
-                    <a href="<?= base_url('plafor/admin/list_operational_competence'); ?>" class="btn btn-default">
+                    <a href="<?= base_url('plafor/courseplan/view_competence_domain/'.\Plafor\Models\CompetenceDomainModel::getCoursePlan(\Plafor\Models\CompetenceDomainModel::getInstance()->find($operational_competence['fk_competence_domain'])['fk_course_plan'])['id']); ?>" class="btn btn-default">
                         <?= lang('common_lang.btn_cancel'); ?>
                     </a>
                     <?php 
-                    echo $operational_competence['archive']!=null?"<a href=".base_url('plafor/admin/delete_operational_competence/'.$operational_competence['id'].'/3').">".lang('common_lang.reactivate')."</a>"
+                    echo $operational_competence['archive']!=null?"<a href=".base_url('plafor/courseplan/delete_operational_competence/'.$operational_competence['id'].'/3').">".lang('common_lang.reactivate')."</a>"
                     :
                     "<a href=".base_url(uri_string().'/1')." class={btn btn-danger} >".
                         lang('common_lang.btn_disable');"

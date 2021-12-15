@@ -36,7 +36,7 @@ $session=\CodeIgniter\Config\Services::session();
         'id' => 'competence_domain_form',
         'name' => 'competence_domain_form'
     );
-    echo form_open(base_url('plafor/admin/save_competence_domain'), $attributes, [
+    echo form_open(base_url('plafor/courseplan/save_competence_domain'), $attributes, [
         'id' => $competence_domain['id'] ?? 0
     ]);
     ?>
@@ -65,7 +65,7 @@ $session=\CodeIgniter\Config\Services::session();
         <!-- FORM BUTTONS -->
         <div class="row">
             <div class="col text-right">
-                <a class="btn btn-default" href="<?= base_url('plafor/admin/list_competence_domain/'.($fk_course_plan_id==null?'':$fk_course_plan_id)) ?>"><?= lang('common_lang.btn_cancel'); ?></a>
+                <a class="btn btn-default" href="<?= base_url('plafor/courseplan/view_course_plan/'.($fk_course_plan_id==null?'':$fk_course_plan_id)) ?>"><?= lang('common_lang.btn_cancel'); ?></a>
                 <?= form_submit('save', lang('common_lang.btn_save'), ['class' => 'btn btn-primary']); ?>
             </div>
         </div>

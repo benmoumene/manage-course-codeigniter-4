@@ -1,20 +1,21 @@
 <div class="container">
+    <?=view('\Plafor\templates\navigator',['title'=>lang('plafor_lang.title_view_acquisition_status')])?>
     <div class="row">
         <div class="col-md-12">
             <p class="bg-primary text-white"><?=lang('plafor_lang.details_acquisition_status')?></p>
         </div><div class="col-md-2">
             <p class="font-weight-bold"><?=lang('plafor_lang.field_objective_symbol')?></p>
-            <a href="<?= base_url('plafor/apprentice/view_objective/'.$objective['id'])?>"><?=$objective['symbol']?></a>
+            <a href="<?= base_url('plafor/courseplan/view_objective/'.$objective['id'])?>"><?=$objective['symbol']?></a>
         </div><div class="col-md-6">
             <p class="font-weight-bold"><?=lang('plafor_lang.field_objective_name')?></p>
-            <a href="<?= base_url('plafor/apprentice/view_objective/'.$objective['id'])?>"><?=$objective['name']?></a>
+            <a href="<?= base_url('plafor/courseplan/view_objective/'.$objective['id'])?>"><?=$objective['name']?></a>
         </div><div class="col-md-2">
             <p class="font-weight-bold"><?=lang('plafor_lang.field_objective_taxonomy')?></p>
-            <a href="<?= base_url('plafor/apprentice/view_objective/'.$objective['id'])?>"><?=$objective['taxonomy']?></a>
+            <a href="<?= base_url('plafor/courseplan/view_objective/'.$objective['id'])?>"><?=$objective['taxonomy']?></a>
         </div>
         <div class="col-md-2">
             <p class="font-weight-bold"><?=lang('plafor_lang.field_acquisition_level')?></p>
-            <a href="<?= base_url('plafor/apprentice/save_acquisition_status/'.$acquisition_status['id'])?>"><?=$acquisition_level['name']?></a>
+            <p><?=$acquisition_level['name']?></p>
         </div>
     </div>
     <div class="row">

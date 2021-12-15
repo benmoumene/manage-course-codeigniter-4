@@ -59,7 +59,10 @@ class ObjectiveModel extends \CodeIgniter\Model
      * @param $objectiveId
      * @return array
      */
-    public static function getAcquisitionStatus($objectiveId){
+    public static function getAcquisitionStatus($objectiveId,$userCourseId=null){
+        if ($userCourseId!=null){
+            return AcquisitionStatusModel::getInstance()->where('fk_objective',$objectiveId)->where('fk_user_course',$userCourseId)->first();
+        }
         return AcquisitionStatusModel::getInstance()->where('fk_objective',$objectiveId)->findAll();
     }
 

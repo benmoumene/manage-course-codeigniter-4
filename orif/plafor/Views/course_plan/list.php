@@ -1,4 +1,5 @@
 <?php
+view('\Plafor\templates\navigator',['reset'=>true]);
 helper('Form');
 /**
  * Users List View
@@ -16,7 +17,7 @@ helper('Form');
     </div>
     <div class="row" style="justify-content:space-between">
         <div class="col-sm-3 text-left">
-            <a href="<?= base_url('plafor/admin/save_course_plan'); ?>" class="btn btn-primary">
+            <a href="<?= base_url('plafor/courseplan/save_course_plan'); ?>" class="btn btn-primary">
                 <?= lang('common_lang.btn_new_m'); ?>
             </a>
         </div>
@@ -42,10 +43,10 @@ helper('Form');
             <tbody id="course_planslist">
             <?php foreach($course_plans as $course_plan) { ?>
                 <tr>
-                    <td><a href="<?= base_url('plafor/admin/list_competence_domain/'.$course_plan['id'].($course_plan['archive']==null?'':'/1')); ?>"><span class="font-weight-bold"><?= $course_plan['formation_number']?></span><?= $course_plan['official_name']; ?></td>
-                    <td><a href="<?= base_url('plafor/apprentice/view_course_plan/'.$course_plan['id'])?>"><?= lang('common_lang.btn_details')?></a></td>
-                    <td><a href="<?= base_url('plafor/admin/save_course_plan/'.$course_plan['id']); ?>"><?= lang('common_lang.btn_edit')?></a></td>
-                    <td><a href="<?= base_url('plafor/admin/delete_course_plan/'.$course_plan['id']); ?>" class="<?=$course_plan['archive']==null?'bi bi-trash':'bi bi-reply-all-fill'?>"></td>
+                    <td><a href="<?= base_url('plafor/courseplan/view_course_plan/'.$course_plan['id']) ?>"><span class="font-weight-bold"><?= $course_plan['formation_number']?></span><?= $course_plan['official_name']; ?></td>
+                    <td><a href="<?= base_url('plafor/courseplan/view_course_plan/'.$course_plan['id'])?>"><?= lang('common_lang.btn_details')?></a></td>
+                    <td><a href="<?= base_url('plafor/courseplan/save_course_plan/'.$course_plan['id']); ?>"><?= lang('common_lang.btn_edit')?></a></td>
+                    <td><a href="<?= base_url('plafor/courseplan/delete_course_plan/'.$course_plan['id']); ?>" class="<?=$course_plan['archive']==null?'bi bi-trash':'bi bi-reply-all-fill'?>"></td>
                 </tr>
             <?php } ?>
             </tbody>
@@ -58,7 +59,7 @@ helper('Form');
         $('#toggle_deleted').change(e => {
             console.log('ewqewqe');
             let checked = e.currentTarget.checked;
-            $.post('<?=base_url();?>/plafor/admin/list_course_plan/0/'+(+checked), {}, data => {
+            $.post('<?=base_url();?>/plafor/courseplan/list_course_plan/0/'+(+checked), {}, data => {
                 $('#course_planslist').empty();
                 $('#course_planslist')[0].innerHTML = $(data).find('#course_planslist')[0].innerHTML;
             });
