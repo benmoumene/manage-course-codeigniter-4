@@ -15,7 +15,7 @@
         </div>
         <div class="col-md-2">
             <p class="font-weight-bold"><?=lang('plafor_lang.field_acquisition_level')?></p>
-            <a href="<?= base_url('plafor/apprentice/save_acquisition_status/'.$acquisition_status['id'])?>"><?=$acquisition_level['name']?></a>
+            <p><?=$acquisition_level['name']?></p>
         </div>
     </div>
     <div class="row">
