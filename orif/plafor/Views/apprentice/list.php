@@ -13,7 +13,7 @@ helper('Form');
     <div class="row">
         <div class="col">
             <h1 class="title-section"><?= lang('plafor_lang.title_apprentice_list'); ?></h1>
-            <div style="display:flex;flex-direction:row;align-items:center;justify-content:space-between;">
+            <div style="display:flex;flex-direction:row;align-items:center;justify-content:space-between;flex-wrap: wrap">
                 <?php
                 echo form_open(base_url('plafor/apprentice/list_apprentice/'), ['method' => 'GET']);
                 echo form_dropdown('trainer_id', $trainers, strval($trainer_id), ['class' => 'form-control', 'style' => 'width:unset!important;display:unset!important;margin-left:-10px;']);
@@ -24,9 +24,9 @@ helper('Form');
                 <span>
 
             <?= form_checkbox('toggle_deleted', '', $with_archived, [
-                'id' => 'toggle_deleted', 'class' => 'form-check-input'
+                'id' => 'toggle_deleted', 'class' => 'form-check-input','style' => 'margin-left:1px'
             ]); ?>
-            <?= form_label(lang('common_lang.btn_show_disabled'), 'toggle_deleted', ['class' => 'form-check-label']); ?>
+            <?= form_label(lang('common_lang.btn_show_disabled'), 'toggle_deleted', ['class' => 'form-check-label','style'=>'margin-left:1.5rem']); ?>
                 </span>
             </div>
 
@@ -36,7 +36,7 @@ helper('Form');
 
 <div class="row mt-2">
     <table class="table table-hover">
-        <thead>
+        <thead class="list-apprentice-table-header">
         <tr>
             <th><?= lang('plafor_lang.field_apprentice_username'); ?></th>
             <th><?= lang('plafor_lang.field_followed_courses'); ?></th>

@@ -125,4 +125,44 @@ p.bg-primary {
         min-width: 280px;
         width: 65%;
     }
+    #apprenticeslist{
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        overflow: hidden;
+    }
+    #apprenticeslist tr{
+        width: 100vw;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-evenly;
+    }
+    #apprenticeslist tr td:nth-child(1){
+        min-width: 100px;
+        width: 20%;
+        padding: 0 5px;
+        word-wrap: break-word;
+    }
+    #apprenticeslist tr td:nth-child(2){
+        padding: 0 5px;
+        min-width: 130px;
+        max-width: 130px;
+
+    }
+    #apprenticeslist tr td:nth-child(3) {
+        width: 100px;
+        max-width: 100px!important;
+        min-width: unset!important;
+        display: flex;
+        justify-content: center;
+        padding: 0;
+
+    }
+    .progressContainer{
+        width: 100%;
+    }
+    .list-apprentice-table-header{
+        display: none;
+    }
+
 }
