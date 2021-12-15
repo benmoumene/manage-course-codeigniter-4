@@ -76,7 +76,7 @@ helper('Form');
                 $('#apprenticeslist').empty();
                 $('#apprenticeslist')[0].innerHTML = $(data).find('#apprenticeslist')[0].innerHTML;
             }).then(()=>{
-                initProgress();
+                initProgress("<?=base_url("plafor/apprentice/getcourseplanprogress")?>"+'/',"<?=lang('plafor_lang.details_progress')?>");
             });
         });
     });
