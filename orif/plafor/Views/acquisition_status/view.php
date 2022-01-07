@@ -23,7 +23,7 @@
             <p class="bg-primary text-white"><?=lang('plafor_lang.field_linked_comments')?></p>
 		</div>
 		<?php if($_SESSION['user_access'] >= config('\User\Config\UserConfig')->access_lvl_trainer) { ?>
-		<a href="<?= base_url('plafor/apprentice/add_comment/'.$acquisition_status['id']); ?>" class="btn btn-primary"><?= lang('plafor_lang.title_comment_new'); ?></a>
+		<a style="margin-left: 15px" href="<?= base_url('plafor/apprentice/add_comment/'.$acquisition_status['id']); ?>" class="btn btn-primary"><?= lang('plafor_lang.title_comment_new'); ?></a>
 		<?php } ?>
         <div class="col-md-12">
             <table class="table table-hover">
