@@ -155,3 +155,25 @@ p.bg-primary {
     }
 
 }
+@media all and (max-width: 475px){
+
+    .responsiveTable th{
+        display: none;
+    }
+    .responsiveTable td .descTitle{
+        display: block!important;
+        font-size: 0.8rem;
+        color: #665d40;
+    }
+    .responsiveTable tr{
+        display: flex;
+    }
+    .responsiveTable td{
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding-bottom: 10px!important;
+    }
+    .responsiveTable td:nth-child(2){
+    }
+}

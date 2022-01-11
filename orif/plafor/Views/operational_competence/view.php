@@ -150,6 +150,4 @@
             element.remove();
         })
     }
-
-
 </script>
