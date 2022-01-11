@@ -23,7 +23,6 @@ class AddOpCompetence extends Migration {
             'name' => [
                 'type' => 'varchar',
                 'constraint' => '150',
-                'default' => 'null',
             ],
             'symbol' => [
                 'type' => 'varchar',
@@ -31,15 +30,12 @@ class AddOpCompetence extends Migration {
             ],
             'methodologic' => [
                 'type' => 'text',
-                'default' => 'null',
             ],
             'social' => [
                 'type' => 'text',
-                'default' => 'null',
             ],
             'personal' => [
                 'type' => 'text',
-                'default' => 'null',
             ],
 
             'archive timestamp null',

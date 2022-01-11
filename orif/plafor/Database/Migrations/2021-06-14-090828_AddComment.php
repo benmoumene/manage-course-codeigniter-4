@@ -35,7 +35,7 @@ class AddComment extends Migration {
         $this->forge->addKey('id', true, true);
         $this->forge->addForeignKey('fk_trainer', 'user','id');
         $this->forge->addForeignKey('fk_acquisition_status', 'acquisition_status','id');
-        $this->forge->createTable('Comment');
+        $this->forge->createTable('comment');
 
     }
 

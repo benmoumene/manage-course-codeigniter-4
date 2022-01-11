@@ -103,13 +103,13 @@
         </div>
     </div>
 </div>
-<script type="text/javascript" defer>
+<script defer type="text/javascript">
     window.addEventListener('resize',()=>{
 
-        if (window.innerWidth<476){
+        if (window.innerWidth<490){
 
             if (document.querySelectorAll('.responsiveTable td:nth-child(2) .descTitle').item(0)!==null?window.getComputedStyle(document.querySelectorAll('.responsiveTable td:nth-child(2) .descTitle').item(0)).display!=="none":false)
-            document.querySelectorAll('.responsiveTable td:nth-child(2)').forEach((element)=>{
+                document.querySelectorAll('.responsiveTable td:nth-child(2)').forEach((element)=>{
                 let tax=document.createElement('span');
                 tax.innerHTML=`<span class='taxonomyResponsive'>${element.innerHTML}<span>`
 
@@ -129,15 +129,25 @@
         }
 
     });
-    if (window.getComputedStyle(document.querySelectorAll('.responsiveTable td:nth-child(2) .descTitle').item(0)).display!=="none")
-    document.querySelectorAll('.responsiveTable td:nth-child(2)').forEach((element)=>{
-        let tax=document.createElement('span');
-        tax.innerHTML=`<span class='taxonomyResponsive'>${element.innerHTML}<span>`
+    if (window.innerWidth<490){
 
-        element.previousElementSibling.appendChild(tax);
-        element.remove();
+        if (document.querySelectorAll('.responsiveTable td:nth-child(2) .descTitle').item(0)!==null?window.getComputedStyle(document.querySelectorAll('.responsiveTable td:nth-child(2) .descTitle').item(0)).display!=="none":false)
+            document.querySelectorAll('.responsiveTable td:nth-child(2)').forEach((element)=>{
+                let tax=document.createElement('span');
+                tax.innerHTML=`<span class='taxonomyResponsive'>${element.innerHTML}<span>`
 
-    })
+                element.previousElementSibling.appendChild(tax);
+                element.remove();
 
-
+            })
+    }
+    else{
+        document.querySelectorAll('.responsiveTable td:nth-child(1) .taxonomyResponsive').forEach((element)=>{
+            let td=document.createElement('td');
+            td.innerHTML=element.innerHTML;
+            if (element.parentElement.parentElement.nextElementSibling.querySelector('.descTitle')==null)
+                element.parentElement.parentElement.after(td);
+            element.remove();
+        })
+    }
 </script>

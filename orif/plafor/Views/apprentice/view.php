@@ -107,7 +107,7 @@
 <script type="text/babel">
     $(document).ready(()=>{
         $('#usercourseSelector').val(<?=isset($userCourseMax)?$userCourseMax['id']:null?>);
-            displayDetails(null,<?=json_encode($userCourseMax)?>,'integrated',"<?=base_url("plafor/apprentice/getcourseplanprogress")?>"+'/',"<?=base_url('plafor/apprentice/view_user_course')?>");
+            setTimeout(()=>{displayDetails(null,<?=json_encode($userCourseMax)?>,'integrated',"<?=base_url("plafor/apprentice/getcourseplanprogress")?>"+'/',"<?=base_url('plafor/apprentice/view_user_course')?>");},200)
             $('#usercourseSelector').change((event)=>{
                 let userCourses=<?= json_encode($user_courses)?>;
                 let coursePlans=<?= json_encode($course_plans)?>;

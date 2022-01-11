@@ -1,6 +1,6 @@
 <?php
 view('\Plafor\templates\navigator',['reset'=>true]);
-helper('Form');
+helper('form');
 /**
  * Users List View
  *
@@ -69,7 +69,7 @@ helper('Form');
 <script type="text/babel" defer>
 
     $(document).ready(function () {
-        initProgress("<?=base_url("plafor/apprentice/getcourseplanprogress")?>"+'/',"<?=lang('plafor_lang.details_progress')?>");
+        setTimeout(()=>{initProgress("<?=base_url("plafor/apprentice/getcourseplanprogress")?>"+'/',"<?=lang('plafor_lang.details_progress')?>")},200);
         $('#toggle_deleted').change(e => {
             let checked = e.currentTarget.checked;
             $.post('<?php echo base_url("plafor/apprentice/list_apprentice") . '/'?>' + ((checked == true ? '1' : '0')), {}, data => {
