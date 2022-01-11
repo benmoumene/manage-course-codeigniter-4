@@ -1,6 +1,6 @@
 <?php
 view('\Plafor\templates\navigator',['reset'=>true]);
-helper('Form');
+helper('form');
 /**
  * Users List View
  *
@@ -16,7 +16,7 @@ helper('Form');
             <div style="display:flex;flex-direction:row;align-items:center;justify-content:space-between;flex-wrap: wrap">
                 <?php
                 echo form_open(base_url('plafor/apprentice/list_apprentice/'), ['method' => 'GET']);
-                echo form_dropdown('trainer_id', $trainers, strval($trainer_id), ['class' => 'form-control', 'style' => 'width:unset!important;display:unset!important;margin-left:-10px;']);
+                echo form_dropdown('trainer_id', $trainers, strval($trainer_id), ['class' => 'form-control', 'style' => 'width:unset!important;display:unset!important;']);
                 echo form_submit(null, lang('common_lang.btn_search'), ['class' => 'btn btn-primary', 'style' => 'vertical-align:unset!important;']); ?>
                 <?php
                 echo form_close();
@@ -69,7 +69,7 @@ helper('Form');
 <script type="text/babel" defer>
 
     $(document).ready(function () {
-        initProgress("<?=base_url("plafor/apprentice/getcourseplanprogress")?>"+'/',"<?=lang('plafor_lang.details_progress')?>");
+        setTimeout(()=>{initProgress("<?=base_url("plafor/apprentice/getcourseplanprogress")?>"+'/',"<?=lang('plafor_lang.details_progress')?>")},200);
         $('#toggle_deleted').change(e => {
             let checked = e.currentTarget.checked;
             $.post('<?php echo base_url("plafor/apprentice/list_apprentice") . '/'?>' + ((checked == true ? '1' : '0')), {}, data => {

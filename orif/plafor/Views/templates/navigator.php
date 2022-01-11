@@ -43,7 +43,7 @@ else{
             <?php echo count($navigatorLink)>1 && $i!=count($navigatorLink)-1 ? '<span class="text-primary"><i class="bi bi-arrow-right-short" ></i></span>' : ''?>
         <?php } ?>
     <?php else : ?>
-        <a id="navigator-back" class="btn btn-outline-primary mr-2 bi bi-arrow-left-circle" href="<?= base_url("courseplan/list_course_plan") ?>">
+        <a id="navigator-back" class="btn btn-outline-primary mr-2 bi bi-arrow-left-circle" href="<?= base_url("plafor/courseplan/list_course_plan") ?>">
             <?= lang("common_lang.btn_back") ?>
         </a>
     <?php endif;?>

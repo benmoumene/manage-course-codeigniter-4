@@ -65,7 +65,7 @@
             <?php if (service('session')->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_admin): ?>
             <a href="<?=base_url('plafor/courseplan/save_objective/0/'.$operational_competence['id']) ?>" class="btn btn-primary"><?= lang('common_lang.btn_new_m')?></a>
             <?php endif;?>
-            <table class="table table-hover">
+            <table class="responsiveTable table table-hover">
             <thead>
                 <tr>
                     <th><span class="font-weight-bold"><?=lang('plafor_lang.field_objectives_symbols')?></span></th>
@@ -81,8 +81,15 @@
             if (isset($objectives)):
             foreach ($objectives as $objective){
                 ?><tr>
-                    <td><a class="font-weight-bold" href="<?= base_url('plafor/courseplan/view_objective/'.$objective['id'])?>"><?=$objective['symbol']?></a></td>
-                    <td><a href="<?= base_url('plafor/courseplan/view_objective/'.$objective['id'])?>"><?=$objective['taxonomy']?></a></td>
+                    <td>
+                        <a class="font-weight-bold" href="<?= base_url('plafor/courseplan/view_objective/'.$objective['id'])?>"><?=$objective['symbol']?></a>
+
+                    </td>
+                    <td>
+                        <span class="font-weight-bold descTitle" style="display: none"><?=lang('plafor_lang.field_taxonomy')?></span>
+                        <a href="<?= base_url('plafor/courseplan/view_objective/'.$objective['id'])?>"><?=$objective['taxonomy']?></a>
+
+                    </td>
                     <td><a href="<?= base_url('plafor/courseplan/view_objective/'.$objective['id'])?>"><?=$objective['name']?></a></td>
                 <?php if(service('session')->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_admin):?>
                     <td><a href="<?= base_url('plafor/courseplan/save_objective/'.$objective['id'].'/'.$operational_competence['id']); ?>"><?= lang('common_lang.btn_edit')?></a></td>
@@ -96,3 +103,53 @@
         </div>
     </div>
 </div>
+<script defer type="text/javascript">
+    window.addEventListener('resize',()=>{
+
+        if (window.innerWidth<490){
+
+            if (document.querySelectorAll('.responsiveTable td:nth-child(2) .descTitle').item(0)!==null?window.getComputedStyle(document.querySelectorAll('.responsiveTable td:nth-child(2) .descTitle').item(0)).display!=="none":false)
+                document.querySelectorAll('.responsiveTable td:nth-child(2)').forEach((element)=>{
+                let tax=document.createElement('span');
+                tax.innerHTML=`<span class='taxonomyResponsive'>${element.innerHTML}<span>`
+
+                element.previousElementSibling.appendChild(tax);
+                element.remove();
+
+            })
+        }
+        else{
+            document.querySelectorAll('.responsiveTable td:nth-child(1) .taxonomyResponsive').forEach((element)=>{
+                let td=document.createElement('td');
+                td.innerHTML=element.innerHTML;
+                if (element.parentElement.parentElement.nextElementSibling.querySelector('.descTitle')==null)
+                element.parentElement.parentElement.after(td);
+                element.remove();
+            })
+        }
+
+    });
+    if (window.innerWidth<490){
+
+        if (document.querySelectorAll('.responsiveTable td:nth-child(2) .descTitle').item(0)!==null?window.getComputedStyle(document.querySelectorAll('.responsiveTable td:nth-child(2) .descTitle').item(0)).display!=="none":false)
+            document.querySelectorAll('.responsiveTable td:nth-child(2)').forEach((element)=>{
+                let tax=document.createElement('span');
+                tax.innerHTML=`<span class='taxonomyResponsive'>${element.innerHTML}<span>`
+
+                element.previousElementSibling.appendChild(tax);
+                element.remove();
+
+            })
+    }
+    else{
+        document.querySelectorAll('.responsiveTable td:nth-child(1) .taxonomyResponsive').forEach((element)=>{
+            let td=document.createElement('td');
+            td.innerHTML=element.innerHTML;
+            if (element.parentElement.parentElement.nextElementSibling.querySelector('.descTitle')==null)
+                element.parentElement.parentElement.after(td);
+            element.remove();
+        })
+    }
+
+
+</script>

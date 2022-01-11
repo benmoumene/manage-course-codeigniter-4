@@ -76,9 +76,9 @@
             <table class="table table-hover table-borderless user-course-details-table">
                 <tbody>
                 <tr>
-                    <td class="user-course-details-begin-date"><?=$userCourseMax['date_begin']?></td>
-                    <td class="user-course-details-end-date"><?=$userCourseMax['date_end']?></td>
-                    <td class="user-course-details-status"><?=$user_course_status[$userCourseMax['fk_status']]['name']?></td>
+                    <td class="user-course-details-begin-date"><?=isset($userCourseMax)?$userCourseMax['date_begin']:null?></td>
+                    <td class="user-course-details-end-date"><?=isset($userCourseMax)?$userCourseMax['date_end']:null?></td>
+                    <td class="user-course-details-status"><?=isset($userCourseMax)?$user_course_status[$userCourseMax['fk_status']]['name']:null?></td>
 
                 </tr>
                 </tbody>
@@ -98,16 +98,16 @@
     <div class="row mt-2">
         <div class="col-md-12">
             <p class="bg-primary text-white"><?=lang('plafor_lang.title_course_plan_status')?></p>
-            <p class="font-weight-bold user-course-details-course-plan-name"><?= $course_plans[$userCourseMax['fk_course_plan']]['official_name'] ?></p>
-            <div id="detailsArray" apprentice_id="<?= $apprentice['id'] ?>" course_plan_id="<?=$userCourseMax['fk_course_plan']?>"></div>
+            <p class="font-weight-bold user-course-details-course-plan-name"><?= isset($userCourseMax)?$course_plans[$userCourseMax['fk_course_plan']]['official_name']:null ?></p>
+            <div id="detailsArray" apprentice_id="<?= $apprentice['id'] ?>" course_plan_id="<?=isset($userCourseMax)?$userCourseMax['fk_course_plan']:null?>"></div>
         </div>
     </div>
 </div>
 
 <script type="text/babel">
     $(document).ready(()=>{
-        $('#usercourseSelector').val(<?=$userCourseMax['id']?>);
-            displayDetails(null,<?=json_encode($userCourseMax)?>,'integrated',"<?=base_url("plafor/apprentice/getcourseplanprogress")?>"+'/',"<?=base_url('plafor/apprentice/view_user_course')?>");
+        $('#usercourseSelector').val(<?=isset($userCourseMax)?$userCourseMax['id']:null?>);
+            setTimeout(()=>{displayDetails(null,<?=json_encode($userCourseMax)?>,'integrated',"<?=base_url("plafor/apprentice/getcourseplanprogress")?>"+'/',"<?=base_url('plafor/apprentice/view_user_course')?>");},200)
             $('#usercourseSelector').change((event)=>{
                 let userCourses=<?= json_encode($user_courses)?>;
                 let coursePlans=<?= json_encode($course_plans)?>;

@@ -1,6 +1,6 @@
 <?php
 view('\Plafor\templates\navigator',['reset'=>true]);
-helper('Form');
+helper('form');
 /**
  * Users List View
  *
@@ -16,17 +16,17 @@ helper('Form');
         </div>
     </div>
     <div class="row" style="justify-content:space-between">
-        <div class="col-sm-3 text-left">
+        <div class="col-sm-3">
             <a href="<?= base_url('plafor/courseplan/save_course_plan'); ?>" class="btn btn-primary">
                 <?= lang('common_lang.btn_new_m'); ?>
             </a>
         </div>
-            <div style="align-self:flex-end;">
-                <?=form_checkbox('toggle_deleted', '', $with_archived, [
-                    'id' => 'toggle_deleted', 'class' => 'form-check-input'
-                ]);?>
-                <?=form_label(lang('common_lang.btn_show_disabled'), 'toggle_deleted', ['class' => 'form-check-label']);?>
-            </div>
+        <div style="margin-left: 20px; width:100%; padding: 0 15px 0 15px">
+            <?=form_checkbox('toggle_deleted', '', $with_archived, [
+                'id' => 'toggle_deleted', 'class' => 'form-check-input'
+            ]);?>
+            <?=form_label(lang('common_lang.btn_show_disabled'), 'toggle_deleted', ['class' => 'form-check-label']);?>
+        </div>
     </div>
     <div class="row mt-2">
      <div class="col-sm-3 offset-6">
