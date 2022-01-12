@@ -304,7 +304,6 @@ var OperationalCompetenceView = function (_React$Component3) {
     _createClass(OperationalCompetenceView, [{
         key: 'render',
         value: function render() {
-            console.log(this.props.operationalCompetenceDatas);
             if (this.props.mobiledisplay) {
                 return React.createElement(
                     'div',
