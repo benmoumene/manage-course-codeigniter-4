@@ -78,11 +78,13 @@ class Apprentice extends \App\Controllers\BaseController
                 $coursesList[$courseplan['id']]=$courseplan;
             $courses = UserCourseModel::getInstance()->findall();
         }else{
+            $apprentices=[];
+            if (count(TrainerApprenticeModel::getInstance()->where('fk_trainer', $trainer_id)->findall()))
                 $apprentices = User_Model::getInstance()->whereIn('id', array_column(TrainerApprenticeModel::getInstance()->where('fk_trainer', $trainer_id)->findall(), 'fk_apprentice'))->findall();
-                $coursesList=[];
-                foreach (CoursePlanModel::getInstance()->findall() as $courseplan)
-                    $coursesList[$courseplan['id']]=$courseplan;
-                $courses = UserCourseModel::getInstance()->findall();
+            $coursesList=[];
+            foreach (CoursePlanModel::getInstance()->findall() as $courseplan)
+                $coursesList[$courseplan['id']]=$courseplan;
+            $courses = UserCourseModel::getInstance()->findall();
             }
         
         
@@ -169,7 +171,8 @@ class Apprentice extends \App\Controllers\BaseController
                 );
                 if ($id_user_course > 0) {
                     //update
-                    UserCourseModel::getInstance()->update($id_user_course, $user_course);
+                    //when we update the userCourse see if the courseplan is changed
+                        UserCourseModel::getInstance()->update($id_user_course, $user_course);
                 } else if (UserCourseModel::getInstance()->where('fk_user', $id_apprentice)->where('fk_course_plan', $fk_course_plan)->first() == null) {
                     //insert
                     $id_user_course = UserCourseModel::getInstance()->insert($user_course);
@@ -440,7 +443,7 @@ class Apprentice extends \App\Controllers\BaseController
             if (CommentModel::getInstance()->errors()==null) {
                 //if ok
 
-                return redirect()->to(base_url('plafor/courseplan/view_acquisition_status/'.$acquisition_status['id']));
+                return redirect()->to(base_url('plafor/apprentice/view_acquisition_status/'.$acquisition_status['id']));
             }
         
         }
@@ -460,7 +463,7 @@ class Apprentice extends \App\Controllers\BaseController
 
     public function delete_comment($comment_id = 0, $acquisition_status_id = 0) {
         CommentModel::getInstance()->delete($comment_id);
-        return redirect()->to(base_url('plafor/courseplan/view_acquisition_status/'.$acquisition_status_id));
+        return redirect()->to(base_url('plafor/apprentice/view_acquisition_status/'.$acquisition_status_id));
     }
 
 
