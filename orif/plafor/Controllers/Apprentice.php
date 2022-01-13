@@ -564,4 +564,61 @@ class Apprentice extends \App\Controllers\BaseController
 
         $this->display_view('\Plafor\user_course/view',$output);
     }
+    /**
+     * Delete or deactivate a user depending on $action
+     *
+     * @param integer $user_id = ID of the user to affect
+     * @param integer $action = Action to apply on the user:
+     *  - 0 for displaying the confirmation
+     *  - 1 for deactivating (soft delete)
+     *  - 2 for deleting (hard delete)
+     * @return void
+     */
+    public function delete_user($user_id, $action = 0)
+    {
+        if ($_SESSION['user_access'] == config('\User\Config\UserConfig')->access_lvl_admin) {
+            $user = User_model::getInstance()->withDeleted()->find($user_id);
+            if (is_null($user)) {
+                return redirect()->to(base_url('/user/admin/list_user'));
+            }
+
+            switch ($action) {
+                case 0: // Display confirmation
+                    $output = array(
+                        'user' => $user,
+                        'title' => lang('user_lang.title_user_delete')
+                    );
+                    $this->display_view('\User\admin\delete_user', $output);
+                    break;
+                case 1: // Deactivate (soft delete) user
+                    if ($_SESSION['user_id'] != $user['id']) {
+                        User_model::getInstance()->delete($user_id, FALSE);
+                    }
+                    return redirect()->to('/user/admin/list_user');
+                case 2: // Delete user
+                    if ($_SESSION['user_id'] != $user['id']) {
+                        //here we have to delete associated infos
+                        foreach(TrainerApprenticeModel::getInstance()->where('fk_apprentice',$user['id'])->orWhere('fk_trainer',$user['id'])->findAll() as $trainerApprentice)
+                            $trainerApprentice==null?:TrainerApprenticeModel::getInstance()->delete($trainerApprentice['id']);
+                        if (count(UserCourseModel::getUser($user['id']))>0){
+                            foreach(UserCourseModel::getInstance()->where('fk_user',$user['id'])->findAll() as $userCourse){
+                                foreach(UserCourseModel::getAcquisitionStatus($userCourse['id']) as $acquisitionStatus){
+
+                                    foreach (CommentModel::getInstance()->where('fk_acquisition_status',$acquisitionStatus['id']) as $comment){
+                                        $comment==null?:CommentModel::getInstance()->delete($comment['id'],true);
+                                    }
+                                    AcquisitionStatusModel::getInstance()->delete($acquisitionStatus['id'],true);
+                                }
+                                UserCourseModel::getInstance()->delete($userCourse['id'],true);
+                            }
+
+                        }
+                        User_model::getInstance()->delete($user_id, TRUE);
+                    }
+                    return redirect()->to('/user/admin/list_user');
+                default: // Do nothing
+                    return redirect()->to('/user/admin/list_user');
+            }
+        }
+    }
 }
