@@ -421,7 +421,19 @@ class CoursePlan extends \App\Controllers\BaseController
                     ObjectiveModel::getInstance()->update($objective_id, $objective);
                 } else {
                     //insert
-                    ObjectiveModel::getInstance()->insert($objective);
+                    $objective_id=ObjectiveModel::getInstance()->insert($objective);
+                    //when we add objective we have to update all students acquisition_status whene operationnal
+                    $userCourses=CoursePlanModel::getUserCourses(
+                        OperationalCompetenceModel::getCompetenceDomain(
+                            ObjectiveModel::getOperationalCompetence(
+                                $objective['fk_operational_competence']
+                            )['fk_competence_domain']
+                        )['fk_course_plan']
+                    );
+                    foreach($userCourses as $userCourse){
+                     AcquisitionStatusModel::getInstance()->insert(['fk_objective'=>$objective_id,'fk_user_course'=>$userCourse['id'],'fk_acquisition_level'=>1]);
+
+                    }
                 }
                 if (ObjectiveModel::getInstance()->errors() == null) {
                     //if ok
@@ -499,7 +511,7 @@ class CoursePlan extends \App\Controllers\BaseController
      *
      * @return void
      */
-    public function list_course_plan($id_apprentice = null, bool $with_archived=false)
+    public function list_course_plan($id_apprentice = null, $with_archived=false)
     {
         $id_apprentice==0?$id_apprentice = null:null;
         $coursePlanModel=new CoursePlanModel();

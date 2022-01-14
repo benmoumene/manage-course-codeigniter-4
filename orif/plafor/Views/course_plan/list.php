@@ -57,7 +57,6 @@ helper('form');
 <script>
     $(document).ready(function(){
         $('#toggle_deleted').change(e => {
-            console.log('ewqewqe');
             let checked = e.currentTarget.checked;
             $.post('<?=base_url();?>/plafor/courseplan/list_course_plan/0/'+(+checked), {}, data => {
                 $('#course_planslist').empty();
