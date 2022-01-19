@@ -22,7 +22,7 @@ class addUserDatas extends Seeder
             array (
                 'id' => '2',
                 'fk_user_type' => '1',
-                'username' => 'MH',
+                'username' => 'HerbezME',
                 'password' => '$2y$10$UnH8eVjd5M51hwpSpP/uR.EteO7DtqzT447e.MqdR3EngnY8pXCcO',
                 'archive' => NULL,
                 'date_creation' => '2022-01-19 09:02:59',
