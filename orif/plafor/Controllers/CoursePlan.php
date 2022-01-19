@@ -152,7 +152,7 @@ class CoursePlan extends \App\Controllers\BaseController
      * @param integer $competence_domain_id = The id of the course plan to modify, leave blank to create a new one
      * @return void
      */
-    public function save_competence_domain($competence_domain_id = 0, $course_plan_id = 0)
+    public function save_competence_domain($course_plan_id = 0,$competence_domain_id = 0)
     {
         if ($_SESSION['user_access'] >= config('\User\Config\UserConfig')->access_lvl_admin) {
 
@@ -513,6 +513,7 @@ class CoursePlan extends \App\Controllers\BaseController
      */
     public function list_course_plan($id_apprentice = null, $with_archived=false)
     {
+        $this->request->getGet('wa')!=null?$with_archived=$this->request->getGet('wa'):null;
         $id_apprentice==0?$id_apprentice = null:null;
         $coursePlanModel=new CoursePlanModel();
         $userCourseModel=new UserCourseModel();

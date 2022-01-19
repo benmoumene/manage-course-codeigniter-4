@@ -36,7 +36,7 @@ $session=\CodeIgniter\Config\Services::session();
         'id' => 'competence_domain_form',
         'name' => 'competence_domain_form'
     );
-    echo form_open(base_url('plafor/courseplan/save_competence_domain'), $attributes, [
+    echo form_open(base_url('plafor/courseplan/save_competence_domain/0'), $attributes, [
         'id' => $competence_domain['id'] ?? 0
     ]);
     ?>

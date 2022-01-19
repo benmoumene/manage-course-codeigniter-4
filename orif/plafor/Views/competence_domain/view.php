@@ -29,31 +29,24 @@
             <?php if(service('session')->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_admin):?>
                 <a href="<?=base_url('plafor/courseplan/save_operational_competence/0/'.$competence_domain['id'])?>" class="btn btn-primary"><?=lang('common_lang.btn_new_f')?></a>
             <?php endif?>
+            <?php
+            $datas=[];
+            foreach (\Plafor\Models\CompetenceDomainModel::getOperationalCompetences($competence_domain['id']) as $operational_competence){
+                $datas[]=['id'=>$operational_competence['id'],'symbol'=>$operational_competence['symbol'],'opComp'=>$operational_competence['name']];
+            }
+            ?>
 
-            <table class="table table-hover mt-2">
-            <thead>
-                <tr>
-                    <th><span class="font-weight-bold"><?=lang('plafor_lang.symbol')?></span></th>
-                    <th><span class="font-weight-bold"><?=lang('plafor_lang.operational_competence')?></span></th>
-                    <?php if(service('session')->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_admin):?>
-                        <th></th>
-                        <th></th>
-                    <?php endif;?>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach (\Plafor\Models\CompetenceDomainModel::getOperationalCompetences($competence_domain['id']) as $operational_competence){ ?>
-                    <tr>
-                        <td><a href="<?= base_url('plafor/courseplan/view_operational_competence/'.$operational_competence['id'])?>"><?=$operational_competence['symbol']?></a></td>
-                        <td><a href="<?= base_url('plafor/courseplan/view_operational_competence/'.$operational_competence['id'])?>"><?=$operational_competence['name']?></a></td>
-                        <?php if(service('session')->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_admin):?>
-                            <td><a href="<?= base_url('plafor/courseplan/save_operational_competence/'.$operational_competence['id'].'/'.$competence_domain['id']); ?>"><i class="bi-pencil" style="font-size: 20px;"></i></a></td>
-                            <td><a href="<?= base_url('plafor/courseplan/delete_operational_competence/'.$operational_competence['id']); ?>" ><i class="<?=$competence_domain['archive']==null?'bi bi-trash':'bi bi-reply-all-fill'?>" style="font-size: 20px;" ></a></td>
-                        <?php endif;?>
-                    </tr>
-                <?php  }?>
-            </tbody>
-            </table>
+            <?= view('Common\Views\items_list',[
+                'columns'=>[
+                    'symbol'=>lang('plafor_lang.symbol'),
+                    'opComp'=>lang('plafor_lang.operational_competence')
+                ],
+                'items'=>$datas,
+                'primary_key_field'=>'id',
+                'url_update'=>'plafor/courseplan/save_operational_competence/',
+                'url_delete'=>'plafor/courseplan/delete_operational_competence/',
+                'url_detail'=>'plafor/courseplan/view_operational_competence/',
+            ])?>
         </div>
     </div>
 </div>

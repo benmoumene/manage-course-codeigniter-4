@@ -65,7 +65,7 @@
             <?php if (service('session')->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_admin): ?>
             <a href="<?=base_url('plafor/courseplan/save_objective/0/'.$operational_competence['id']) ?>" class="btn btn-primary"><?= lang('common_lang.btn_new_m')?></a>
             <?php endif;?>
-            <table class="responsiveTable table table-hover">
+            <table class="responsiveTable table table-striped table-hover">
             <thead>
                 <tr>
                     <th><span class="font-weight-bold"><?=lang('plafor_lang.field_objectives_symbols')?></span></th>
@@ -82,17 +82,19 @@
             foreach ($objectives as $objective){
                 ?><tr>
                     <td>
-                        <a class="font-weight-bold" href="<?= base_url('plafor/courseplan/view_objective/'.$objective['id'])?>"><?=$objective['symbol']?></a>
+                        <a><?=$objective['symbol']?></a>
 
                     </td>
                     <td>
                         <span class="font-weight-bold descTitle" style="display: none"><?=lang('plafor_lang.field_taxonomy')?></span>
-                        <a href="<?= base_url('plafor/courseplan/view_objective/'.$objective['id'])?>"><?=$objective['taxonomy']?></a>
+                        <a><?=$objective['taxonomy']?></a>
 
                     </td>
-                    <td><a href="<?= base_url('plafor/courseplan/view_objective/'.$objective['id'])?>"><?=$objective['name']?></a></td>
+                    <td><?=$objective['name']?></td>
+                    <td><a href="<?=base_url('plafor/courseplan/view_objective/'.$objective['id'])?>"><i class="bi bi-card-text"></i></td>
+
                 <?php if(service('session')->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_admin):?>
-                    <td><a href="<?= base_url('plafor/courseplan/save_objective/'.$objective['id'].'/'.$operational_competence['id']); ?>"><?= lang('common_lang.btn_edit')?></a></td>
+                    <td><a href="<?= base_url('plafor/courseplan/save_objective/'.$objective['id'].'/'.$operational_competence['id']); ?>"><i class="bi bi-pencil"></i></a></td>
                     <td><a href="<?= base_url('plafor/courseplan/delete_objective/'.$objective['id']); ?>" class="<?=$operational_competence['archive']==null?'bi bi-trash':'bi bi-reply-all-fill'?>"></td>
                 <?php endif;?>
                 <?php
