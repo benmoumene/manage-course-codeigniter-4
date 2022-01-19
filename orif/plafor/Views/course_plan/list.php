@@ -21,11 +21,12 @@ helper('form');
                 <?= lang('common_lang.btn_new_m'); ?>
             </a>
         </div>
-        <div style="margin-left: 20px; width:100%; padding: 0 15px 0 15px">
+        <div class="col-sm-9 text-right">
+            <?=form_label(lang('common_lang.btn_show_disabled'), 'toggle_deleted', ['class' => 'form-check-label','style'=>'padding-right:30px']);?>
+
             <?=form_checkbox('toggle_deleted', '', $with_archived, [
                 'id' => 'toggle_deleted', 'class' => 'form-check-input'
             ]);?>
-            <?=form_label(lang('common_lang.btn_show_disabled'), 'toggle_deleted', ['class' => 'form-check-label']);?>
         </div>
     </div>
     <div class="row mt-2">
@@ -45,8 +46,8 @@ helper('form');
             ],
             'items'=>$datas,
             'primary_key_field'=>'id',
-            'url_update'=>'plafor/courseplan/save_competence_domain/',
-            'url_delete'=>'plafor/courseplan/delete_competence_domain/',
+            'url_update'=>'plafor/courseplan/save_course_plan/',
+            'url_delete'=>'plafor/courseplan/delete_course_plan/',
             'url_detail'=>'plafor/courseplan/view_course_plan/',
         ])?>
     </div>
