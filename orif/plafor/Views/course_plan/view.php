@@ -36,7 +36,7 @@
                  ],
                 'items'=>$datas,
                 'primary_key_field'=>'id',
-                'url_update'=>'plafor/courseplan/save_competence_domain/',
+                'url_update'=>'plafor/courseplan/save_competence_domain/'.$course_plan['id'].'/',
                 'url_delete'=>'plafor/courseplan/delete_competence_domain/',
                 'url_detail'=>'plafor/courseplan/view_competence_domain/',
                 ])?>
