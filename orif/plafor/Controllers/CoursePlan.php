@@ -134,8 +134,21 @@ class CoursePlan extends \App\Controllers\BaseController
                     return redirect()->to('/plafor/courseplan/list_course_plan');
                     break;
                 case 3:
-                    //Reactiver le plan de formation
+                    //Reactiver le plan de formation et ses competence et objectifs associés
+                    foreach (CoursePlanModel::getCompetenceDomains($course_plan_id) as $competenceDomain){
+                        $competenceDomain['archive']=null;
+                        CompetenceDomainModel::getInstance()->update($competenceDomain['id'],$competenceDomain);
+                        foreach (CompetenceDomainModel::getOperationalCompetences($competenceDomain['id'],true) as $operationalCompetence){
+                            $operationalCompetence['archive']=null;
+                            OperationalCompetenceModel::getInstance()->update($operationalCompetence['id'],$operationalCompetence);
+                            foreach (ObjectiveModel::getInstance()->where('fk_operational_competence',$operationalCompetence['id'])->withDeleted(true)->findAll() as $objective){
+                                $objective['archive']=null;
+                                ObjectiveModel::getInstance()->update($objective['id'],$objective);
+                            }
+                        }
+                    }
                     CoursePlanModel::getInstance()->withDeleted()->update($course_plan_id, ['archive' => null]);
+
                     return redirect()->to(base_url('plafor/courseplan/list_course_plan'));
                     break;
                 default:

@@ -238,6 +238,7 @@ return [
     'course_status'                  =>'Status des formations',
     'status'                         =>'Statut de la formation',
     'form_number_not_unique'         =>'Le numéro du plan de formation existe déjà',
+    'with_status'                    =>'Avec le status',
 
     'course_plan_enable_explanation' =>'Toutes les informations concernant ce plan de formation (domaines de compétences, compétences oppérationnelles et objectifs) seront réactivées.',
     'competence_domain_enable_explanation' =>'Toutes les informations concernant ce domaine de compétence (symbole, nom, compétences oppérationnelles et objectifs) seront réactivées.',
@@ -246,4 +247,6 @@ return [
     'user_course_enable_explanation' =>'Toutes les informations concernant cette formation liée seront réactivées.',
     'apprentice_link_enable_explanation' =>'Toutes les informations concernant le lien entre cette apprenti et ce formateur seront réactivées.',
     'acquisition_status_enable_explanation' =>'Toutes les informations concernant le statut d\'acquisition seront réactivées.',
+
+    'apprentices_already_assigned_to_course_plan'   => 'Le(s) apprentis suivant sont déjà associé(s) au plan de formation'
 ];

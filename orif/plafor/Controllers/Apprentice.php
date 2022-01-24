@@ -74,17 +74,17 @@ class Apprentice extends \App\Controllers\BaseController
             $apprentices = User_model::getApprentices($withDeleted);
 
             $coursesList=[];
-            foreach (CoursePlanModel::getInstance()->findall() as $courseplan)
+            foreach (CoursePlanModel::getInstance()->withDeleted(true)->findall() as $courseplan)
                 $coursesList[$courseplan['id']]=$courseplan;
-            $courses = UserCourseModel::getInstance()->findall();
+            $courses = UserCourseModel::getInstance()->withDeleted(true)->findall();
         }else{
             $apprentices=[];
             if (count(TrainerApprenticeModel::getInstance()->where('fk_trainer', $trainer_id)->findall()))
                 $apprentices = User_Model::getInstance()->whereIn('id', array_column(TrainerApprenticeModel::getInstance()->where('fk_trainer', $trainer_id)->findall(), 'fk_apprentice'))->findall();
             $coursesList=[];
-            foreach (CoursePlanModel::getInstance()->findall() as $courseplan)
+            foreach (CoursePlanModel::getInstance()->withDeleted(true)->findall() as $courseplan)
                 $coursesList[$courseplan['id']]=$courseplan;
-            $courses = UserCourseModel::getInstance()->findall();
+            $courses = UserCourseModel::getInstance()->withDeleted(true)->findall();
             }
         
         
@@ -118,15 +118,15 @@ class Apprentice extends \App\Controllers\BaseController
         }
 
         $user_course_status=[];
-        foreach (UserCourseStatusModel::getInstance()->findAll() as $usercoursetatus)
+        foreach (UserCourseStatusModel::getInstance()->withDeleted(true)->findAll() as $usercoursetatus)
         $user_course_status[$usercoursetatus['id']] = $usercoursetatus;
 
         $course_plans=[];
-        foreach (CoursePlanModel::getInstance()->findall() as $courseplan)
+        foreach (CoursePlanModel::getInstance()->withDeleted(true)->findall() as $courseplan)
         $course_plans[$courseplan['id']] = $courseplan;
 
         $trainers = [];
-        foreach (User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('name',lang('plafor_lang.title_trainer'))->first()['id'])->findall() as $trainer)
+        foreach (User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('name',lang('plafor_lang.title_trainer'))->first()['id'])->withDeleted(true)->findall() as $trainer)
             $trainers[$trainer['id']]= $trainer;
 
         $links = [];
