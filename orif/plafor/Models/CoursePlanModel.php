@@ -57,8 +57,8 @@ class CoursePlanModel extends Model{
      * @param $coursePlanId
      * @return array
      */
-    public static function getCompetenceDomains($coursePlanId){
-        return CompetenceDomainModel::getInstance()->where('fk_course_plan',$coursePlanId)->withDeleted(true)->findAll();
+    public static function getCompetenceDomains($coursePlanId,$with_archived=0){
+        return CompetenceDomainModel::getInstance()->where('fk_course_plan',$coursePlanId)->withDeleted($with_archived)->findAll();
     }
 
     /**
