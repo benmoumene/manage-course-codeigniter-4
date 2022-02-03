@@ -78,7 +78,7 @@ $validation=\CodeIgniter\Config\Services::validation();
             <div class="col-sm-12 form-group">
                 <?= form_label(lang('plafor_lang.field_operational_competence_domain'), 'competence_domain', ['class' => 'form-label']); ?>
                 <br />
-                <?= form_dropdown('competence_domain',$competence_domains,$competence_domain_id?? '','id="competence_domain" class="form-control"')?>
+                <?= form_dropdown('competence_domain',$competence_domains,$operational_competence['fk_competence_domain']?? '','id="competence_domain" class="form-control"')?>
             </div>
             <div class="col-sm-12 form-group">
                 <?= form_label(lang('plafor_lang.field_operational_competence_symbol'), 'operational_competence_symbol', ['class' => 'form-label']); ?>
