@@ -172,7 +172,7 @@ class Apprentice extends \App\Controllers\BaseController
                 if ($id_user_course > 0) {
                     //update
                     //when we update the userCourse see if the courseplan is changed
-                        UserCourseModel::getInstance()->update($id_user_course, $user_course);
+                    UserCourseModel::getInstance()->update($id_user_course, $user_course);
                 } else if (UserCourseModel::getInstance()->where('fk_user', $id_apprentice)->where('fk_course_plan', $fk_course_plan)->first() == null) {
                     //insert
                     $id_user_course = UserCourseModel::getInstance()->insert($user_course);
