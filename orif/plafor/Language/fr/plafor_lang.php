@@ -248,5 +248,5 @@ return [
     'apprentice_link_enable_explanation' =>'Toutes les informations concernant le lien entre cette apprenti et ce formateur seront réactivées.',
     'acquisition_status_enable_explanation' =>'Toutes les informations concernant le statut d\'acquisition seront réactivées.',
 
-    'apprentices_already_assigned_to_course_plan'   => 'Le(s) apprentis suivant sont déjà associé(s) au plan de formation'
+    'apprentices_already_assigned_to_course_plan'   => 'Le(s) apprentis suivant(s) sont déjà associé(s) au plan de formation'
 ];
