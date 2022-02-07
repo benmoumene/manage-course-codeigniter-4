@@ -1,4 +1,13 @@
 <?php
+/**
+ * Fichier de vue pour list_apprentice
+ *
+ * @author      Orif (ViDi, HeMa)
+ * @link        https://github.com/OrifInformatique
+ * @copyright   Copyright (c), Orif (https://www.orif.ch)
+ */
+?>
+<?php
 view('\Plafor\templates\navigator',['reset'=>true]);
 helper('form');
 /**

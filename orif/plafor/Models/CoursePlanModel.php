@@ -1,4 +1,11 @@
 <?php
+/**
+ * Fichier de model pour course_plan
+ *
+ * @author      Orif (ViDi, HeMa)
+ * @link        https://github.com/OrifInformatique
+ * @copyright   Copyright (c), Orif (https://www.orif.ch)
+ */
 namespace Plafor\Models;
 
 use CodeIgniter\Database\ConnectionInterface;

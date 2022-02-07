@@ -1,5 +1,11 @@
 <?php
-
+/**
+ * Controller pour la gestion des plan de formation non associés à un apprenti
+ * Required level connected
+ * @author      Orif (ViDi, HeMa)
+ * @link        https://github.com/OrifInformatique
+ * @copyright   Copyright (c), Orif (https://www.orif.ch)
+ */
 
 namespace Plafor\Controllers;
 

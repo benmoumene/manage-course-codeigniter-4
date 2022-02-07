@@ -1,4 +1,12 @@
-<?php 
+<?php
+/**
+ * Fichier de language pour le module plafor
+ * competence_domain avec les nouveaux plans si n'existent pas
+ *
+ * @author      Orif (ViDi, HeMa)
+ * @link        https://github.com/OrifInformatique
+ * @copyright   Copyright (c), Orif (https://www.orif.ch)
+ */
 
 return [
 

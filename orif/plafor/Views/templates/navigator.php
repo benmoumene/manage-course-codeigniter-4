@@ -1,4 +1,17 @@
 <?php
+/**
+ * Fichier de vue pour la navigation
+ *
+ * @author      Orif (ViDi, HeMa)
+ * @link        https://github.com/OrifInformatique
+ * @copyright   Copyright (c), Orif (https://www.orif.ch)
+ */
+/**
+ * Params $reset
+ * Call reset on navigation root
+ */
+?>
+<?php
 if (isset($reset)){
     service('session')->remove('navigator');
 }
