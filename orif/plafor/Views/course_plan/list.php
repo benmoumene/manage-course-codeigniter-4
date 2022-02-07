@@ -1,4 +1,7 @@
 <?php
+
+use CodeIgniter\I18n\Time;
+
 view('\Plafor\templates\navigator',['reset'=>true]);
 helper('form');
 /**
@@ -35,14 +38,15 @@ helper('form');
         <?php
         $datas=[];
         foreach($course_plans as $course_plan) {
-            $datas[]=['id'=>$course_plan['id'],'formNumber'=>$course_plan['formation_number'],'coursePlan'=>$course_plan['official_name']];
+            $datas[]=['id'=>$course_plan['id'],'formNumber'=>$course_plan['formation_number'],'coursePlan'=>$course_plan['official_name'],'begin_date'=>Time::createFromFormat('Y-m-d', $course_plan['date_begin'])->toLocalizedString('dd.MM.Y')];
         }
         ?>
 
         <?= view('Common\Views\items_list',[
             'columns'=>[
                 'formNumber'=>lang('plafor_lang.field_course_plan_formation_number'),
-                'coursePlan'=>lang('plafor_lang.field_course_plan_official_name')
+                'coursePlan'=>lang('plafor_lang.field_course_plan_official_name'),
+                'begin_date'=>lang('plafor_lang.field_course_plan_into_effect')
             ],
             'items'=>$datas,
             'primary_key_field'=>'id',
