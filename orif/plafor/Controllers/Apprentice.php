@@ -5,6 +5,8 @@ namespace Plafor\Controllers;
 
 
 use CodeIgniter\Config\Services;
+use CodeIgniter\HTTP\Response;
+use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\I18n\Time;
 use CodeIgniter\Validation\Validation;
 use Exception;
@@ -375,7 +377,7 @@ class Apprentice extends \App\Controllers\BaseController
      * Changes an acquisition status for an apprentice
      *
      * @param int $acquisition_status_id = ID of the acquisition status to change
-     * @return void
+     * @return Response|ResponseInterface
      */
     public function save_acquisition_status($acquisition_status_id = 0) {
         $acquisitionStatus = AcquisitionStatusModel::getInstance()->find($acquisition_status_id);
@@ -401,9 +403,21 @@ class Apprentice extends \App\Controllers\BaseController
             $acquisitionStatus = [
                 'fk_acquisition_level' => $acquisitionLevel
             ];
+            //check if opcomp and compdom is avtive
+            $objective=ObjectiveModel::getInstance()->find($acquisitionStatus['fk_objective']);
+            $opeationalCompetence=ObjectiveModel::getOperationalCompetence($objective['fk_operational_competence']);
+            //verify if op comp is disabled
+            if ($opeationalCompetence==null||$opeationalCompetence['archive']!=null){
+                return $this->response->setContentType('application/json')->setStatusCode(409)->setBody(json_encode(['error'=>lang('plafor_lang.associated_op_comp_disabled')]));
+            }
+            //if not verify if competence domain is active
+            else{
+                $competenceDomain=OperationalCompetenceModel::getCompetenceDomain($opeationalCompetence['fk_competence_domain']);
+                if ($competenceDomain==null|$competenceDomain['archive']!=null){
+                    return $this->response->setContentType('application/json')->setStatusCode(409)->setBody(json_encode(['error'=>lang('plafor_lang.associated_comp_dom_disabled')]));
+                }
+            }
             AcquisitionStatusModel::getInstance()->update($acquisition_status_id, $acquisitionStatus);
-
-
             if (AcquisitionStatusModel::getInstance()->errors()==null) {
 
                 //if ok

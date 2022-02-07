@@ -194,6 +194,8 @@ return [
     // Error messages
     'msg_err_course_plan_not_exist'  =>'Le plan de formation sélectionné n\'existe pas',
     'msg_err_course_plan_not_unique' =>'Ce plan de formation est déjà utilisé, merci d\'en choisir un autre',
+    'associated_op_comp_disabled'    =>'La compétence opérationnelle associée à cet objectif est désactivée',
+    'associated_comp_dom_disabled'   =>'Le domaine de ccompétence associé est désactivé',
 
     // Other texts
     'course_plan'                    =>'Plan de formation',
