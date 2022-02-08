@@ -54,7 +54,7 @@ class UserCourseModel extends \CodeIgniter\Model
      * @return array
      */
     public static function getUser($fkUserId){
-        return User_model::getInstance()->find($fkUserId);
+        return User_model::getInstance()->withDeleted()->find($fkUserId);
     }
 
     /**
