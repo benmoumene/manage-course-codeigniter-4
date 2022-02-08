@@ -406,12 +406,13 @@ class Apprentice extends \App\Controllers\BaseController
             $acquisitionLevels[$acquisitionLevel['id']]=$acquisitionLevel['name'];
 
         // Check if data was sent
+
         if (!empty($_POST)) {
             $acquisitionLevel = $this->request->getPost('field_acquisition_level');
-            $acquisitionStatus = [
-                'fk_acquisition_level' => $acquisitionLevel
-            ];
+            $acquisitionStatus=AcquisitionStatusModel::getInstance()->find($acquisition_status_id);
+            $acquisitionStatus['fk_acquisition_level'] = $acquisitionLevel;
             //check if opcomp and compdom is avtive
+
             $objective=ObjectiveModel::getInstance()->find($acquisitionStatus['fk_objective']);
             $opeationalCompetence=ObjectiveModel::getOperationalCompetence($objective['fk_operational_competence']);
             //verify if op comp is disabled
