@@ -22,11 +22,12 @@ class AddUserCourseStatus extends Migration{
         $this->forge->addKey('id',true,true);
         $this->forge->createTable('user_course_status');
         $seeder = \Config\Database::seeder();
+        if (ENVIRONMENT === 'testing') $seeder->setSilent(TRUE);
         $seeder->call('\Plafor\Database\Seeds\addUserCoursesStatusDatas');
     }
 
     public function down()
     {
-        $this->forge->dropTable('user_course_status');
+        $this->forge->dropTable('user_course_status', TRUE);
     }
 }

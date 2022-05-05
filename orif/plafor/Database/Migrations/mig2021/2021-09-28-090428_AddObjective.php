@@ -24,7 +24,7 @@ class AddObjective extends Migration {
                 'constraint' => '10',
             ],
             'taxonomy' => [
-                'type' => 'int', 
+                'type' => 'int',
                 'constraint' => '5',
             ],
             'name' => [
@@ -42,6 +42,7 @@ class AddObjective extends Migration {
             echo $e->getMessage();
         }
         $seeder = \Config\Database::seeder();
+        if (ENVIRONMENT === 'testing') $seeder->setSilent(TRUE);
         $seeder->call('\Plafor\Database\Seeds\addObjective2021Datas');
     }
 

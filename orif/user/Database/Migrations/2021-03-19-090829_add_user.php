@@ -47,6 +47,7 @@ class AddUser extends \CodeIgniter\Database\Migration
         $this->forge->addForeignKey('fk_user_type','user_type','id');
         $this->forge->createTable('user',true);
         $seeder=\Config\Database::seeder();
+        if (ENVIRONMENT === 'testing') $seeder->setSilent(TRUE);
         //for plafor module
         //$seeder->call('\User\Database\Seeds\AddUserDatas');
         // only for application
@@ -58,6 +59,6 @@ class AddUser extends \CodeIgniter\Database\Migration
      */
     public function down()
     {
-        $this->forge->dropTable('user');
+        $this->forge->dropTable('user', TRUE);
     }
 }

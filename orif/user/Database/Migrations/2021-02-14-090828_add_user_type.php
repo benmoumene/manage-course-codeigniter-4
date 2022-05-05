@@ -34,6 +34,7 @@ class AddUserType extends Migration
         $this->forge->addKey('id',true);
         $this->forge->createTable('user_type',true);
         $seeder=\Config\Database::seeder();
+        if (ENVIRONMENT === 'testing') $seeder->setSilent(TRUE);
         //for plafor module
         //$seeder->call('\User\Database\Seeds\AddUserTypeDatas');
         $seeder->call('\Plafor\Database\Seeds\addUserTypeDatas');
@@ -45,6 +46,6 @@ class AddUserType extends Migration
      */
     public function down()
     {
-        $this->forge->dropTable('user_type');
+        $this->forge->dropTable('user_type', TRUE);
     }
 }

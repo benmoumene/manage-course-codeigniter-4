@@ -40,6 +40,6 @@ class AddComment extends Migration {
     }
 
     public function down() {
-        $this->forge->dropTable('comment');
+        $this->forge->dropTable('comment', TRUE);
     }
 }

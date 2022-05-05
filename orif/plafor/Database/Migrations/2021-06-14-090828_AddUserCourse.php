@@ -43,11 +43,12 @@ class AddUserCourse extends Migration{
         $this->forge->addForeignKey('fk_status','user_course_status','id');
         $this->forge->createTable('user_course');
         $seeder = \Config\Database::seeder();
+        if (ENVIRONMENT === 'testing') $seeder->setSilent(TRUE);
         $seeder->call('\Plafor\Database\Seeds\addUserCoursesDatas');
     }
 
     public function down()
     {
-        $this->forge->dropTable('user_course');
+        $this->forge->dropTable('user_course', TRUE);
     }
 }

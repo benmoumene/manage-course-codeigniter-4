@@ -35,6 +35,6 @@ class AddCoursePlanModule extends Migration
 
     public function down()
     {
-        $this->forge->dropTable('course_plan_module');
+        $this->forge->dropTable('course_plan_module', TRUE);
     }
 }

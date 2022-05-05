@@ -38,6 +38,7 @@ class AddCompetenceDomain extends Migration {
             echo $e->getMessage();
         }
         $seeder = \Config\Database::seeder();
+        if (ENVIRONMENT === 'testing') $seeder->setSilent(TRUE);
         $seeder->call('\Plafor\Database\Seeds\addCompetenceDomain2021Datas');
     }
 

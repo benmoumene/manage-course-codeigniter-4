@@ -43,12 +43,13 @@ class AddOpCompetence extends Migration {
 
         $this->forge->addKey('id', true, true);
         $this->forge->addForeignKey('fk_competence_domain', 'competence_domain','id');
-        $this->forge->createTable('operational_competence');
+        $this->forge->createTable('operational_competence', TRUE);
         $seeder = \Config\Database::seeder();
+        if (ENVIRONMENT === 'testing') $seeder->setSilent(TRUE);
         $seeder->call('\Plafor\Database\Seeds\addOperationalCompetencesDatas');
     }
 
     public function down() {
-        $this->forge->dropTable('operational_competence');
+        $this->forge->dropTable('operational_competence', TRUE);
     }
 }

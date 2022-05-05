@@ -45,6 +45,7 @@ class AddAcquisitionStatus extends \CodeIgniter\Database\Migration
         $this->db->disableForeignKeyChecks();
         $this->forge->createTable('acquisition_status');
         $seeder = \Config\Database::seeder();
+        if (ENVIRONMENT === 'testing') $seeder->setSilent(TRUE);
         $seeder->call('\Plafor\Database\Seeds\addAcquisitionStatusDatas');
     }
 
@@ -54,6 +55,6 @@ class AddAcquisitionStatus extends \CodeIgniter\Database\Migration
      */
     public function down()
     {
-        $this->forge->dropTable('acquisition_status');
+        $this->forge->dropTable('acquisition_status', TRUE);
     }
 }
