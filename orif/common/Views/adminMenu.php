@@ -1,5 +1,5 @@
 <?php
-if ($_SESSION['user_access']>=config('\User\Config\UserConfig')->access_lvl_trainer){
+if (isset($_SESSION['user_access']) && $_SESSION['user_access']>=config('\User\Config\UserConfig')->access_lvl_trainer){
 ?>
 <div class="container">
     <div class="row">

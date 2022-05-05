@@ -8,6 +8,8 @@ use Plafor\Models\AcquisitionLevelModel;
 use Plafor\Models\AcquisitionStatusModel;
 use Plafor\Models\CompetenceDomainModel;
 use Plafor\Models\CoursePlanModel;
+use Plafor\Models\CoursePlanModuleModel;
+use Plafor\Models\ModuleModel;
 use Plafor\Models\ObjectiveModel;
 use Plafor\Models\OperationalCompetenceModel;
 use Plafor\Models\TrainerApprenticeModel;
@@ -551,6 +553,7 @@ class CoursePlan extends \App\Controllers\BaseController
         }
 
         $competence_domains=CoursePlanModel::getCompetenceDomains($course_plan_id);
+        $modules = CoursePlanModel::getModules($course_plan_id);
 
         // Format date
         $date_begin = Time::createFromFormat('Y-m-d', $course_plan['date_begin']);
@@ -559,7 +562,8 @@ class CoursePlan extends \App\Controllers\BaseController
         $output = array(
             'title'=>lang('plafor_lang.title_course_plan_view'),
             'course_plan'=>$course_plan,
-            'competence_domains'=>$competence_domains
+            'competence_domains'=>$competence_domains,
+            'modules' => $modules,
         );
 
         return $this->display_view('\Plafor\course_plan\view',$output);
@@ -662,5 +666,63 @@ class CoursePlan extends \App\Controllers\BaseController
         );
 
         $this->display_view('Plafor\objective/view',$output);
+    }
+
+    /**
+     * Shows an UI to link and unlink modules
+     *
+     * @param  int  $course_plan_id ID of the course plan whose links are to change. May be overridden by a POST value.
+     * @return void
+     */
+    public function link_module($course_plan_id = null) {
+        if (!isset($_SESSION['user_access']) || $_SESSION['user_access'] < config('\User\Config\UserConfig')->access_lvl_admin) {
+            return $this->display_view('\User\errors\403error');
+        }
+
+        if (!empty($id = $this->request->getPost('course_plan_id'))) {
+            $course_plan_id = $id;
+        }
+
+        $course_plan = CoursePlanModel::getInstance()->find($course_plan_id);
+
+        if (is_null($course_plan) || is_null($course_plan_id)) {
+            return redirect()->to(base_url('plafor/courseplan/list_course_plan'));
+        }
+
+        $coursePlanModuleModel = CoursePlanModuleModel::getInstance();
+        $modules = ModuleModel::getInstance()->findAll();
+        $modulesSelected = $coursePlanModuleModel->where('fk_course_plan', $course_plan_id)->findColumn('fk_module') ?? [];
+
+        if (!empty($selected = $this->request->getPost('modules_selected'))) {
+            // List of modules to link
+            $add = array_filter($selected, function($moduleId) use ($modulesSelected) {
+                return !in_array($moduleId, $modulesSelected);
+            });
+            foreach ($add as $moduleId) {
+                $coursePlanModuleModel->insert([
+                    'fk_course_plan' => $course_plan_id,
+                    'fk_module' => $moduleId,
+                ]);
+            }
+
+            // List of modules to unlink
+            $remove = array_filter($modulesSelected, function($moduleId) use ($selected) {
+                return !in_array($moduleId, $selected);
+            });
+            foreach ($remove as $moduleId) {
+                $coursePlanModuleModel->where('fk_course_plan', $course_plan_id)->where('fk_module', $moduleId)->delete();
+            }
+
+            return redirect()->to(base_url('plafor/courseplan/view_course_plan/' . $course_plan_id));
+        }
+
+        $data = [
+            'title' => lang('plafor_lang.title_link_course_plan_module'),
+            'course_plan' => $course_plan,
+            'modules' => $modules,
+            'modules_selected' => $modulesSelected,
+        ];
+
+        $this->display_view('\Plafor\module\link', $data);
     }
 }

@@ -68,6 +68,19 @@ class CoursePlanModel extends Model{
     public static function getUserCourses($coursePlanId){
         return UserCourseModel::getInstance()->where('fk_course_plan',$coursePlanId)->findAll();
     }
+
+    /**
+     * @param  integer $coursePlanId ID of the course plan whose modules are to get
+     * @return array
+     */
+    public static function getModules($coursePlanId) {
+        $moduleIds = CoursePlanModuleModel::getInstance()->where('fk_course_plan', $coursePlanId)->findColumn('fk_module');
+        if (is_null($moduleIds)) {
+            return [];
+        }
+        return ModuleModel::getInstance()->withDeleted()->find($moduleIds);
+    }
+
     /**
      * @param $userId //is the apprentice id
      * @return null|string|array // return jsonobjects list organized by course

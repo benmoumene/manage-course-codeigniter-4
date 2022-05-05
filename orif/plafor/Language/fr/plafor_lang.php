@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 return [
 
@@ -8,7 +8,7 @@ return [
 
     // Field labels
     'field_identity' => 'id',
-    
+
     //Usefull Links
     'plafor_module' => 'Module Plafor',
 
@@ -35,6 +35,7 @@ return [
     'title_course_plan_new' => 'Ajouter un plan de formation',
     'title_course_plan_update' => 'Modifier le plan de formation',
     'title_course_plan_view' => 'Afficher les détails du plan de formation',
+    'title_view_course_plans_linked' => 'Plans de formation liés',
 
     //Competence Domain
     'title_view_competence_domain' => 'Détail du domaine de compétence',
@@ -69,7 +70,7 @@ return [
     'title_acquisition_status_view'=>'Afficher les détails des status d\'acquisition',
     'title_acquisition_status_save' =>'Ajouter un statut d\'acquisition',
     'title_acquisition_status_edit' =>  'Modifier un statut d\'acquisition',
-    
+
     //Comment
     'title_comment_save'=>'Ajouter un commentaire',
     'comment_delete' => 'souhaitez-vous supprimer le commentaire ?',
@@ -80,6 +81,15 @@ return [
     'title_failed'                   => 'Échouée',
     'title_suspended'                => 'Suspendue',
     'title_abandoned'                => 'Abandonnée',
+
+    // Module
+    'module_is_school'               => 'Ecole professionnelle',
+    'module_is_not_school'           => 'Cours inter-entreprise',
+    'title_module_view'              => 'Afficher les détails du module',
+    'title_view_module'              => 'Détails du module',
+    'title_module_new'               => 'Ajouter un module',
+    'title_module_update'            => 'Modifier un module',
+    'title_view_modules_linked'      => 'Modules liés',
 
     // Page titles
     'title_apprentice_list'          => 'Liste des apprentis',
@@ -126,6 +136,9 @@ return [
     'title_comment_new'              =>'Ajouter un commentaire',
     'title_comment_delete'           =>'Supprimer le commentaire',
     'title_progress'                 => 'Avancement',
+    'title_module_list'              => 'Liste des modules',
+    'title_delete_module'            => 'Supprimer un module',
+    'title_link_course_plan_module'  => 'Lier un plan de formation et des modules',
 
     // Details labels
     'details_apprentice'             =>'Détail de l\'apprenti',
@@ -186,6 +199,9 @@ return [
     'field_symbol'                   =>'Symbole',
     'field_taxonomy'                 =>'Taxonomie',
     'field_linked_comments'          =>'Commentaires liés',
+    'field_module_module_number'     => 'Numéro du module',
+    'field_module_official_name'     => 'Nom du module',
+    'field_module_is_school'         => 'Module à l\'école professionnelle',
 
     // Admin texts
     'admin_apprentices'              =>'Apprentis',
@@ -238,6 +254,12 @@ return [
     'course_status'                  =>'Status des formations',
     'status'                         =>'Statut de la formation',
     'form_number_not_unique'         =>'Le numéro du plan de formation existe déjà',
+    'module'                         => 'Module',
+    'module_number_not_unique'       => 'Le numéro du module existe déjà',
+    'module_delete_explanation'      => 'Toutes les informations concernant ce module seront supprimées.',
+    'module_disable_explanation'     => 'Toutes les informations concernant ce module seront désactivées.',
+    'module_enable_explanation'      => 'Toutes les informations concernant ce module seront réactivées.',
+    'change_course_plan_module_links' => 'Lier ou délier des modules',
 
     'course_plan_enable_explanation' =>'Toutes les informations concernant ce plan de formation (domaines de compétences, compétences oppérationnelles et objectifs) seront réactivées.',
     'competence_domain_enable_explanation' =>'Toutes les informations concernant ce domaine de compétence (symbole, nom, compétences oppérationnelles et objectifs) seront réactivées.',

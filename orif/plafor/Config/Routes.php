@@ -12,5 +12,7 @@ $routes->add('plafor/apprentice/(:any)','\Plafor\Controllers\Apprentice::$1',['f
 $routes->add('plafor/courseplan/(:any)','\Plafor\Controllers\CoursePlan::$1');
 $routes->add('migration/(:any)','\Plafor\Controllers\Migration::$1');
 $routes->add('migration','\Plafor\Controllers\Migration::index');
+$routes->add('plafor/module/(:any)', '\Plafor\Controllers\Module::$1');
+$routes->add('plafor/module', '\Plafor\Controllers\Module::index');
 
 ?>
