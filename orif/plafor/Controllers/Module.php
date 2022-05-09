@@ -113,6 +113,11 @@ class Module extends \App\Controllers\BaseController
             $course_plan_id = $id;
         }
 
+        if ($module_id > 0 && is_null(ModuleModel::getInstance()->find($module_id))) {
+            // Back to module list
+            return redirect()->to(base_url('plafor/module/list_modules'));
+        }
+
         if (count($_POST) > 0) {
             $module = [
                 'module_number' => str_pad($this->request->getPost('module_number'), config('\Plafor\Config\PlaforConfig')->MODULE_NUMBER_MAX_LENGTH, '0', STR_PAD_LEFT),
