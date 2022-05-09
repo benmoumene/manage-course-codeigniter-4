@@ -17,6 +17,7 @@ class AddUserCourseModuleGrade extends Migration
             ],
             'fk_user_course' => [
                 'type' => 'int',
+                'unsigned' => true,
                 'constraint' => '11',
             ],
             'fk_module' => [
@@ -27,7 +28,6 @@ class AddUserCourseModuleGrade extends Migration
                 'type' => 'int',
                 'constraint' => '11',
             ],
-            'archive timestamp null',
         ]);
 
         $this->forge->addKey('id', TRUE, TRUE);
