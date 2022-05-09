@@ -31,7 +31,7 @@ class AddModule extends Migration
         ]);
 
         $this->forge->addKey('id', true, true);
-        $this->forge->createTable('module');
+        $this->forge->createTable('module', TRUE);
     }
 
     public function down()
