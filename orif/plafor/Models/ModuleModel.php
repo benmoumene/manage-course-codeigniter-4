@@ -26,7 +26,7 @@ class ModuleModel extends Model
             ],
             'official_name' => [
                 'label' => 'plafor_lang.field_module_official_name',
-                'rules' => 'required|max_length[100]',
+                'rules' => 'required|max_length[' . config('\Plafor\Config\PlaforConfig')->MODULE_OFFICIAL_NAME_MAX_LENGTH . ']',
             ],
         ];
         parent::__construct($db, $validation);
