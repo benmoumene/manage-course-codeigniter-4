@@ -32,17 +32,10 @@ class AddCompetenceDomain extends Migration {
 
         $this->forge->addKey('id', true, true);
         $this->forge->addForeignKey('fk_course_plan', 'course_plan','id');
-        try {
-            $this->db->tableExists('competence_domain')===true?:$this->forge->createTable('competence_domain');
-        }catch (\Exception $e){
-            echo $e->getMessage();
-        }
-        $seeder = \Config\Database::seeder();
-        if (ENVIRONMENT === 'testing') $seeder->setSilent(TRUE);
-        $seeder->call('\Plafor\Database\Seeds\addCompetenceDomain2021Datas');
+        $this->forge->createTable('competence_domain', TRUE);
     }
 
     public function down() {
-        $this->forge->dropTable('competence_domain');
+        $this->forge->dropTable('competence_domain', TRUE);
     }
 }

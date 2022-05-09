@@ -23,11 +23,31 @@ class Migration extends \CodeIgniter\Controller
             if ((json_decode($initDatas, true))['initialized'] === false) {
                 $this->response->setStatusCode('201')->send();
                 $migrate = Services::migrations();
+                $seeder = \Config\Database::seeder();
+                $seeds = [
+                    '\Plafor\Database\Seeds\addAcquisitionStatusDatas',
+                    '\Plafor\Database\Seeds\addCompetenceDomainDatas',
+                    '\Plafor\Database\Seeds\addCoursePlanDatas',
+                    '\Plafor\Database\Seeds\addObjectiveDatas',
+                    '\Plafor\Database\Seeds\addOperationalCompetencesDatas',
+                    '\Plafor\Database\Seeds\addTrainerApprenticeDatas',
+                    '\Plafor\Database\Seeds\addUserCoursesDatas',
+                    '\Plafor\Database\Seeds\addUserDatas',
+                    '\Plafor\Database\Seeds\addCompetenceDomain2021Datas',
+                    '\Plafor\Database\Seeds\addCoursePlan2021Datas',
+                    '\Plafor\Database\Seeds\addObjective2021Datas',
+                    '\Plafor\Database\Seeds\addOperationalCompetences2021Datas',
+                ];
+
                 try {
                     $migrate->setNamespace('User');
                     $migrate->latest();
                     $migrate->setNamespace('Plafor');
                     $migrate->latest();
+
+                    foreach ($seeds as $seed) {
+                        $seeder->call($seed);
+                    }
                 } catch (\Exception $e) {
                     echo $e->getMessage();
                 }

@@ -44,9 +44,6 @@ class AddAcquisitionStatus extends \CodeIgniter\Database\Migration
         $this->forge->addForeignKey('fk_acquisition_level','acquisition_level','id');
         $this->db->disableForeignKeyChecks();
         $this->forge->createTable('acquisition_status');
-        $seeder = \Config\Database::seeder();
-        if (ENVIRONMENT === 'testing') $seeder->setSilent(TRUE);
-        $seeder->call('\Plafor\Database\Seeds\addAcquisitionStatusDatas');
     }
 
 

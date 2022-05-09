@@ -31,17 +31,10 @@ class AddCoursePlan extends Migration {
         ]);
 
         $this->forge->addKey('id', true, true);
-        try {
-            $this->db->tableExists('course_plan')===true?:$this->forge->createTable('course_plan');
-        }catch (\Exception $e){
-            echo $e->getMessage();
-        }
-        $seeder = \Config\Database::seeder();
-        if (ENVIRONMENT === 'testing') $seeder->setSilent(TRUE);
-        $seeder->call('\Plafor\Database\Seeds\addCoursePlan2021Datas');
+        $this->forge->createTable('course_plan', TRUE);
     }
 
     public function down() {
-        $this->forge->dropTable('course_plan');
+        $this->forge->dropTable('course_plan', TRUE);
     }
 }
