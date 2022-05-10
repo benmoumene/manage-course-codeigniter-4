@@ -607,7 +607,7 @@ class Apprentice extends \App\Controllers\BaseController
         $courses_modules = [];
         // All grades of a course plan. The structure is [<course_plan_id> => [<module_id> => [<grades>]]]
         $courses_grades = [];
-        $course_plans = CoursePlanModel::getInstance()->find(array_column($user_course_plans, 'fk_course_plan'));
+        $course_plans = empty($user_course_plans) ? [] : CoursePlanModel::getInstance()->find(array_column($user_course_plans, 'fk_course_plan'));
 
         foreach ($user_course_plans as $user_course) {
             $course_modules = [];
