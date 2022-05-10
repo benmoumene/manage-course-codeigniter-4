@@ -88,12 +88,11 @@
                 <a class="btn btn-primary text-white" href="<?= base_url('plafor/apprentice/save_user_course/'.$apprentice['id'])?>"><?= lang('plafor_lang.title_user_course_new') ?></a>
             <?php else:?>
 
-            <?php endif;
-
-            ?>
+            <?php endif; ?>
+            <a class="btn btn-primary text-white" href="<?= base_url('plafor/apprentice/list_grades/'.$apprentice['id'])?>"><?= lang('plafor_lang.title_grade_list'); ?></a>
         </div>
     </div>
-    
+
     <!-- Current course plan detailed status -->
     <div class="row mt-2">
         <div class="col-md-12">

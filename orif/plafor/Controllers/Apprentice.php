@@ -13,12 +13,14 @@ use Plafor\Models\AcquisitionStatusModel;
 use Plafor\Models\CommentModel;
 use Plafor\Models\CompetenceDomainModel;
 use Plafor\Models\CoursePlanModel;
+use Plafor\Models\CoursePlanModuleModel;
+use Plafor\Models\ModuleModel;
 use Plafor\Models\ObjectiveModel;
 use Plafor\Models\OperationalCompetenceModel;
 use Plafor\Models\UserCourseModel;
 use Plafor\Models\UserCourseStatusModel;
 use Plafor\Models\TrainerApprenticeModel;
-
+use Plafor\Models\UserCourseModuleGradeModel;
 use User\Models\User_type_model;
 use User\Models\User_model;
 
@@ -54,7 +56,7 @@ class Apprentice extends \App\Controllers\BaseController
         }
     }
 
-    
+
     public function list_apprentice($withDeleted=0)
     {
         $trainer_id = $this->request->getGet('trainer_id');
@@ -69,7 +71,7 @@ class Apprentice extends \App\Controllers\BaseController
             {
                 $trainersList[$trainer['id']] = $trainer['username'];
             }
-        
+
         if($trainer_id == null or $trainer_id == 0){
             $apprentices = User_model::getApprentices($withDeleted);
 
@@ -84,8 +86,8 @@ class Apprentice extends \App\Controllers\BaseController
                     $coursesList[$courseplan['id']]=$courseplan;
                 $courses = UserCourseModel::getInstance()->findall();
             }
-        
-        
+
+
         $output = array(
             'title' => lang('plafor_lang.title_list_apprentice'),
             'trainer_id' => $trainer_id,
@@ -102,7 +104,7 @@ class Apprentice extends \App\Controllers\BaseController
     public function view_apprentice($apprentice_id = null)
     {
         $apprentice = User_model::getInstance()->find($apprentice_id);
-        
+
         if(is_null($apprentice) || $apprentice['fk_user_type'] != User_type_model::getInstance()->where('name',lang('plafor_lang.title_apprentice'))->first()['id']){
             return redirect()->to(base_url("/plafor/apprentice/list_apprentice"));
         }
@@ -130,7 +132,7 @@ class Apprentice extends \App\Controllers\BaseController
         $links = [];
         foreach (TrainerApprenticeModel::getInstance()->where('fk_apprentice',$apprentice_id)->findAll() as $link)
             $links[$link['id']]=$link;
-        
+
         $output = array(
             'title' => lang('plafor_lang.title_view_apprentice'),
             'apprentice' => $apprentice,
@@ -442,7 +444,7 @@ class Apprentice extends \App\Controllers\BaseController
 
                 return redirect()->to(base_url('plafor/courseplan/view_acquisition_status/'.$acquisition_status['id']));
             }
-        
+
         }
 
         $comment = CommentModel::getInstance()->find($comment_id);
@@ -561,4 +563,272 @@ class Apprentice extends \App\Controllers\BaseController
 
         $this->display_view('\Plafor\user_course/view',$output);
     }
+
+    /**
+     * Lists the modules of an apprentice
+     *
+     * @param  integer $apprentice_id ID of the apprentice whose modules are to show.
+     * If the current user is an apprentice, it is ignored.
+     * @return void
+     */
+    public function list_grades(int $apprentice_id = 0)
+    {
+        if (!isset($_SESSION['user_access'])) {
+            return $this->display_view('\User\errors\403error');
+        }
+
+        // Check that the current user has access to the apprentice
+        /** @var \Config\UserConfig */
+        $config = config('\User\Config\UserConfig');
+        $user_access = $_SESSION['user_access'];
+
+        if ($user_access == $config->access_level_apprentice) {
+            // Ignore parameter apprentice id
+            $apprentice_id = (int)$_SESSION['user_id'];
+        } elseif ($user_access == $config->access_lvl_trainer) {
+            // Only allow own apprentices
+            $apprentices_ids = TrainerApprenticeModel::getInstance()->where('fk_trainer', $_SESSION['user_id'])->findColumn('fk_apprentice');
+            if (!in_array($apprentice_id, $apprentices_ids)) {
+                return redirect()->to(base_url('plafor/apprentice/list_apprentice?trainer_id=' . $_SESSION['user_id']));
+            }
+        } // Else it's an admin with full rights
+
+        $apprentice = User_model::getInstance()->find($apprentice_id);
+        if (
+            is_null($apprentice) ||
+            User_type_model::getInstance()->find($apprentice['fk_user_type'])['access_level'] != $config->access_level_apprentice
+        ) {
+            // Not an apprentice
+            return redirect()->to(base_url('/plafor/apprentice/list_apprentice'));
+        }
+
+        $user_course_plans = UserCourseModel::getInstance()->where('fk_user', $apprentice_id)->where('fk_status', 1)->findAll();
+        // All modules of a course plan. The key is the course plan's id
+        $courses_modules = [];
+        // All grades of a course plan. The structure is [<course_plan_id> => [<module_id> => [<grades>]]]
+        $courses_grades = [];
+        $course_plans = CoursePlanModel::getInstance()->find(array_column($user_course_plans, 'fk_course_plan'));
+
+        foreach ($user_course_plans as $user_course) {
+            $course_modules = [];
+            $course_grades = [];
+
+            $modules_ids = CoursePlanModuleModel::getInstance()->where('fk_course_plan', $user_course['fk_course_plan'])->findColumn('fk_module') ?? [];
+            foreach ($modules_ids as $module_id) {
+                $course_modules[] = ModuleModel::getInstance()->find($module_id);
+
+                $course_grades[$module_id] = UserCourseModuleGradeModel::getInstance()->where('fk_user_course', $user_course['id'])->where('fk_module', $module_id)->findAll() ?? [];
+            }
+
+            $courses_modules[$user_course['fk_course_plan']] = $course_modules;
+            $courses_grades[$user_course['fk_course_plan']] = $course_grades;
+        }
+
+        $data = [
+            'title' => lang('plafor_lang.title_grade_list'),
+            'course_plans' => $course_plans,
+            'modules' => $courses_modules,
+            'grades' => $courses_grades,
+            'apprentice' => $apprentice,
+        ];
+
+        $this->display_view('\Plafor\grade\list', $data);
+    }
+    /**
+     * Adds a grade to an user course for a module
+     *
+     * @param  integer $user_course_id ID of the user course to add the grade to, can be overridden by POST parameters.
+     * @param  integer $module_id ID of the module the grade is for, can be overridden by POST parameters.
+     * @return void
+     */
+    public function add_grade(int $user_course_id = 0, int $module_id = 0)
+    {
+        if (!isset($_SESSION['user_access'])) {
+            return $this->display_view('\User\errors\403error');
+        }
+
+        // Get POST data
+        if (!empty($id = $this->request->getPost('user_course_id'))) {
+            $user_course_id = $id;
+        }
+        if (!empty($id = $this->request->getPost('module_id'))) {
+            $module_id = $id;
+        }
+
+        // Check that the user course, the module, and a link between them exist
+        $user_course = UserCourseModel::getInstance()->find($user_course_id);
+        if (empty($user_course) || empty(ModuleModel::getInstance()->find($module_id)) ||
+            empty(CoursePlanModuleModel::getInstance()->where('fk_course_plan', $user_course['fk_course_plan'])->where('fk_module', $module_id)->find())) {
+            return $this->index();
+        }
+
+        // Check that the current user has access to the apprentice
+        $apprentice_id = $user_course['fk_user'];
+
+        /** @var \Config\UserConfig */
+        $config = config('\User\Config\UserConfig');
+        $user_access = $_SESSION['user_access'];
+
+        if ($user_access == $config->access_level_apprentice && $_SESSION['user_id'] != $apprentice_id) {
+            return redirect()->to(base_url('plafor/apprentice/view_apprentice/'.$_SESSION['user_id']));
+        } elseif ($user_access == $config->access_lvl_trainer) {
+            // Only allow own apprentices
+            $apprentices_ids = TrainerApprenticeModel::getInstance()->where('fk_trainer', $_SESSION['user_id'])->findColumn('fk_apprentice');
+            if (!in_array($apprentice_id, $apprentices_ids)) {
+                return redirect()->to(base_url('plafor/apprentice/list_apprentice?trainer_id=' . $_SESSION['user_id']));
+            }
+        } // Else it's an admin with full rights
+
+        if (
+            is_null($apprentice = User_model::getInstance()->find($apprentice_id)) ||
+            User_type_model::getInstance()->find($apprentice['fk_user_type'])['access_level'] != $config->access_level_apprentice
+        ) {
+            // Not an apprentice
+            return redirect()->to(base_url('/plafor/apprentice/list_apprentice'));
+        }
+
+        $postData = [];
+
+        if (count($_POST) > 0) {
+            $grade = [
+                'fk_user_course' => $user_course_id,
+                'fk_module' => $module_id,
+                'grade' => $this->request->getPost('grade'),
+            ];
+
+            UserCourseModuleGradeModel::getInstance()->insert($grade);
+
+            if (UserCourseModuleGradeModel::getInstance()->errors() == null) {
+                return redirect()->to(base_url('plafor/apprentice/list_grades/' . $apprentice_id));
+            }
+
+            $postData = [
+                'fk_user_course' => $user_course_id,
+                'fk_module' => $module_id,
+                'grade' => $this->request->getPost('grade'),
+            ];
+        }
+
+        $data = [
+            'title' => lang('plafor_lang.title_grade_new'),
+            'user_course_id' => $user_course_id,
+            'module_id' => $module_id,
+            'form_url' => base_url('plafor/apprentice/add_grade'),
+            'errors' => UserCourseModuleGradeModel::getInstance()->errors(),
+            'grade' => $postData,
+            'apprentice_id' => $apprentice_id,
+        ];
+
+        $this->display_view('\Plafor\grade\save', $data);
+    }
+    /**
+     * Modifies a grade's value, but not its links
+     *
+     * @param  integer $grade_id ID of the grade to modify
+     * @return void
+     */
+    public function edit_grade(int $grade_id = 0)
+    {
+        if (!isset($_SESSION['user_access']) || $_SESSION['user_access'] < config('\User\Config\UserConfig')->access_lvl_trainer) {
+            return $this->display_view('\User\errors\403error');
+        }
+
+        // Get POST data
+        if (!empty($id = $this->request->getPost('grade_id'))) {
+            $grade_id = $id;
+        }
+
+        // Check that the grade exists
+        $grade = UserCourseModuleGradeModel::getInstance()->find($grade_id);
+        if (empty($grade)) {
+            return $this->index();
+        }
+
+        // Check that the current user has access to the apprentice
+        $apprentice_id = UserCourseModel::getInstance()->find($grade['fk_user_course'])['fk_user'];
+
+        /** @var \Config\UserConfig */
+        $config = config('\User\Config\UserConfig');
+        $user_access = $_SESSION['user_access'];
+
+        if ($user_access == $config->access_lvl_trainer) {
+            // Only allow own apprentices
+            $apprentices_ids = TrainerApprenticeModel::getInstance()->where('fk_trainer', $_SESSION['user_id'])->findColumn('fk_apprentice');
+            if (!in_array($apprentice_id, $apprentices_ids)) {
+                return redirect()->to(base_url('plafor/apprentice/list_apprentice?trainer_id=' . $_SESSION['user_id']));
+            }
+        } // Else it's an admin with full rights
+
+        $postData = [];
+
+        if (count($_POST) > 0) {
+            $grade = [
+                // Don't change linked module and course
+                'grade' => $this->request->getPost('grade'),
+            ];
+
+            UserCourseModuleGradeModel::getInstance()->update($grade_id, $grade);
+
+            if (UserCourseModuleGradeModel::getInstance()->errors() == null) {
+                return redirect()->to(base_url('plafor/apprentice/list_grades/' . $apprentice_id));
+            }
+
+            $postData = [
+                'grade' => $this->request->getPost('grade'),
+            ];
+        }
+
+        $data = [
+            'title' => lang('plafor_lang.title_grade_update'),
+            'grade_id' => $grade_id,
+            'form_url' => base_url('plafor/apprentice/edit_grade'),
+            'errors' => UserCourseModuleGradeModel::getInstance()->errors(),
+            'grade' => count($postData) > 0 ? $postData : $grade,
+            'apprentice_id' => $apprentice_id,
+        ];
+
+        $this->display_view('\Plafor\grade\save', $data);
+    }
+    /**
+     * Deletes a grade
+     *
+     * @param  integer $grade_id ID of the grade to delete
+     * @param  integer $action
+     * - 0 to show the confirmation UI
+     * - 1 to permanently delete the grade
+     * @return void
+     */
+    public function delete_grade(int $grade_id, int $action = 0)
+    {
+        if (!isset($_SESSION['user_access']) || $_SESSION['user_access'] < config('\User\Config\UserConfig')->access_lvl_admin) {
+            return $this->display_view('\User\errors\403error');
+        }
+
+        $grade = UserCourseModuleGradeModel::getInstance()->find($grade_id);
+        if (empty($grade)) {
+            return $this->index();
+        }
+
+        switch ($action) {
+            case 0: // Display confirmation
+                $module = ModuleModel::getInstance()->find($grade['fk_module']);
+
+                $data = [
+                    'grade' => $grade,
+                    'module' => $module,
+                ];
+
+                return $this->display_view('\Plafor\grade\delete', $data);
+            case 1: // Delete grade
+                $apprentice_id = UserCourseModel::getInstance()->find($grade['fk_user_course'])['fk_user'];
+
+                UserCourseModuleGradeModel::getInstance()->delete($grade_id);
+
+                return redirect()->to(base_url('plafor/apprentice/list_grades/' . $apprentice_id));
+            default: // Do nothing
+                $apprentice_id = UserCourseModel::getInstance()->find($grade['fk_user_course'])['fk_user'];
+                return redirect()->to(base_url('plafor/apprentice/list_grades/' . $apprentice_id));
+        }
+    }
+
 }

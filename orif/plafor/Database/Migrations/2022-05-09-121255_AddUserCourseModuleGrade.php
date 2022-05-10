@@ -25,8 +25,8 @@ class AddUserCourseModuleGrade extends Migration
                 'constraint' => '11',
             ],
             'grade' => [
-                'type' => 'int',
-                'constraint' => '11',
+                'type' => 'decimal',
+                'constraint' => '11,1',
             ],
         ]);
 

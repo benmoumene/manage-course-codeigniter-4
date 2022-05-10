@@ -91,6 +91,12 @@ return [
     'title_module_update'            => 'Modifier un module',
     'title_view_modules_linked'      => 'Modules liés',
 
+    // Grades
+    'title_grade_list'               => 'Liste des notes de l\'apprenti',
+    'grade_no_grades'                => 'Aucune notes',
+    'title_grade_new'                => 'Ajouter une note',
+    'title_grade_update'             => 'Modifier une note',
+
     // Page titles
     'title_apprentice_list'          => 'Liste des apprentis',
     'title_apprentice_update'        => 'Modifier l\'apprenti',
@@ -202,6 +208,8 @@ return [
     'field_module_module_number'     => 'Numéro du module',
     'field_module_official_name'     => 'Nom du module',
     'field_module_is_school'         => 'Module à l\'école professionnelle',
+    'field_grade_grade'              => 'Note',
+    'field_grade_grades'             => 'Notes',
 
     // Admin texts
     'admin_apprentices'              =>'Apprentis',
@@ -260,6 +268,8 @@ return [
     'module_disable_explanation'     => 'Toutes les informations concernant ce module seront désactivées.',
     'module_enable_explanation'      => 'Toutes les informations concernant ce module seront réactivées.',
     'change_course_plan_module_links' => 'Lier ou délier des modules',
+    'grade'                          => 'Note',
+    'grade_delete_explanation'       => 'Toutes les informations concernant cette note seront supprimées.',
 
     'course_plan_enable_explanation' =>'Toutes les informations concernant ce plan de formation (domaines de compétences, compétences oppérationnelles et objectifs) seront réactivées.',
     'competence_domain_enable_explanation' =>'Toutes les informations concernant ce domaine de compétence (symbole, nom, compétences oppérationnelles et objectifs) seront réactivées.',
