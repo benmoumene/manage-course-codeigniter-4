@@ -4,7 +4,7 @@ namespace Plafor\Controllers;
 
 // CodeIgniter looks for it in a specific location, which isn't disclosed anywhere.
 // As such, I've decided to not waste time searching for it.
-include __DIR__ . '/../Models/ModuleFabricator.php';
+include_once __DIR__ . '/../Models/ModuleFabricator.php';
 
 use CodeIgniter\Test\CIUnitTestCase;
 use CodeIgniter\Test\ControllerTestTrait;
