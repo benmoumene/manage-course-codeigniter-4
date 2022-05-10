@@ -86,6 +86,7 @@ class ModuleTest extends CIUnitTestCase
      * Tests Module::index
      *
      * @dataProvider indexProvider
+     * @group Modules
      * @param  boolean $logged_in Whether the test is done logged in
      * @param  integer $user_access Access given to the "user"
      * @param  string  $expected_redirect_url Expected redirection to
@@ -161,6 +162,7 @@ class ModuleTest extends CIUnitTestCase
      * Tests whether Module::list_modules redirects with specific access
      *
      * @dataProvider listModulesAccessProvider
+     * @group Modules
      * @param  integer|null $user_access Access given to the "user", NULL if no access is set.
      * @param  boolean      $expect_redirect Whether redirection is expected
      * @param  boolean      $expect_403 Whether a 403 page is expected
@@ -236,6 +238,7 @@ class ModuleTest extends CIUnitTestCase
      * Tests Module::view_module
      *
      * @dataProvider viewModuleProvider
+     * @group Modules
      * @param  integer|null $module_id ID of the module to view
      * @param  boolean      $expect_redirect Whether a redirect is expected
      * @return void
@@ -366,6 +369,7 @@ class ModuleTest extends CIUnitTestCase
      * Tests Module::save_module
      *
      * @dataProvider saveModuleProvider
+     * @group Modules
      * @param  integer    $module_id ID of the module
      * @param  array|null $post_data Data to put in $_POST
      * @param  boolean    $expect_redirect Whether a redirect is expected
@@ -375,15 +379,13 @@ class ModuleTest extends CIUnitTestCase
     public function testSaveModule(int $module_id, ?array $post_data, bool $expect_redirect, bool $expect_errors): void
     {
         // Setup
-        if (!is_null($post_data)) {
-            global $_POST;
-            $keys = ['module_number', 'official_name', 'is_school'];
-            foreach ($keys as $key) {
-                if (array_key_exists($key, $post_data)) {
-                    $_POST[$key] = $post_data[$key];
-                } else {
-                    unset($_POST[$key]);
-                }
+        global $_POST;
+        $keys = ['module_number', 'official_name', 'is_school'];
+        foreach ($keys as $key) {
+            if (!is_null($post_data) && array_key_exists($key, $post_data)) {
+                $_POST[$key] = $post_data[$key];
+            } else {
+                unset($_POST[$key]);
             }
         }
         // Reset errors by removing the existing instance
@@ -412,6 +414,12 @@ class ModuleTest extends CIUnitTestCase
         }
     }
 
+    /**
+     * Tests Module::save_module with a valid link
+     *
+     * @group Modules
+     * @return void
+     */
     public function testSaveModuleLink(): void
     {
         // Setup
@@ -439,6 +447,12 @@ class ModuleTest extends CIUnitTestCase
         $this->assertEmpty(ModuleModel::getInstance()->errors());
     }
 
+    /**
+     * Tests Module::save_module with an invalid link
+     *
+     * @group Modules
+     * @return void
+     */
     public function testSaveModuleNoLink(): void
     {
         // Setup
@@ -523,6 +537,7 @@ class ModuleTest extends CIUnitTestCase
      * Tests for Module::delete_module
      *
      * @dataProvider deleteModuleProvider
+     * @group Modules
      * @param  integer $module_id ID of the module to delete
      * @param  integer $action Action to pass to delete_module, see Module::delete_module
      * @param  boolean $expect_redirect Whether a redirect is expected
