@@ -22,6 +22,15 @@ $input_grade_grade = [
     'id' => 'grade',
     'step' => 0.1,
 ];
+$input_grade_date_exam = [
+    'name' => 'date_exam',
+    'value' => $grade['date_exam'] ?? '',
+    'type' => 'date',
+    'class' => 'form-control',
+    'id' => 'date_exam',
+];
+
+$disable = $grade['archive'] == NULL;
 ?>
 <div class="container">
     <!-- TITLE -->
@@ -52,6 +61,8 @@ $input_grade_grade = [
         <div class="col-sm-12 form-group">
             <?= form_label(lang('plafor_lang.field_grade_grade'), 'grade', ['class' => 'form_label']); ?>
             <?= form_input($input_grade_grade); ?>
+            <?= form_label(lang('plafor_lang.field_grade_date_exam'), 'date_exam', ['class' => 'form_label']); ?>
+            <?= form_input($input_grade_date_exam); ?>
         </div>
     </div>
 
@@ -59,7 +70,7 @@ $input_grade_grade = [
     <div class="row">
         <div class="col text-right">
             <?php if (isset($grade['id']) && $_SESSION['user_access'] >= config('\User\Config\UserConfig')->access_lvl_admin) { ?>
-                <a href="<?= base_url('plafor/apprentice/delete_grade/' . $grade['id']); ?>" class="btn btn-danger"><?= lang('common_lang.btn_delete'); ?></a>
+                <a href="<?= base_url('plafor/apprentice/delete_grade/' . $grade['id']); ?>" class="btn btn-<?= $disable ? 'danger' : 'secondary'; ?>"><?= lang('common_lang.btn_' . ($disable ? 'disable' : 'reactivate')); ?></a>
             <?php } ?>
             <a href="<?= base_url('plafor/apprentice/list_grades/' . $apprentice_id); ?>" class="btn btn-default"><?= lang('common_lang.btn_cancel'); ?></a>
             <?= form_submit('save', lang('common_lang.btn_save'), ['class' => 'btn btn-primary']); ?>

@@ -210,6 +210,7 @@ return [
     'field_module_is_school'         => 'Module à l\'école professionnelle',
     'field_grade_grade'              => 'Note',
     'field_grade_grades'             => 'Notes',
+    'field_grade_date_exam'          => 'Date d\'examen',
 
     // Admin texts
     'admin_apprentices'              =>'Apprentis',
@@ -270,6 +271,8 @@ return [
     'change_course_plan_module_links' => 'Lier ou délier des modules',
     'grade'                          => 'Note',
     'grade_delete_explanation'       => 'Toutes les informations concernant cette note seront supprimées.',
+    'grade_disable_explanation'      => 'Toutes les informations concernant cette note seront désactivées.',
+    'grade_enable_explanation'       => 'Toutes les informations concernant cette note seront réactivées.',
 
     'course_plan_enable_explanation' =>'Toutes les informations concernant ce plan de formation (domaines de compétences, compétences oppérationnelles et objectifs) seront réactivées.',
     'competence_domain_enable_explanation' =>'Toutes les informations concernant ce domaine de compétence (symbole, nom, compétences oppérationnelles et objectifs) seront réactivées.',

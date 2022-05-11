@@ -12,7 +12,9 @@ class UserCourseModuleGradeModel extends Model
     private static $userCourseModuleGradeModel = NULL;
     protected $table = 'user_course_module_grade';
     protected $primaryKey = 'id';
-    protected $allowedFields = ['fk_user_course', 'fk_module', 'grade'];
+    protected $allowedFields = ['fk_user_course', 'fk_module', 'grade', 'date_exam', 'archive'];
+    protected $useSoftDeletes = true;
+    protected $deletedField = 'archive';
     protected $validationRules;
 
     public function __construct(ConnectionInterface &$db = null, ValidationInterface $validation = null)
@@ -29,6 +31,10 @@ class UserCourseModuleGradeModel extends Model
             'grade' => [
                 'label' => 'plafor_lang.grade',
                 'rules' => 'required|decimal|greater_than_equal_to[' . config('\Plafor\Config\PlaforConfig')->GRADE_LOWEST . ']|less_than_equal_to[' . config('\Plafor\Config\PlaforConfig')->GRADE_HIGHEST . ']',
+            ],
+            'date_exam' => [
+                'label' => 'plafor_lang.field_grade_date_exam',
+                'rules' => 'required',
             ],
         ];
 

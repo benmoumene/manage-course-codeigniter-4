@@ -1,4 +1,5 @@
 <?php
+helper('form');
 $trainer_access = config('\User\Config\UserConfig')->access_lvl_trainer;
 $admin_access = config('\User\Config\UserConfig')->access_lvl_admin;
 ?>
@@ -16,6 +17,16 @@ $admin_access = config('\User\Config\UserConfig')->access_lvl_admin;
     ?>
         <div class="row">
             <p class="font-weight-bold user-course-details-course-plan-name"><?= $course_plan['official_name']; ?></p>
+            <div class="col-sm-9 text-right">
+                <label class="btn btn-default form-check-label" for="toggle_deleted">
+                    <?= form_label(lang('common_lang.btn_show_disabled'), 'toggle_deleted', [
+                        'class' => 'form-check-label',
+                    ]); ?>
+                </label>
+                <?= form_checkbox('toggle_deleted', '', $with_archived, [
+                    'id' => 'toggle_deleted',
+                ]); ?>
+            </div>
 
             <table class="table table-hover">
                 <thead>
@@ -25,7 +36,7 @@ $admin_access = config('\User\Config\UserConfig')->access_lvl_admin;
                         <th></th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="modules_grades">
                     <?php
                     foreach ($course_modules as $module) {
                         $module_grades = $course_grades[$module['id']];
@@ -45,6 +56,9 @@ $admin_access = config('\User\Config\UserConfig')->access_lvl_admin;
                                 if (count($module_grades) > 0) {
                                     foreach ($module_grades as $i => $grade) {
                                         $g = $grade['grade'];
+                                        if ($grade['archive'] != NULL) {
+                                            $g = '<span style="text-decoration: line-through;">' . $g . '</span>';
+                                        }
                                         if ($_SESSION['user_access'] >= $trainer_access) {
                                             $url = base_url('plafor/apprentice/edit_grade/' . $grade['id']);
                                             $g = '<a href="' . $url . '">' . $g . '</a>';
@@ -65,3 +79,15 @@ $admin_access = config('\User\Config\UserConfig')->access_lvl_admin;
         </div>
     <?php } ?>
 </div>
+
+<script>
+    $(document).ready(function() {
+        $('#toggle_deleted').change(e => {
+            let checked = e.currentTarget.checked;
+            $.post('<?= base_url('/plafor/apprentice/list_grades/' . $apprentice['id']); ?>/' + (+checked), {}, data => {
+                $('#modules_grades').empty();
+                $('#modules_grades')[0].innerHTML = $(data).find('#modules_grades')[0].innerHTML;
+            });
+        });
+    });
+</script>

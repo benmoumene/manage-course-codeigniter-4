@@ -532,6 +532,7 @@ class ApprenticeTest extends CIUnitTestCase
                 'grade_id' => 1,
                 'post_data' => [
                     'grade' => 1.4,
+                    'date_exam' => '2022-01-01',
                 ],
                 'expect_redirect' => TRUE,
                 'expect_errors' => FALSE,
@@ -542,6 +543,7 @@ class ApprenticeTest extends CIUnitTestCase
                 'post_data' => [
                     'grade_id' => 1,
                     'grade' => 1.5,
+                    'date_exam' => '2022-01-01',
                 ],
                 'expect_redirect' => TRUE,
                 'expect_errors' => FALSE,
@@ -552,6 +554,7 @@ class ApprenticeTest extends CIUnitTestCase
                 'post_data' => [
                     'grade_id' => 1,
                     'grade' => 1.6,
+                    'date_exam' => '2022-01-01',
                 ],
                 'expect_redirect' => TRUE,
                 'expect_errors' => FALSE,
@@ -561,6 +564,7 @@ class ApprenticeTest extends CIUnitTestCase
                 'grade_id' => 1,
                 'post_data' => [
                     'grade' => $plafor_config->GRADE_LOWEST - 1,
+                    'date_exam' => '2022-01-01',
                 ],
                 'expect_redirect' => FALSE,
                 'expect_errors' => TRUE,
@@ -569,6 +573,7 @@ class ApprenticeTest extends CIUnitTestCase
                 'grade_id' => 1,
                 'post_data' => [
                     'grade' => $plafor_config->GRADE_HIGHEST + 1,
+                    'date_exam' => '2022-01-01',
                 ],
                 'expect_redirect' => FALSE,
                 'expect_errors' => TRUE,
@@ -577,6 +582,7 @@ class ApprenticeTest extends CIUnitTestCase
                 'grade_id' => 999,
                 'post_data' => [
                     'grade' => 1,
+                    'date_exam' => '2022-01-01',
                 ],
                 'expect_redirect' => TRUE,
                 'expect_errors' => FALSE,
@@ -777,24 +783,35 @@ class ApprenticeTest extends CIUnitTestCase
                 'action' => 0,
                 'expect_redirect' => FALSE,
                 'exists' => TRUE,
+                'archived' => FALSE,
             ],
             'Delete grade' => [
                 'grade_id' => 1,
                 'action' => 1,
                 'expect_redirect' => TRUE,
                 'exists' => FALSE,
+                'archived' => FALSE,
+            ],
+            'Deactivate grade' => [
+                'grade_id' => 1,
+                'action' => 2,
+                'expect_redirect' => TRUE,
+                'exists' => TRUE,
+                'archived' => TRUE,
             ],
             'Do not show inexistant grade' => [
                 'grade_id' => 999,
                 'action' => NULL,
                 'expect_redirect' => TRUE,
                 'exists' => FALSE,
+                'archived' => FALSE,
             ],
-            'Do nothing on invalid action' => [ //?!
+            'Do nothing on invalid action' => [
                 'grade_id' => 1,
                 'action' => 999,
                 'expect_redirect' => TRUE,
                 'exists' => TRUE,
+                'archived' => FALSE,
             ],
         ];
     }
@@ -810,7 +827,7 @@ class ApprenticeTest extends CIUnitTestCase
      * @param  boolean      $exists Whether the grade exists afterwards
      * @return void
      */
-    public function testDeleteGrade(int $grade_id, ?int $action, bool $expect_redirect, bool $exists): void
+    public function testDeleteGrade(int $grade_id, ?int $action, bool $expect_redirect, bool $exists, bool $archived): void
     {
         // Setup
         $action ??= 0;
@@ -833,6 +850,14 @@ class ApprenticeTest extends CIUnitTestCase
             $this->assertEmpty($data);
         } else {
             $this->assertNotEmpty($data);
+
+            if ($archived) {
+                $this->assertNotEmpty($data['archive']);
+            } else {
+                $this->assertEmpty($data['archived']);
+            }
         }
     }
+
+    // todo reactivate grade
 }

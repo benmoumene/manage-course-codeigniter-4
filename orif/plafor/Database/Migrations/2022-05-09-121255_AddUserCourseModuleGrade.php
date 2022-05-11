@@ -28,6 +28,10 @@ class AddUserCourseModuleGrade extends Migration
                 'type' => 'decimal',
                 'constraint' => '11,1',
             ],
+            'date_exam'=>[
+                'type'=>'date'
+            ],
+            'archive timestamp null',
         ]);
 
         $this->forge->addKey('id', TRUE, TRUE);

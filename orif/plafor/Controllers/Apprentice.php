@@ -569,9 +569,10 @@ class Apprentice extends \App\Controllers\BaseController
      *
      * @param  integer $apprentice_id ID of the apprentice whose modules are to show.
      * If the current user is an apprentice, it is ignored.
+     * @param  boolean $with_archived If true, shows the archived grades too.
      * @return void
      */
-    public function list_grades(int $apprentice_id = 0)
+    public function list_grades(int $apprentice_id = 0, bool $with_archived = false)
     {
         if (!isset($_SESSION['user_access'])) {
             return $this->display_view('\User\errors\403error');
@@ -617,7 +618,7 @@ class Apprentice extends \App\Controllers\BaseController
             foreach ($modules_ids as $module_id) {
                 $course_modules[] = ModuleModel::getInstance()->find($module_id);
 
-                $course_grades[$module_id] = UserCourseModuleGradeModel::getInstance()->where('fk_user_course', $user_course['id'])->where('fk_module', $module_id)->findAll() ?? [];
+                $course_grades[$module_id] = UserCourseModuleGradeModel::getInstance()->withDeleted($with_archived)->where('fk_user_course', $user_course['id'])->where('fk_module', $module_id)->findAll() ?? [];
             }
 
             $courses_modules[$user_course['fk_course_plan']] = $course_modules;
@@ -630,6 +631,7 @@ class Apprentice extends \App\Controllers\BaseController
             'modules' => $courses_modules,
             'grades' => $courses_grades,
             'apprentice' => $apprentice,
+            'with_archived' => $with_archived,
         ];
 
         $this->display_view('\Plafor\grade\list', $data);
@@ -694,6 +696,7 @@ class Apprentice extends \App\Controllers\BaseController
                 'fk_user_course' => $user_course_id,
                 'fk_module' => $module_id,
                 'grade' => $this->request->getPost('grade'),
+                'date_exam' => $this->request->getPost('date_exam'),
             ];
 
             UserCourseModuleGradeModel::getInstance()->insert($grade);
@@ -706,6 +709,7 @@ class Apprentice extends \App\Controllers\BaseController
                 'fk_user_course' => $user_course_id,
                 'fk_module' => $module_id,
                 'grade' => $this->request->getPost('grade'),
+                'date_exam' => $this->request->getPost('date_exam'),
             ];
         }
 
@@ -739,7 +743,7 @@ class Apprentice extends \App\Controllers\BaseController
         }
 
         // Check that the grade exists
-        $grade = UserCourseModuleGradeModel::getInstance()->find($grade_id);
+        $grade = UserCourseModuleGradeModel::getInstance()->withDeleted()->find($grade_id);
         if (empty($grade)) {
             return $this->index();
         }
@@ -765,6 +769,7 @@ class Apprentice extends \App\Controllers\BaseController
             $grade = [
                 // Don't change linked module and course
                 'grade' => $this->request->getPost('grade'),
+                'date_exam' => $this->request->getPost('date_exam'),
             ];
 
             UserCourseModuleGradeModel::getInstance()->update($grade_id, $grade);
@@ -775,6 +780,7 @@ class Apprentice extends \App\Controllers\BaseController
 
             $postData = [
                 'grade' => $this->request->getPost('grade'),
+                'date_exam' => $this->request->getPost('date_exam'),
                 'id' => $grade_id,
             ];
         }
@@ -797,6 +803,8 @@ class Apprentice extends \App\Controllers\BaseController
      * @param  integer $action
      * - 0 to show the confirmation UI
      * - 1 to permanently delete the grade
+     * - 2 to deactivate the grade
+     * - 3 to reactivate the grade
      * @return void
      */
     public function delete_grade(int $grade_id, int $action = 0)
@@ -805,10 +813,12 @@ class Apprentice extends \App\Controllers\BaseController
             return $this->display_view('\User\errors\403error');
         }
 
-        $grade = UserCourseModuleGradeModel::getInstance()->find($grade_id);
+        $grade = UserCourseModuleGradeModel::getInstance()->withDeleted()->find($grade_id);
         if (empty($grade)) {
             return $this->index();
         }
+
+        $apprentice_id = UserCourseModel::getInstance()->find($grade['fk_user_course'])['fk_user'];
 
         switch ($action) {
             case 0: // Display confirmation
@@ -821,15 +831,19 @@ class Apprentice extends \App\Controllers\BaseController
 
                 return $this->display_view('\Plafor\grade\delete', $data);
             case 1: // Delete grade
-                $apprentice_id = UserCourseModel::getInstance()->find($grade['fk_user_course'])['fk_user'];
+                UserCourseModuleGradeModel::getInstance()->delete($grade_id, TRUE);
 
+                return redirect()->to(base_url('plafor/apprentice/list_grades/' . $apprentice_id));
+            case 2: // Deactivate grade
                 UserCourseModuleGradeModel::getInstance()->delete($grade_id);
 
                 return redirect()->to(base_url('plafor/apprentice/list_grades/' . $apprentice_id));
+            case 3: // Reactivate grade
+                UserCourseModuleGradeModel::getInstance()->withDeleted()->update($grade_id, ['archive' => NULL]);
+
+                return redirect()->to(base_url('plafor/apprentice/list_grades/' . $apprentice_id));
             default: // Do nothing
-                $apprentice_id = UserCourseModel::getInstance()->find($grade['fk_user_course'])['fk_user'];
                 return redirect()->to(base_url('plafor/apprentice/list_grades/' . $apprentice_id));
         }
     }
-
 }
