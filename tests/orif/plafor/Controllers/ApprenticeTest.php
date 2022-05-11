@@ -60,8 +60,8 @@ class ApprenticeTest extends CIUnitTestCase
         // Insert dummy modules
         ModuleModel::getInstance()->skipValidation(TRUE);
         foreach (self::$module_fabricator->make(10) as $i => $module) {
-            if ($i > 7) {
-                $module['archive'] = '2022-01-01 00:00:00';
+            if ($i <= 7) {
+                $module['archive'] = NULL;
             }
             $module['module_number'] = str_pad($i, config('\Plafor\Config\PlaforConfig')->MODULE_NUMBER_MAX_LENGTH, '0', STR_PAD_LEFT);
             ModuleModel::getInstance()->insert($module);
@@ -71,8 +71,8 @@ class ApprenticeTest extends CIUnitTestCase
         // Insert dummy course plans
         CoursePlanModel::getInstance()->skipValidation(TRUE);
         foreach (self::$course_fabricator->make(5) as $i => $course_plan) {
-            if ($i > 4) {
-                $course_plan['archive'] = '2022-01-01 00:00:00';
+            if ($i < 4) {
+                $course_plan['archive'] = NULL;
             }
             $course_plan['formation_number'] = str_pad($i, config('\Plafor\Config\PlaforConfig')->FORMATION_NUMBER_MAX_LENGTH, '0', STR_PAD_LEFT);
             CoursePlanModel::getInstance()->insert($course_plan);
@@ -84,6 +84,7 @@ class ApprenticeTest extends CIUnitTestCase
         User_model::getInstance()->skipValidation(TRUE);
         foreach (self::$user_fabricator->make(6) as $i => $user) {
             $user['fk_user_type'] = 3 - intdiv($i, 2);
+            $user['archive'] = NULL;
             User_model::getInstance()->insert($user);
         }
         User_model::getInstance()->skipValidation(FALSE);
