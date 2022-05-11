@@ -588,7 +588,7 @@ class Apprentice extends \App\Controllers\BaseController
         } elseif ($user_access == $config->access_lvl_trainer) {
             // Only allow own apprentices
             $apprentices_ids = TrainerApprenticeModel::getInstance()->where('fk_trainer', $_SESSION['user_id'])->findColumn('fk_apprentice');
-            if (!in_array($apprentice_id, $apprentices_ids)) {
+            if (is_null($apprentices_ids) || !in_array($apprentice_id, $apprentices_ids)) {
                 return redirect()->to(base_url('plafor/apprentice/list_apprentice?trainer_id=' . $_SESSION['user_id']));
             }
         } // Else it's an admin with full rights
@@ -775,6 +775,7 @@ class Apprentice extends \App\Controllers\BaseController
 
             $postData = [
                 'grade' => $this->request->getPost('grade'),
+                'id' => $grade_id,
             ];
         }
 

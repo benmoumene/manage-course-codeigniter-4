@@ -58,7 +58,7 @@ $input_grade_grade = [
     <!-- BUTTONS -->
     <div class="row">
         <div class="col text-right">
-            <?php if ($_SESSION['user_access'] >= config('\User\Config\UserConfig')->access_lvl_admin) { ?>
+            <?php if (isset($grade['id']) && $_SESSION['user_access'] >= config('\User\Config\UserConfig')->access_lvl_admin) { ?>
                 <a href="<?= base_url('plafor/apprentice/delete_grade/' . $grade['id']); ?>" class="btn btn-danger"><?= lang('common_lang.btn_delete'); ?></a>
             <?php } ?>
             <a href="<?= base_url('plafor/apprentice/list_grades/' . $apprentice_id); ?>" class="btn btn-default"><?= lang('common_lang.btn_cancel'); ?></a>

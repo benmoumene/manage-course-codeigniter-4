@@ -43,13 +43,14 @@ $admin_access = config('\User\Config\UserConfig')->access_lvl_admin;
                             <td>
                                 <?php
                                 if (count($module_grades) > 0) {
-                                    foreach ($module_grades as $grade) {
+                                    foreach ($module_grades as $i => $grade) {
                                         $g = $grade['grade'];
                                         if ($_SESSION['user_access'] >= $trainer_access) {
                                             $url = base_url('plafor/apprentice/edit_grade/' . $grade['id']);
                                             $g = '<a href="' . $url . '">' . $g . '</a>';
                                         }
-                                        echo $g . ' ';
+                                        if ($i != 0) echo ', ';
+                                        echo $g;
                                     }
                                 } else {
                                     echo lang('plafor_lang.grade_no_grades');
