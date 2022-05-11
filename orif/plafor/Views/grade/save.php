@@ -30,7 +30,7 @@ $input_grade_date_exam = [
     'id' => 'date_exam',
 ];
 
-$disable = $grade['archive'] == NULL;
+$disable = ($grade['archive'] ?? NULL) == NULL;
 ?>
 <div class="container">
     <!-- TITLE -->

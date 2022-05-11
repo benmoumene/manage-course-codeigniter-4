@@ -364,6 +364,7 @@ class ApprenticeTest extends CIUnitTestCase
                 'module_id' => 1,
                 'post_data' => [
                     'grade' => 1.3,
+                    'date_exam' => '2022-01-01',
                 ],
                 'expect_redirect' => TRUE,
                 'expect_errors' => FALSE,
@@ -375,6 +376,7 @@ class ApprenticeTest extends CIUnitTestCase
                 'post_data' => [
                     'grade' => 1.5,
                     'module_id' => 1,
+                    'date_exam' => '2022-01-01',
                 ],
                 'expect_redirect' => TRUE,
                 'expect_errors' => FALSE,
@@ -385,6 +387,7 @@ class ApprenticeTest extends CIUnitTestCase
                 'post_data' => [
                     'grade' => 3.3,
                     'user_course_id' => 1,
+                    'date_exam' => '2022-01-01',
                 ],
                 'expect_redirect' => TRUE,
                 'expect_errors' => FALSE,
@@ -396,6 +399,7 @@ class ApprenticeTest extends CIUnitTestCase
                     'grade' => 3.5,
                     'user_course_id' => 1,
                     'module_id' => 1,
+                    'date_exam' => '2022-01-01',
                 ],
                 'expect_redirect' => TRUE,
                 'expect_errors' => FALSE,
@@ -407,6 +411,7 @@ class ApprenticeTest extends CIUnitTestCase
                 'post_data' => [
                     'grade' => 1.5,
                     'module_id' => 1,
+                    'date_exam' => '2022-01-01',
                 ],
                 'expect_redirect' => TRUE,
                 'expect_errors' => FALSE,
@@ -417,6 +422,7 @@ class ApprenticeTest extends CIUnitTestCase
                 'post_data' => [
                     'grade' => 3.3,
                     'user_course_id' => 1,
+                    'date_exam' => '2022-01-01',
                 ],
                 'expect_redirect' => TRUE,
                 'expect_errors' => FALSE,
@@ -428,6 +434,7 @@ class ApprenticeTest extends CIUnitTestCase
                     'grade' => 3.5,
                     'user_course_id' => 1,
                     'module_id' => 1,
+                    'date_exam' => '2022-01-01',
                 ],
                 'expect_redirect' => TRUE,
                 'expect_errors' => FALSE,
@@ -438,6 +445,7 @@ class ApprenticeTest extends CIUnitTestCase
                 'module_id' => 1,
                 'post_data' => [
                     'grade' => $plafor_config->GRADE_LOWEST - 1,
+                    'date_exam' => '2022-01-01',
                 ],
                 'expect_redirect' => FALSE,
                 'expect_errors' => TRUE,
@@ -447,6 +455,16 @@ class ApprenticeTest extends CIUnitTestCase
                 'module_id' => 1,
                 'post_data' => [
                     'grade' => $plafor_config->GRADE_HIGHEST + 1,
+                    'date_exam' => '2022-01-01',
+                ],
+                'expect_redirect' => FALSE,
+                'expect_errors' => TRUE,
+            ],
+            'Insert without exam date' => [
+                'user_course_id' => 1,
+                'module_id' => 1,
+                'post_data' => [
+                    'grade' => 3.0,
                 ],
                 'expect_redirect' => FALSE,
                 'expect_errors' => TRUE,
@@ -472,7 +490,7 @@ class ApprenticeTest extends CIUnitTestCase
         $user_course_id ??= 0;
         $module_id ??= 0;
         global $_POST;
-        $keys = ['user_course_id', 'module_id', 'grade'];
+        $keys = ['user_course_id', 'module_id', 'grade', 'date_exam'];
         foreach ($keys as $key) {
             if (!is_null($post_data) && array_key_exists($key, $post_data)) {
                 $_POST[$key] = $post_data[$key];
@@ -606,7 +624,7 @@ class ApprenticeTest extends CIUnitTestCase
         // Setup
         $grade_id ??= 0;
         global $_POST;
-        $keys = ['grade_id', 'grade'];
+        $keys = ['grade_id', 'grade', 'date_exam'];
         foreach ($keys as $key) {
             if (!is_null($post_data) && array_key_exists($key, $post_data)) {
                 $_POST[$key] = $post_data[$key];
@@ -775,7 +793,7 @@ class ApprenticeTest extends CIUnitTestCase
      *
      * @return array
      */
-    public function deleteGradeProvider() : array
+    public function deleteGradeProvider(): array
     {
         return [
             'Show grade delete confirmation' => [
@@ -854,10 +872,39 @@ class ApprenticeTest extends CIUnitTestCase
             if ($archived) {
                 $this->assertNotEmpty($data['archive']);
             } else {
-                $this->assertEmpty($data['archived']);
+                $this->assertEmpty($data['archive']);
             }
         }
     }
 
-    // todo reactivate grade
+    /**
+     * Tests for Apprentice::delete_grade for grade reactivation
+     *
+     * @group Grades
+     * @return void
+     */
+    public function testDeleteGradeReactivate(): void
+    {
+        // Setup
+        $grade_id = GradeModel::getInstance()->insert([
+            'fk_user_course' => 1,
+            'fk_module' => 1,
+            'grade' => 1.5,
+            'date_exam' => '2022-01-01',
+            'archive' => '2022-01-01',
+        ]);
+
+        // Test
+        /** @var \CodeIgniter\Test\TestResponse */
+        $result = $this->withUri(base_url('plafor/apprentice/delete_grade'))
+            ->controller(\Plafor\Controllers\Apprentice::class)
+            ->execute('delete_grade', $grade_id, 3);
+
+        // Assert
+        $result->assertRedirect();
+
+        $data = GradeModel::getInstance()->withDeleted()->find($grade_id);
+        $this->assertNotEmpty($data);
+        $this->assertEmpty($data['archive']);
+    }
 }
