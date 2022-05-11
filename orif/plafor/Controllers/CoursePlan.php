@@ -699,6 +699,9 @@ class CoursePlan extends \App\Controllers\BaseController
                 return !in_array($moduleId, $modulesSelected);
             });
             foreach ($add as $moduleId) {
+                if (empty(ModuleModel::getInstance()->find($moduleId))) {
+                    continue;
+                }
                 $coursePlanModuleModel->insert([
                     'fk_course_plan' => $course_plan_id,
                     'fk_module' => $moduleId,
