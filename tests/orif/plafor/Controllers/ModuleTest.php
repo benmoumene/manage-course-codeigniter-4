@@ -553,7 +553,7 @@ class ModuleTest extends CIUnitTestCase
     public function testSaveModuleNoLink(): void
     {
         // Setup
-        $course_plan_id = \Plafor\Models\CoursePlanModel::getInstance()->insert([
+        $course_plan_id = CoursePlanModel::getInstance()->insert([
             'formation_number' => '00000',
             'official_name' => 'Fake course plan',
             'date_begin' => '2022-01-01 00:00:00',
@@ -561,8 +561,8 @@ class ModuleTest extends CIUnitTestCase
 
         global $_POST;
         $_POST['module_id'] = 0;
-        $_POST['course_plan_id'] = $course_plan_id + 1;
-        $_POST['module_number'] = '100';
+        $_POST['course_plan_id'] = $course_plan_id;
+        $_POST['module_number'] = 999;
         $_POST['official_name'] = 'Fake module';
 
         $length = 0;
