@@ -52,22 +52,4 @@ class PlaforRules
 
         return true;
     }
-
-    /**
-     * @param  integer  $number
-     * @param  integer  $module_id
-     * @param  any      $datas
-     * @param  string   $error
-     * @return boolean
-     */
-    public function checkModuleNumber($number, $module_id, $datas, &$error) {
-        $limit = 0;
-        if ($module_id != 0) $limit++;
-        if (count((new ModuleModel())->withDeleted()->getWhere(['module_number' => $number])->getResultArray()) > $limit) {
-            $error = lang('plafor_lang.module_number_not_unique');
-            return false;
-        }
-
-        return true;
-    }
 }
