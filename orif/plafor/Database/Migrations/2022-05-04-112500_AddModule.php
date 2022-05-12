@@ -17,7 +17,7 @@ class AddModule extends Migration
             ],
             'module_number' => [
                 'type' => 'varchar',
-                'constraint' => '3',
+                'constraint' => '4',
             ],
             'official_name' => [
                 'type' => 'varchar',

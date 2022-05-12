@@ -120,7 +120,7 @@ class Module extends \App\Controllers\BaseController
 
         if (count($_POST) > 0) {
             $module = [
-                'module_number' => str_pad($this->request->getPost('module_number'), config('\Plafor\Config\PlaforConfig')->MODULE_NUMBER_MAX_LENGTH, '0', STR_PAD_LEFT),
+                'module_number' => str_pad($this->request->getPost('module_number'), config('\Plafor\Config\PlaforConfig')->MODULE_NUMBER_MIN_LENGTH, '0', STR_PAD_LEFT),
                 'official_name' => $this->request->getPost('official_name'),
                 'is_school' => $this->request->getPost('is_school') == 1,
                 'id' => $module_id,

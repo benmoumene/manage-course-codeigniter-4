@@ -63,7 +63,7 @@ class ApprenticeTest extends CIUnitTestCase
             if ($i <= 7) {
                 $module['archive'] = NULL;
             }
-            $module['module_number'] = str_pad($i, config('\Plafor\Config\PlaforConfig')->MODULE_NUMBER_MAX_LENGTH, '0', STR_PAD_LEFT);
+            $module['module_number'] = str_pad($i, config('\Plafor\Config\PlaforConfig')->MODULE_NUMBER_MIN_LENGTH, '0', STR_PAD_LEFT);
             ModuleModel::getInstance()->insert($module);
         }
         ModuleModel::getInstance()->skipValidation(FALSE);

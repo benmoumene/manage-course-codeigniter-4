@@ -22,7 +22,7 @@ class ModuleModel extends Model
         $this->validationRules = [
             'module_number' => [
                 'label' => 'plafor_lang.field_module_module_number',
-                'rules' => 'required|numeric|max_length[' . config('\Plafor\Config\PlaforConfig')->MODULE_NUMBER_MAX_LENGTH . ']',
+                'rules' => 'required|max_length[' . config('\Plafor\Config\PlaforConfig')->MODULE_NUMBER_MAX_LENGTH . ']',
             ],
             'official_name' => [
                 'label' => 'plafor_lang.field_module_official_name',
