@@ -4,7 +4,7 @@ helper('form');
 $input_module_number = [
     'name' => 'module_number',
     'value' => $module['module_number'] ?? '',
-    'max_length' => config('\Plafor\Config\PlaforConfig')->MODULE_NUMBER_MAX_LENGTH,
+    'maxlength' => config('\Plafor\Config\PlaforConfig')->MODULE_NUMBER_MAX_LENGTH,
     'class' => 'form-control',
     'id' => 'module_module_number'
 ];
@@ -103,10 +103,11 @@ else $input_is_not_school['checked'] = TRUE;
 </div>
 
 <script>
+    const max_length = +(<?= json_encode(config('\Plafor\Config\PlaforConfig')->MODULE_NUMBER_MIN_LENGTH) ?>);
     $(document).ready(function() {
         $('#module_module_number').change(e => {
             // Left pad the number so it's displayed the same as it is saved
-            e.currentTarget.value = e.currentTarget.value.toString().padStart(e.currentTarget.max.length, '0');
+            e.currentTarget.value = e.currentTarget.value.toString().padStart(max_length, '0');
         });
     });
 </script>
