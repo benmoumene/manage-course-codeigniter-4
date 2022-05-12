@@ -17,6 +17,16 @@
     }
 }
 
+@media print {
+    /* Hides the elements when printing */
+    .no-print {
+        display: none;
+    }
+    a {
+        text-decoration: none !important;
+    }
+}
+
 /* Nav menu style */
 #my-navbar .active {
     border-bottom: 3px #1a661a solid;

@@ -8,31 +8,33 @@ $admin_access = config('\User\Config\UserConfig')->access_lvl_admin;
         <div class="col">
             <h1 class="title-section"><?= lang('plafor_lang.title_grade_list') . ' ' . $apprentice['username']; ?></h1>
         </div>
+        <div class="col-sm-12 text-right no-print">
+            <label class="btn btn-default form-check-label" for="toggle_deleted">
+                <?= form_label(lang('common_lang.btn_show_disabled'), 'toggle_deleted', [
+                    'class' => 'form-check-label',
+                ]); ?>
+            </label>
+            <?= form_checkbox('toggle_deleted', '', $with_archived, [
+                'id' => 'toggle_deleted',
+            ]); ?>
+        </div>
     </div>
     <br />
     <?php
     foreach ($course_plans as $course_plan) {
         $course_modules = $modules[$course_plan['id']];
         $course_grades = $grades[$course_plan['id']];
+        $course_averages = $averages[$course_plan['id']];
     ?>
         <div class="row">
             <p class="font-weight-bold user-course-details-course-plan-name"><?= $course_plan['official_name']; ?></p>
-            <div class="col-sm-9 text-right">
-                <label class="btn btn-default form-check-label" for="toggle_deleted">
-                    <?= form_label(lang('common_lang.btn_show_disabled'), 'toggle_deleted', [
-                        'class' => 'form-check-label',
-                    ]); ?>
-                </label>
-                <?= form_checkbox('toggle_deleted', '', $with_archived, [
-                    'id' => 'toggle_deleted',
-                ]); ?>
-            </div>
 
             <table class="table table-hover">
                 <thead>
                     <tr>
                         <th><?= lang('plafor_lang.field_module_official_name'); ?></th>
                         <th><?= lang('plafor_lang.field_grade_grades'); ?></th>
+                        <th><?= lang('plafor_lang.grade_average'); ?></th>
                         <th></th>
                     </tr>
                 </thead>
@@ -48,7 +50,7 @@ $admin_access = config('\User\Config\UserConfig')->access_lvl_admin;
                                     <?php } ?>
                                     <span class="font-weight-bold"><?= $module['module_number']; ?></span> <?= $module['official_name']; ?>
                                     <?php if ($_SESSION['user_access'] >= $admin_access) { ?>
-                                    </a>
+                                    </a> (<?= lang('plafor_lang.module_is_' . ($module['is_school'] ? '' : 'not_') . 'school'); ?>)
                                 <?php } ?>
                             </td>
                             <td>
@@ -57,7 +59,7 @@ $admin_access = config('\User\Config\UserConfig')->access_lvl_admin;
                                     foreach ($module_grades as $i => $grade) {
                                         $g = $grade['grade'];
                                         if ($grade['archive'] != NULL) {
-                                            $g = '<span style="text-decoration: line-through;">' . $g . '</span>';
+                                            $g = '<span class="text-danger">' . $g . '</span>';
                                         }
                                         if ($_SESSION['user_access'] >= $trainer_access) {
                                             $url = base_url('plafor/apprentice/edit_grade/' . $grade['id']);
@@ -71,7 +73,18 @@ $admin_access = config('\User\Config\UserConfig')->access_lvl_admin;
                                 }
                                 ?>
                             </td>
-                            <td><a href="<?= base_url('plafor/apprentice/add_grade/' . $course_plan['id'] . '/' . $module['id']); ?>" class="btn btn-primary">+</a></td>
+                            <td>
+                                <?= array_key_exists($module['id'], $course_averages) ? round($course_averages[$module['id']], 1) : ''; ?>
+                            </td>
+                            <td><a href="<?= base_url('plafor/apprentice/add_grade/' . $course_plan['id'] . '/' . $module['id']); ?>" class="btn btn-primary no-print">+</a></td>
+                        </tr>
+                    <?php } ?>
+                    <?php if (array_key_exists('average', $course_averages)) { ?>
+                        <tr>
+                            <td><span class="font-weight-bold"><?= lang('plafor_lang.grade_course_average'); ?></span></td>
+                            <td></td>
+                            <td><?= round($course_averages['average'], 2); ?></td>
+                            <td></td>
                         </tr>
                     <?php } ?>
                 </tbody>

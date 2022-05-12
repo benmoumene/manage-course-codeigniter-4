@@ -3,7 +3,7 @@
  * A view containing a login bar with application logo, title
  * and links for login/logout/change password/user administration functionnalities.
  * The links are related with the "user" module. They depend of the user access level.
- * 
+ *
  * This part of page is included in all pages in the BaseController display_view method.
  *
  * @author      Orif (ViDi, HeMa)
@@ -21,9 +21,9 @@
       <h1><a href="<?php echo base_url(); ?>" class="text-dark text-decoration-none"><?php echo lang('common_lang.app_title'); ?></a></h1>
     </div>
     <div class="col-sm-12 col-md-3 text-right" >
-      <div class="nav flex-column">
+      <div class="nav flex-column no-print">
         <?php if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] == true) { ?>
-          
+
           <!-- ADMIN ACCESS ONLY -->
           <?php if ($_SESSION['user_access'] >= config('\User\Config\UserConfig')->access_lvl_admin) { ?>
               <a href="<?php echo base_url("user/admin/list_user"); ?>" ><?php echo lang('common_lang.btn_admin'); ?></a><br />

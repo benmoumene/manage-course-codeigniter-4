@@ -54,6 +54,6 @@
 <body>
     <?php
         if (ENVIRONMENT != 'production') {
-            echo '<div class="alert alert-warning text-center">CodeIgniter environment variable is set to '.strtoupper(ENVIRONMENT).'. You can change it in .env file.</div>';
+            echo '<div class="alert alert-warning text-center no-print">CodeIgniter environment variable is set to '.strtoupper(ENVIRONMENT).'. You can change it in .env file.</div>';
         }
     ?>

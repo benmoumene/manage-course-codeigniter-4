@@ -608,21 +608,62 @@ class Apprentice extends \App\Controllers\BaseController
         $courses_modules = [];
         // All grades of a course plan. The structure is [<course_plan_id> => [<module_id> => [<grades>]]]
         $courses_grades = [];
+        // The grades' average of a course plan. The structure is [<course_plan_id> => [<module_id> => <average>]]
+        $courses_averages = [];
         $course_plans = empty($user_course_plans) ? [] : CoursePlanModel::getInstance()->find(array_column($user_course_plans, 'fk_course_plan'));
 
         foreach ($user_course_plans as $user_course) {
+            $course_plan_id = $user_course['fk_course_plan'];
+
             $course_modules = [];
             $course_grades = [];
+            $course_averages = [];
 
-            $modules_ids = CoursePlanModuleModel::getInstance()->where('fk_course_plan', $user_course['fk_course_plan'])->findColumn('fk_module') ?? [];
+            $modules_ids = CoursePlanModuleModel::getInstance()->where('fk_course_plan', $course_plan_id)->findColumn('fk_module') ?? [];
             foreach ($modules_ids as $module_id) {
                 $course_modules[] = ModuleModel::getInstance()->find($module_id);
 
                 $course_grades[$module_id] = UserCourseModuleGradeModel::getInstance()->withDeleted($with_archived)->where('fk_user_course', $user_course['id'])->where('fk_module', $module_id)->findAll() ?? [];
+                $grades = UserCourseModuleGradeModel::getInstance()->where('fk_user_course', $user_course['id'])->where('fk_module', $module_id)->findAll() ?? [];
+                if (count($grades) > 0) {
+                    $course_averages[$module_id] = array_reduce($grades, function($sum, $grade) {
+                        return $grade['grade'] + $sum;
+                    }) / count($grades);
+                }
             }
 
-            $courses_modules[$user_course['fk_course_plan']] = $course_modules;
-            $courses_grades[$user_course['fk_course_plan']] = $course_grades;
+            if (count($course_averages) > 0) {
+                // School modules averages are worth 80% of the course plan average
+                $sum_school = 0;
+                $count_school = 0;
+                // Out of school modules are worth 20% of the course plan average
+                $sum_not_school = 0;
+                $count_not_school = 0;
+                foreach ($course_averages as $module_id => $average) {
+                    $module = ModuleModel::getInstance()->find($module_id);
+                    if (empty($module)) continue;
+
+                    if ($module['is_school']) {
+                        $sum_school += $course_averages[$module_id];
+                        $count_school++;
+                    } else {
+                        $sum_not_school += $course_averages[$module_id];
+                        $count_not_school++;
+                    }
+                }
+
+                if ($count_school > 0 && $count_not_school > 0) {
+                    $course_averages['average'] = $sum_school / $count_school * .8 + $sum_not_school / $count_not_school * .2;
+                } elseif ($count_school > 0) {
+                    $course_averages['average'] = $sum_school / $count_school;
+                } elseif ($count_not_school > 0) {
+                    $course_averages['average'] = $sum_not_school / $count_not_school;
+                }
+            }
+
+            $courses_modules[$course_plan_id] = $course_modules;
+            $courses_grades[$course_plan_id] = $course_grades;
+            $courses_averages[$course_plan_id] = $course_averages;
         }
 
         $data = [
@@ -632,6 +673,7 @@ class Apprentice extends \App\Controllers\BaseController
             'grades' => $courses_grades,
             'apprentice' => $apprentice,
             'with_archived' => $with_archived,
+            'averages' => $courses_averages,
         ];
 
         $this->display_view('\Plafor\grade\list', $data);

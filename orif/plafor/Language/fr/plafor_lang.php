@@ -96,6 +96,8 @@ return [
     'grade_no_grades'                => 'Aucune notes',
     'title_grade_new'                => 'Ajouter une note',
     'title_grade_update'             => 'Modifier une note',
+    'grade_average'                  => 'Moyenne',
+    'grade_course_average'           => 'Moyenne du plan de formation',
 
     // Page titles
     'title_apprentice_list'          => 'Liste des apprentis',
