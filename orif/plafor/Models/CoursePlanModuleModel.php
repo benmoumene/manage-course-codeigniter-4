@@ -12,7 +12,7 @@ class CoursePlanModuleModel extends Model
     private static $coursePlanModuleModel = null;
     protected $table = 'course_plan_module';
     protected $primaryKey = 'id';
-    protected $allowedFields = ['fk_course_plan', 'fk_module'];
+    protected $allowedFields = ['fk_course_plan', 'fk_module', 'is_school'];
     protected $validationRules;
 
     public function __construct(ConnectionInterface &$db = null, ValidationInterface $validation = null)

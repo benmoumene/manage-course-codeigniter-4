@@ -114,7 +114,7 @@ class CoursePlanTest extends CIUnitTestCase
             'Add link to module 4' => [
                 'course_plan_id' => 1,
                 'post_data' => [
-                    'modules_selected' => [1, 2, 3, 4],
+                    'modules_selected' => ['is_school:4'],
                 ],
                 'expect_redirect' => TRUE,
                 'expected_links' => 4,
@@ -122,7 +122,7 @@ class CoursePlanTest extends CIUnitTestCase
             'Remove link to module 3' => [
                 'course_plan_id' => 1,
                 'post_data' => [
-                    'modules_selected' => [1, 2],
+                    'modules_selected' => ['no_link:3'],
                 ],
                 'expect_redirect' => TRUE,
                 'expected_links' => 2,
@@ -130,7 +130,7 @@ class CoursePlanTest extends CIUnitTestCase
             'Add link to inexistant module' => [
                 'course_plan_id' => 1,
                 'post_data' => [
-                    'modules_selected' => [1, 2, 3, 999],
+                    'modules_selected' => ['is_school:999'],
                 ],
                 'expect_redirect' => TRUE,
                 'expected_links' => 3,
@@ -138,7 +138,7 @@ class CoursePlanTest extends CIUnitTestCase
             'Add link to module 4 with POST overrides parameter' => [
                 'course_plan_id' => 999,
                 'post_data' => [
-                    'modules_selected' => [1, 2, 3, 4],
+                    'modules_selected' => ['is_school:4'],
                     'course_plan_id' => 1,
                 ],
                 'expect_redirect' => TRUE,
@@ -147,7 +147,7 @@ class CoursePlanTest extends CIUnitTestCase
             'Fail adding link to inexistant course plan' => [
                 'course_plan_id' => 999,
                 'post_data' => [
-                    'modules_selected' => [1, 2, 3],
+                    'modules_selected' => ['is_school:3'],
                 ],
                 'expect_redirect' => TRUE,
                 'expected_links' => 0,
@@ -155,10 +155,10 @@ class CoursePlanTest extends CIUnitTestCase
             'Add link to archived course plan' => [
                 'course_plan_id' => 4,
                 'post_data' => [
-                    'modules_selected' => [1, 2, 3],
+                    'modules_selected' => ['is_school:3'],
                 ],
                 'expect_redirect' => TRUE,
-                'expected_links' => 3,
+                'expected_links' => 1,
             ],
         ];
     }

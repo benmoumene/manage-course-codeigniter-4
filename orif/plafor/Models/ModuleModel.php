@@ -12,7 +12,7 @@ class ModuleModel extends Model
     private static $moduleModel = null;
     protected $table = 'module';
     protected $primaryKey = 'id';
-    protected $allowedFields = ['module_number', 'official_name', 'is_school', 'version', 'archive'];
+    protected $allowedFields = ['module_number', 'official_name', 'version', 'archive'];
     protected $useSoftDeletes = true;
     protected $deletedField = 'archive';
     protected $validationRules;

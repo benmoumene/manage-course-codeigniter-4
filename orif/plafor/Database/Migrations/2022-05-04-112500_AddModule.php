@@ -23,10 +23,6 @@ class AddModule extends Migration
                 'type' => 'varchar',
                 'constraint' => '100',
             ],
-            'is_school' => [
-                'type' => 'int',
-                'constraint' => '1',
-            ],
             'version' => [
                 'type' => 'int',
                 'constraint' => '11',

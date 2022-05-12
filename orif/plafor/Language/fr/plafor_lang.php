@@ -90,6 +90,7 @@ return [
     'title_module_new'               => 'Ajouter un module',
     'title_module_update'            => 'Modifier un module',
     'title_view_modules_linked'      => 'Modules liés',
+    'module_no_link'                 => 'Aucune liaison',
 
     // Grades
     'title_grade_list'               => 'Liste des notes de l\'apprenti',

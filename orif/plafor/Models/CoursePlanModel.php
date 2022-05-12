@@ -74,11 +74,19 @@ class CoursePlanModel extends Model{
      * @return array
      */
     public static function getModules($coursePlanId) {
-        $moduleIds = CoursePlanModuleModel::getInstance()->where('fk_course_plan', $coursePlanId)->findColumn('fk_module');
-        if (is_null($moduleIds)) {
+        $links = CoursePlanModuleModel::getInstance()->where('fk_course_plan', $coursePlanId)->findAll();
+        if (empty($links)) {
             return [];
         }
-        return ModuleModel::getInstance()->withDeleted()->find($moduleIds);
+        $modules = [];
+        foreach ($links as $link) {
+            $module = ModuleModel::getInstance()->find($link['fk_module']);
+            if (empty($module)) continue;
+
+            $module['is_school'] = $link['is_school'];
+            $modules[] = $module;
+        }
+        return $modules;
     }
 
     /**

@@ -7,11 +7,11 @@
         <div class="col-12">
             <p class="font-weight-bold"><?= $module['official_name']; ?></p>
         </div>
-        <div class="col-12">
+        <div class="col-6">
             <p><?= lang('plafor_lang.number_abr') . ' ' . $module['module_number']; ?></p>
         </div>
-        <div class="col-12">
-            <p><?= lang('plafor_lang.module_is_' . ($module['is_school'] ? '' : 'not_') . 'school'); ?></p>
+        <div class="col-6">
+            <p><?= lang('plafor_lang.field_module_version') . ' ' . $module['version']; ?></p>
         </div>
     </div>
 </div>

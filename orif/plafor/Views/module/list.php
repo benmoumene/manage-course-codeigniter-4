@@ -40,7 +40,6 @@ helper('form');
                     <th></th>
                     <th></th>
                     <th></th>
-                    <th></th>
                 </tr>
             </thead>
             <tbody id="module_list">
@@ -50,10 +49,9 @@ helper('form');
                             <a href="<?= base_url('plafor/module/view_module/'.$module['id']); ?>">
                                 <span class="font-weight-bold"><?= $module['module_number']; ?></span>
                                 <?= $module['official_name']; ?>
-                                V<?= $module['version']; ?>
+                                (V<?= $module['version']; ?>)
                             </a>
                         </td>
-                        <td><?= lang('plafor_lang.module_is_' . ($module['is_school'] ? '' : 'not_') . 'school'); ?></td>
                         <td><a href="<?= base_url('plafor/module/view_module/'.$module['id']); ?>"><?= lang('common_lang.btn_details'); ?></a></td>
                         <td><a href="<?= base_url('plafor/module/save_module/'.$module['id']); ?>"><?= lang('common_lang.btn_edit'); ?></a></td>
                         <td><a href="<?= base_url('plafor/module/delete_module/'.$module['id']); ?>" class="bi <?= $module['archive'] == null ? 'bi-trash' : 'bi-reply-all-fill' ?>"></a></td>

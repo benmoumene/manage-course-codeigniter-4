@@ -23,22 +23,6 @@ $input_official_name = [
     'class' => 'form-control',
     'id' => 'module_official_name'
 ];
-$input_is_school = [
-    'name' => 'is_school',
-    'value' => 1,
-    'type' => 'radio',
-    'class' => 'form-radio',
-    'id' => 'module_is_school',
-];
-$input_is_not_school = [
-    'name' => 'is_school',
-    'value' => 0,
-    'type' => 'radio',
-    'class' => 'form-radio',
-    'id' => 'module_is_not_school',
-];
-if (($module['is_school'] ?? 0) == 1) $input_is_school['checked'] = TRUE;
-else $input_is_not_school['checked'] = TRUE;
 ?>
 <div class="container">
     <!-- TITLE -->
@@ -56,7 +40,6 @@ else $input_is_not_school['checked'] = TRUE;
     ];
     echo form_open(base_url('plafor/module/save_module'), $attributes, [
         'module_id' => $module['id'] ?? 0,
-        'course_plan_id' => $course_plan_id,
     ]);
     ?>
 
@@ -76,18 +59,6 @@ else $input_is_not_school['checked'] = TRUE;
             <?= form_input($input_official_name); ?>
             <?= form_label(lang('plafor_lang.field_module_version'), 'module_version', ['class' => 'form-label']); ?>
             <?= form_input($input_module_version); ?>
-            <div class="row">
-                <div class="col-12">
-                    <?= form_label(lang('plafor_lang.module_is_school'), 'module_is_school', ['class' => 'form-label']); ?>
-                    <?= form_input($input_is_school); ?>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-12">
-                    <?= form_label(lang('plafor_lang.module_is_not_school'), 'module_is_not_school', ['class' => 'form-label']); ?>
-                    <?= form_input($input_is_not_school); ?>
-                </div>
-            </div>
         </div>
     </div>
 

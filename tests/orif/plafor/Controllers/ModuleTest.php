@@ -369,6 +369,7 @@ class ModuleTest extends CIUnitTestCase
                 'post_data' => [
                     'module_number' => '100',
                     'official_name' => 'Dummy module',
+                    'version' => '1',
                 ],
                 'expect_redirect' => TRUE,
                 'expect_errors' => FALSE,
@@ -376,8 +377,9 @@ class ModuleTest extends CIUnitTestCase
             'Fail insert module with number too big' => [
                 'module_id' => 0,
                 'post_data' => [
-                    'module_number' => '1111',
+                    'module_number' => '11111',
                     'official_name' => 'Dummy module',
+                    'version' => '1',
                 ],
                 'expect_redirect' => FALSE,
                 'expect_errors' => TRUE,
@@ -387,15 +389,17 @@ class ModuleTest extends CIUnitTestCase
                 'post_data' => [
                     'module_number' => '111',
                     'official_name' => '',
+                    'version' => '1',
                 ],
                 'expect_redirect' => FALSE,
                 'expect_errors' => TRUE,
             ],
-            'Fail insert module with number too big and no name' => [
+            'Fail insert module without version' => [
                 'module_id' => 0,
                 'post_data' => [
-                    'module_number' => '1111',
-                    'official_name' => '',
+                    'module_number' => '111',
+                    'official_name' => 'Dummy module',
+                    'version' => '',
                 ],
                 'expect_redirect' => FALSE,
                 'expect_errors' => TRUE,
@@ -405,6 +409,7 @@ class ModuleTest extends CIUnitTestCase
                 'post_data' => [
                     'module_number' => '100',
                     'official_name' => 'Dummy module',
+                    'version' => '1',
                 ],
                 'expect_redirect' => TRUE,
                 'expect_errors' => FALSE,
@@ -414,6 +419,7 @@ class ModuleTest extends CIUnitTestCase
                 'post_data' => [
                     'module_number' => '100',
                     'official_name' => 'Dummy module',
+                    'version' => '1',
                     'module_id' => 3,
                 ],
                 'expect_redirect' => TRUE,
@@ -422,8 +428,9 @@ class ModuleTest extends CIUnitTestCase
             'Fail update with number too big' => [
                 'module_id' => 3,
                 'post_data' => [
-                    'module_number' => '1111',
+                    'module_number' => '11111',
                     'official_name' => 'Dummy module',
+                    'version' => '1',
                 ],
                 'expect_redirect' => FALSE,
                 'expect_errors' => TRUE,
@@ -433,15 +440,17 @@ class ModuleTest extends CIUnitTestCase
                 'post_data' => [
                     'module_number' => '111',
                     'official_name' => '',
+                    'version' => '1',
                 ],
                 'expect_redirect' => FALSE,
                 'expect_errors' => TRUE,
             ],
-            'Fail update with number too big and no name' => [
+            'Fail update module without version' => [
                 'module_id' => 3,
                 'post_data' => [
-                    'module_number' => '1111',
-                    'official_name' => '',
+                    'module_number' => '111',
+                    'official_name' => 'Dummy module',
+                    'version' => '',
                 ],
                 'expect_redirect' => FALSE,
                 'expect_errors' => TRUE,
@@ -470,7 +479,7 @@ class ModuleTest extends CIUnitTestCase
     {
         // Setup
         global $_POST;
-        $keys = ['module_number', 'official_name', 'is_school'];
+        $keys = ['module_number', 'official_name', 'version'];
         foreach ($keys as $key) {
             if (!is_null($post_data) && array_key_exists($key, $post_data)) {
                 $_POST[$key] = $post_data[$key];
@@ -500,90 +509,6 @@ class ModuleTest extends CIUnitTestCase
                 $this->assertEmpty($errors);
             }
         }
-    }
-
-    /**
-     * Tests Module::save_module with a valid link
-     *
-     * @group Modules
-     * @return void
-     */
-    public function testSaveModuleLink(): void
-    {
-        // Setup
-        $course_plan_id = \Plafor\Models\CoursePlanModel::getInstance()->insert([
-            'formation_number' => '10000',
-            'official_name' => 'Fake course plan',
-            'date_begin' => '2022-01-01 00:00:00',
-        ]);
-
-        global $_POST;
-        $_POST['module_id'] = 0;
-        $_POST['course_plan_id'] = $course_plan_id;
-        $_POST['module_number'] = '100';
-        $_POST['official_name'] = 'Fake module';
-
-        $length = 0;
-        if (!is_null($all = CoursePlanModuleModel::getInstance()->findAll())) {
-            $length = count($all);
-        }
-
-        // Test
-        /** @var \CodeIgniter\Test\TestResponse */
-        $result = $this->withUri(base_url('plafor/module/save_module/'))
-            ->controller(\Plafor\Controllers\Module::class)
-            ->execute('save_module');
-
-        // Assert
-        $result->assertRedirect();
-        $count = 0;
-        if (!is_null($all = CoursePlanModuleModel::getInstance()->findAll())) {
-            $count = count($all);
-        }
-        $this->assertEquals($length+1, $count, 'Failed asserting that the amount of links has increased.');
-        $this->assertEmpty(ModuleModel::getInstance()->errors());
-    }
-
-    /**
-     * Tests Module::save_module with an invalid link
-     *
-     * @group Modules
-     * @return void
-     */
-    public function testSaveModuleNoLink(): void
-    {
-        // Setup
-        $course_plan_id = CoursePlanModel::getInstance()->insert([
-            'formation_number' => '00000',
-            'official_name' => 'Fake course plan',
-            'date_begin' => '2022-01-01 00:00:00',
-        ]);
-
-        global $_POST;
-        $_POST['module_id'] = 0;
-        $_POST['course_plan_id'] = $course_plan_id;
-        $_POST['module_number'] = 999;
-        $_POST['official_name'] = 'Fake module';
-
-        $length = 0;
-        if (!is_null($all = CoursePlanModuleModel::getInstance()->findAll())) {
-            $length = count($all);
-        }
-
-        // Test
-        /** @var \CodeIgniter\Test\TestResponse */
-        $result = $this->withUri(base_url('plafor/module/save_module/'))
-            ->controller(\Plafor\Controllers\Module::class)
-            ->execute('save_module');
-
-        // Assert
-        $result->assertRedirect();
-        $count = 0;
-        if (!is_null($all = CoursePlanModuleModel::getInstance()->findAll())) {
-            $count = count($all);
-        }
-        $this->assertEquals($length, $count, 'Failed asserting that the amount of links is the same as before.');
-        $this->assertEmpty(ModuleModel::getInstance()->errors());
     }
 
     /**

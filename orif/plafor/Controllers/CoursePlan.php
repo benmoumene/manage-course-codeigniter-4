@@ -689,33 +689,64 @@ class CoursePlan extends \App\Controllers\BaseController
             return redirect()->to(base_url('plafor/courseplan/list_course_plan'));
         }
 
-        $coursePlanModuleModel = CoursePlanModuleModel::getInstance();
         $modules = ModuleModel::getInstance()->findAll();
-        $modulesSelected = $coursePlanModuleModel->where('fk_course_plan', $course_plan_id)->findColumn('fk_module') ?? [];
+        $selected = CoursePlanModuleModel::getInstance()->where('fk_course_plan', $course_plan_id)->findAll() ?? [];
+        $modulesSelected = [];
+        if (!empty($selected)) {
+            foreach ($selected as $select) {
+                $modulesSelected[$select['fk_module']] = $select['is_school'];
+            }
+        }
 
         if (!empty($selected = $this->request->getPost('modules_selected'))) {
-            // List of modules to link
-            $add = array_filter($selected, function($moduleId) use ($modulesSelected) {
-                return !in_array($moduleId, $modulesSelected);
+            // Link as a school module
+            $is_school = array_filter($selected, function($moduleId) {
+                return preg_match('/^is_school:/', $moduleId);
             });
-            foreach ($add as $moduleId) {
-                if (empty(ModuleModel::getInstance()->find($moduleId))) {
-                    continue;
+            if (!empty($is_school)) {
+                foreach($is_school as $moduleId) {
+                    $module_id = explode(':', $moduleId)[1];
+                    if (empty(ModuleModel::getInstance()->find($module_id))) continue;
+                    if (!empty($link = CoursePlanModuleModel::getInstance()->where('fk_course_plan', $course_plan_id)->where('fk_module', $module_id)->first())) {
+                        CoursePlanModuleModel::getInstance()->update($link['id'], ['is_school' => TRUE]);
+                    } else {
+                        CoursePlanModuleModel::getInstance()->insert([
+                            'fk_course_plan' => $course_plan_id,
+                            'fk_module' => $module_id,
+                            'is_school' => TRUE,
+                        ]);
+                    }
                 }
-                $coursePlanModuleModel->insert([
-                    'fk_course_plan' => $course_plan_id,
-                    'fk_module' => $moduleId,
-                ]);
             }
-
-            // List of modules to unlink
-            $remove = array_filter($modulesSelected, function($moduleId) use ($selected) {
-                return !in_array($moduleId, $selected);
+            // Link as a out of school module
+            $is_not_school = array_filter($selected, function($moduleId) {
+                return preg_match('/^is_not_school:/', $moduleId);
             });
-            foreach ($remove as $moduleId) {
-                $coursePlanModuleModel->where('fk_course_plan', $course_plan_id)->where('fk_module', $moduleId)->delete();
+            if (!empty($is_not_school)) {
+                foreach($is_not_school as $moduleId) {
+                    $module_id = explode(':', $moduleId)[1];
+                    if (empty(ModuleModel::getInstance()->find($module_id))) continue;
+                    if (!empty($link = CoursePlanModuleModel::getInstance()->where('fk_course_plan', $course_plan_id)->where('fk_module', $module_id)->first())) {
+                        CoursePlanModuleModel::getInstance()->update($link['id'], ['is_school' => FALSE]);
+                    } else {
+                        CoursePlanModuleModel::getInstance()->insert([
+                            'fk_course_plan' => $course_plan_id,
+                            'fk_module' => $module_id,
+                            'is_school' => FALSE,
+                        ]);
+                    }
+                }
             }
-
+            // Not linked
+            $no_link = array_filter($selected, function($moduleId) {
+                return preg_match('/^no_link:/', $moduleId);
+            });
+            if (!empty($no_link)) {
+                foreach ($no_link as $moduleId) {
+                    $module_id = explode(':', $moduleId)[1];
+                    CoursePlanModuleModel::getInstance()->where('fk_course_plan', $course_plan_id)->where('fk_module', $module_id)->delete();
+                }
+            }
             return redirect()->to(base_url('plafor/courseplan/view_course_plan/' . $course_plan_id));
         }
 

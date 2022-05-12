@@ -25,6 +25,10 @@ class AddCoursePlanModule extends Migration
                 'type' => 'int',
                 'constraint' => '11',
             ],
+            'is_school' => [
+                'type' => 'int',
+                'constraint' => '1',
+            ],
         ]);
 
         $this->forge->addKey('id', true, true);

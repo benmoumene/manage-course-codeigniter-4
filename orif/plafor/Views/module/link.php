@@ -11,22 +11,42 @@ helper('form');
 function form_module($module, $modules_selected = []): string
 {
     // The checkbox must be prepared on its own in case the module is selected
-    $checkbox = [
-        'name' => 'modules_selected[]',
-        'value' => $module['id'],
-        'type' => 'checkbox',
-        'class' => 'form-checkbox',
-        'id' => 'modules_selected_' . $module['id'],
+    $is_school_input = [
+        'name' => 'modules_selected[' . $module['id'] . ']',
+        'value' => 'is_school:' . $module['id'],
+        'type' => 'radio',
+        'class' => 'form-radio',
+        'id' => 'module_select_school_' . $module['id'],
     ];
-    if (in_array($module['id'], $modules_selected)) $checkbox['checked'] = TRUE;
+    $is_not_school_input = [
+        'name' => 'modules_selected[' . $module['id'] . ']',
+        'value' => 'is_not_school:' . $module['id'],
+        'type' => 'radio',
+        'class' => 'form-radio',
+        'id' => 'module_select_not_school_' . $module['id'],
+    ];
+    $unlink_input = [
+        'name' => 'modules_selected[' . $module['id'] . ']',
+        'value' => 'no_link:' . $module['id'],
+        'type' => 'radio',
+        'class' => 'form-radio',
+        'id' => 'module_select_no_link_' . $module['id'],
+    ];
+    if (!array_key_exists($module['id'], $modules_selected)) $unlink_input['checked'] = TRUE;
+    elseif ($modules_selected[$module['id']]) $is_school_input['checked'] = TRUE;
+    else $is_not_school_input['checked'] = TRUE;
 
-    $content = form_label(
-        '<span class="font-weight-bold">' . $module['module_number'] . '</span> ' . $module['official_name'] . ' V' . $module['version'],
-        'modules_selected_' . $module['id'],
-        ['class' => 'form-label']
-    );
-    $content .= ' ';
-    $content .= form_input($checkbox);
+    $content = '<span class="font-weight-bold">' . $module['module_number'] . '</span> ' . $module['official_name'] . ' V' . $module['version'];
+    $content .= '<br>';
+    $content .= form_label(lang('plafor_lang.module_is_school'), 'module_select_school_' . $module['id'], ['class' => 'form-label']);
+    $content .= form_input($is_school_input);
+    $content .= '<br>';
+    $content .= form_label(lang('plafor_lang.module_is_not_school'), 'module_select_not_school_' . $module['id'], ['class' => 'form-label']);
+    $content .= form_input($is_not_school_input);
+    $content .= '<br>';
+    $content .= form_label(lang('plafor_lang.module_no_link'), 'module_select_no_link_' . $module['id'], ['class' => 'form-label']);
+    $content .= form_input($unlink_input);
+    $content .= '<br>';
 
     return $content;
 }

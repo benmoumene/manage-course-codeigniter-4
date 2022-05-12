@@ -624,9 +624,12 @@ class Apprentice extends \App\Controllers\BaseController
             $course_grades = [];
             $course_averages = [];
 
-            $modules_ids = CoursePlanModuleModel::getInstance()->where('fk_course_plan', $course_plan_id)->findColumn('fk_module') ?? [];
-            foreach ($modules_ids as $module_id) {
-                $course_modules[] = ModuleModel::getInstance()->find($module_id);
+            $links = CoursePlanModuleModel::getInstance()->where('fk_course_plan', $course_plan_id)->findAll() ?? [];
+            foreach ($links as $link) {
+                $module_id = $link['fk_module'];
+                $module = ModuleModel::getInstance()->find($module_id);
+                $module['is_school'] = $link['is_school'];
+                $course_modules[$module_id] = $module;
 
                 $course_grades[$module_id] = UserCourseModuleGradeModel::getInstance()->withDeleted($with_archived)->where('fk_user_course', $user_course['id'])->where('fk_module', $module_id)->findAll() ?? [];
                 $grades = UserCourseModuleGradeModel::getInstance()->where('fk_user_course', $user_course['id'])->where('fk_module', $module_id)->findAll() ?? [];
@@ -645,7 +648,7 @@ class Apprentice extends \App\Controllers\BaseController
                 $sum_not_school = 0;
                 $count_not_school = 0;
                 foreach ($course_averages as $module_id => $average) {
-                    $module = ModuleModel::getInstance()->find($module_id);
+                    $module = $course_modules[$module_id];
                     if (empty($module)) continue;
 
                     if ($module['is_school']) {

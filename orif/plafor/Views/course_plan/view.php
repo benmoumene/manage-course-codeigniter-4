@@ -57,7 +57,7 @@ $is_admin = service('session')->get('user_access') >= config('\User\Config\UserC
         </div>
         <div class="col-12">
             <?php if($is_admin): ?>
-            <a href="<?= base_url('plafor/module/save_module/0/' . $course_plan['id']); ?>" class="btn btn-primary"><?=lang('common_lang.btn_new_m')?></a>
+            <a href="<?= base_url('plafor/module/save_module/0'); ?>" class="btn btn-primary"><?=lang('common_lang.btn_new_m')?></a>
             <a href="<?= base_url('plafor/courseplan/link_module/' . $course_plan['id']); ?>" class="btn btn-primary"><?= lang('plafor_lang.change_course_plan_module_links'); ?></a>
             <?php endif; ?>
 
@@ -78,7 +78,7 @@ $is_admin = service('session')->get('user_access') >= config('\User\Config\UserC
                                 <?php if($is_admin): ?>
                                 <a href="<?= base_url('plafor/module/view_module/'.$module['id']); ?>">
                                 <?php endif; ?>
-                                    <span class="font-weight-bold"><?= $module['module_number']; ?></span> <?= $module['official_name']; ?> V<?= $module['version']; ?>
+                                    <span class="font-weight-bold"><?= $module['module_number']; ?></span> <?= $module['official_name']; ?> (V<?= $module['version']; ?>)
                                 <?php if($is_admin): ?>
                                 </a>
                                 <?php endif; ?>

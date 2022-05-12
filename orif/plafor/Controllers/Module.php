@@ -94,11 +94,10 @@ class Module extends \App\Controllers\BaseController
     /**
      * Adds or modifies a module
      *
-     * @param  integer $module_id      Module to modify, set to 0 to create a new one. Can be submitted with POST.
-     * @param  integer $course_plan_id If given and non-zero, the module will be linked with the course plan.
+     * @param  integer $module_id Module to modify, set to 0 to create a new one. Can be submitted with POST.
      * @return void
      */
-    public function save_module($module_id = 0, $course_plan_id = 0)
+    public function save_module($module_id = 0)
     {
         if (!isset($_SESSION['user_access']) || $_SESSION['user_access'] < config('\User\Config\UserConfig')->access_lvl_admin) {
             return $this->display_view('\User\errors\403error');
@@ -108,9 +107,6 @@ class Module extends \App\Controllers\BaseController
 
         if (!empty($id = $this->request->getPost('module_id'))) {
             $module_id = $id;
-        }
-        if (!empty($id = $this->request->getPost('course_plan_id'))) {
-            $course_plan_id = $id;
         }
 
         if ($module_id > 0 && is_null(ModuleModel::getInstance()->find($module_id))) {
@@ -122,7 +118,6 @@ class Module extends \App\Controllers\BaseController
             $module = [
                 'module_number' => str_pad($this->request->getPost('module_number'), config('\Plafor\Config\PlaforConfig')->MODULE_NUMBER_MIN_LENGTH, '0', STR_PAD_LEFT),
                 'official_name' => $this->request->getPost('official_name'),
-                'is_school' => $this->request->getPost('is_school') == 1,
                 'version' => $this->request->getPost('version'),
             ];
 
@@ -133,28 +128,12 @@ class Module extends \App\Controllers\BaseController
             }
 
             if (ModuleModel::getInstance()->errors() == null) {
-                // Bind to a course plan
-                if ($course_plan_id != 0) {
-                    $course_plan = CoursePlanModel::getInstance()->find($course_plan_id);
-
-                    if (!is_null($course_plan)) {
-                        $link = CoursePlanModuleModel::getInstance()->where('fk_course_plan', $course_plan_id)->where('fk_module', $module_id)->find();
-                        if (empty($link)) {
-                            CoursePlanModuleModel::getInstance()->insert([
-                                'fk_course_plan' => $course_plan_id,
-                                'fk_module' => $module_id,
-                            ]);
-                        }
-                    }
-                }
-
                 return redirect()->to(base_url('/plafor/module/list_modules'));
             }
 
             $postData = [
                 'module_number' => $this->request->getPost('module_number'),
                 'official_name' => $this->request->getPost('official_name'),
-                'is_school' => $this->request->getPost('is_school'),
                 'version' => $this->request->getPost('version'),
                 'id' => $module_id,
             ];
@@ -167,7 +146,6 @@ class Module extends \App\Controllers\BaseController
             'module' => count($postData) > 0 ? $postData : ModuleModel::getInstance()->withDeleted()->find($module_id),
             'errors' => ModuleModel::getInstance()->errors(),
             'update' => $update,
-            'course_plan_id' => $course_plan_id,
         ];
 
         $this->display_view('\Plafor\module\save', $data);
