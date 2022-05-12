@@ -610,7 +610,12 @@ class Apprentice extends \App\Controllers\BaseController
         $courses_grades = [];
         // The grades' average of a course plan. The structure is [<course_plan_id> => [<module_id> => <average>]]
         $courses_averages = [];
-        $course_plans = empty($user_course_plans) ? [] : CoursePlanModel::getInstance()->find(array_column($user_course_plans, 'fk_course_plan'));
+        $course_plans = [];
+        if (!empty($user_course_plans)) {
+            foreach ($user_course_plans as $user_course) {
+                $course_plans[$user_course['id']] = CoursePlanModel::getInstance()->find($user_course['fk_course_plan']);
+            }
+        }
 
         foreach ($user_course_plans as $user_course) {
             $course_plan_id = $user_course['fk_course_plan'];
@@ -644,10 +649,10 @@ class Apprentice extends \App\Controllers\BaseController
                     if (empty($module)) continue;
 
                     if ($module['is_school']) {
-                        $sum_school += $course_averages[$module_id];
+                        $sum_school += $average;
                         $count_school++;
                     } else {
-                        $sum_not_school += $course_averages[$module_id];
+                        $sum_not_school += $average;
                         $count_not_school++;
                     }
                 }

@@ -21,7 +21,7 @@ $admin_access = config('\User\Config\UserConfig')->access_lvl_admin;
     </div>
     <br />
     <?php
-    foreach ($course_plans as $course_plan) {
+    foreach ($course_plans as $user_course_id => $course_plan) {
         $course_modules = $modules[$course_plan['id']];
         $course_grades = $grades[$course_plan['id']];
         $course_averages = $averages[$course_plan['id']];
@@ -38,7 +38,7 @@ $admin_access = config('\User\Config\UserConfig')->access_lvl_admin;
                         <th></th>
                     </tr>
                 </thead>
-                <tbody id="modules_grades">
+                <tbody class="module_grades" id="modules_grades_<?= $course_plan['id']; ?>">
                     <?php
                     foreach ($course_modules as $module) {
                         $module_grades = $course_grades[$module['id']];
@@ -76,7 +76,7 @@ $admin_access = config('\User\Config\UserConfig')->access_lvl_admin;
                             <td>
                                 <?= array_key_exists($module['id'], $course_averages) ? round($course_averages[$module['id']], 1) : ''; ?>
                             </td>
-                            <td><a href="<?= base_url('plafor/apprentice/add_grade/' . $course_plan['id'] . '/' . $module['id']); ?>" class="btn btn-primary no-print">+</a></td>
+                            <td><a href="<?= base_url('plafor/apprentice/add_grade/' . $user_course_id . '/' . $module['id']); ?>" class="btn btn-primary no-print">+</a></td>
                         </tr>
                     <?php } ?>
                     <?php if (array_key_exists('average', $course_averages)) { ?>
@@ -90,6 +90,7 @@ $admin_access = config('\User\Config\UserConfig')->access_lvl_admin;
                 </tbody>
             </table>
         </div>
+        <br>
     <?php } ?>
 </div>
 
@@ -98,8 +99,8 @@ $admin_access = config('\User\Config\UserConfig')->access_lvl_admin;
         $('#toggle_deleted').change(e => {
             let checked = e.currentTarget.checked;
             $.post('<?= base_url('/plafor/apprentice/list_grades/' . $apprentice['id']); ?>/' + (+checked), {}, data => {
-                $('#modules_grades').empty();
-                $('#modules_grades')[0].innerHTML = $(data).find('#modules_grades')[0].innerHTML;
+                $('.module_grades').empty();
+                $('.module_grades').each((_, elem) => elem.innerHTML = $(data).find(`#${elem.id}`)[0].innerHTML);
             });
         });
     });
