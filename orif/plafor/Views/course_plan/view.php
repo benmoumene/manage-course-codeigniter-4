@@ -78,7 +78,7 @@ $is_admin = service('session')->get('user_access') >= config('\User\Config\UserC
                                 <?php if($is_admin): ?>
                                 <a href="<?= base_url('plafor/module/view_module/'.$module['id']); ?>">
                                 <?php endif; ?>
-                                    <span class="font-weight-bold"><?= $module['module_number']; ?></span> <?= $module['official_name']; ?>
+                                    <span class="font-weight-bold"><?= $module['module_number']; ?></span> <?= $module['official_name']; ?> V<?= $module['version']; ?>
                                 <?php if($is_admin): ?>
                                 </a>
                                 <?php endif; ?>

@@ -210,6 +210,7 @@ return [
     'field_module_module_number'     => 'Numéro du module',
     'field_module_official_name'     => 'Nom du module',
     'field_module_is_school'         => 'Module à l\'école professionnelle',
+    'field_module_version'           => 'Version',
     'field_grade_grade'              => 'Note',
     'field_grade_grades'             => 'Notes',
     'field_grade_date_exam'          => 'Date d\'examen',

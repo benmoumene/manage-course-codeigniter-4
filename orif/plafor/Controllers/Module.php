@@ -123,7 +123,7 @@ class Module extends \App\Controllers\BaseController
                 'module_number' => str_pad($this->request->getPost('module_number'), config('\Plafor\Config\PlaforConfig')->MODULE_NUMBER_MIN_LENGTH, '0', STR_PAD_LEFT),
                 'official_name' => $this->request->getPost('official_name'),
                 'is_school' => $this->request->getPost('is_school') == 1,
-                'id' => $module_id,
+                'version' => $this->request->getPost('version'),
             ];
 
             if ($module_id > 0) {
@@ -155,6 +155,7 @@ class Module extends \App\Controllers\BaseController
                 'module_number' => $this->request->getPost('module_number'),
                 'official_name' => $this->request->getPost('official_name'),
                 'is_school' => $this->request->getPost('is_school'),
+                'version' => $this->request->getPost('version'),
                 'id' => $module_id,
             ];
         }

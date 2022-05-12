@@ -15,6 +15,7 @@ class ModuleFabricator extends \Plafor\Models\ModuleModel
             'module_number' => $faker->numerify('###'),
             'official_name' => $faker->sentence,
             'is_school' => $faker->boolean,
+            'version' => $faker->randomDigit(),
         ];
     }
 }

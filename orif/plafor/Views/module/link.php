@@ -21,7 +21,7 @@ function form_module($module, $modules_selected = []): string
     if (in_array($module['id'], $modules_selected)) $checkbox['checked'] = TRUE;
 
     $content = form_label(
-        '<span class="font-weight-bold">' . $module['module_number'] . '</span> ' . $module['official_name'],
+        '<span class="font-weight-bold">' . $module['module_number'] . '</span> ' . $module['official_name'] . ' V' . $module['version'],
         'modules_selected_' . $module['id'],
         ['class' => 'form-label']
     );

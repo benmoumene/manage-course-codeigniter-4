@@ -12,7 +12,7 @@ class ModuleModel extends Model
     private static $moduleModel = null;
     protected $table = 'module';
     protected $primaryKey = 'id';
-    protected $allowedFields = ['module_number', 'official_name', 'is_school', 'archive'];
+    protected $allowedFields = ['module_number', 'official_name', 'is_school', 'version', 'archive'];
     protected $useSoftDeletes = true;
     protected $deletedField = 'archive';
     protected $validationRules;
@@ -27,6 +27,10 @@ class ModuleModel extends Model
             'official_name' => [
                 'label' => 'plafor_lang.field_module_official_name',
                 'rules' => 'required|max_length[' . config('\Plafor\Config\PlaforConfig')->MODULE_OFFICIAL_NAME_MAX_LENGTH . ']',
+            ],
+            'version' => [
+                'label' => 'plafor_lang.field_module_version',
+                'rules' => 'required|numeric',
             ],
         ];
         parent::__construct($db, $validation);

@@ -27,6 +27,10 @@ class AddModule extends Migration
                 'type' => 'int',
                 'constraint' => '1',
             ],
+            'version' => [
+                'type' => 'int',
+                'constraint' => '11',
+            ],
             'archive timestamp null',
         ]);
 

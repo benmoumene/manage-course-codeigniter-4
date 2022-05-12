@@ -5,9 +5,16 @@ $input_module_number = [
     'name' => 'module_number',
     'value' => $module['module_number'] ?? '',
     'max_length' => config('\Plafor\Config\PlaforConfig')->MODULE_NUMBER_MAX_LENGTH,
-    'min' => 0,
     'class' => 'form-control',
     'id' => 'module_module_number'
+];
+$input_module_version = [
+    'name' => 'version',
+    'value' => $module['version'] ?? '',
+    'type' => 'number',
+    'min' => 0,
+    'class' => 'form-control',
+    'id' => 'module_version'
 ];
 $input_official_name = [
     'name' => 'official_name',
@@ -67,6 +74,8 @@ else $input_is_not_school['checked'] = TRUE;
             <?= form_input($input_module_number); ?>
             <?= form_label(lang('plafor_lang.field_module_official_name'), 'module_official_name', ['class' => 'form-label']); ?>
             <?= form_input($input_official_name); ?>
+            <?= form_label(lang('plafor_lang.field_module_version'), 'module_version', ['class' => 'form-label']); ?>
+            <?= form_input($input_module_version); ?>
             <div class="row">
                 <div class="col-12">
                     <?= form_label(lang('plafor_lang.module_is_school'), 'module_is_school', ['class' => 'form-label']); ?>
