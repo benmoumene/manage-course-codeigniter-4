@@ -162,6 +162,7 @@ class ApprenticeTest extends CIUnitTestCase
                         'fk_user_course' => $user_course_id,
                         'fk_module' => $module_id,
                         'grade' => $grade,
+                        'date_exam' => '2022-01-01',
                     ]);
                 }
             }
