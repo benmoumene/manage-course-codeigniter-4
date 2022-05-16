@@ -33,6 +33,7 @@ $admin_access = config('\User\Config\UserConfig')->access_lvl_admin;
                 <thead>
                     <tr>
                         <th><?= lang('plafor_lang.field_module_official_name'); ?></th>
+                        <th></th>
                         <th><?= lang('plafor_lang.field_grade_grades'); ?></th>
                         <th><?= lang('plafor_lang.grade_average'); ?></th>
                         <th></th>
@@ -49,8 +50,9 @@ $admin_access = config('\User\Config\UserConfig')->access_lvl_admin;
                                     <span class="font-weight-bold"><?= $module['module_number']; ?></span>
                                     <?= $module['official_name']; ?>
                                     (V<?= $module['version']; ?>)
-                                </a> (<?= lang('plafor_lang.module_is_' . ($module['is_school'] ? '' : 'not_') . 'school'); ?>)
+                                </a>
                             </td>
+                            <td><?= lang('plafor_lang.module_is_' . ($module['is_school'] ? '' : 'not_') . 'school'); ?></td>
                             <td>
                                 <?php
                                 if (count($module_grades) > 0) {
@@ -80,6 +82,7 @@ $admin_access = config('\User\Config\UserConfig')->access_lvl_admin;
                     <?php if (array_key_exists('average', $course_averages)) { ?>
                         <tr>
                             <td><span class="font-weight-bold"><?= lang('plafor_lang.grade_course_average'); ?></span></td>
+                            <td></td>
                             <td></td>
                             <td><?= round($course_averages['average'], 2); ?></td>
                             <td></td>
