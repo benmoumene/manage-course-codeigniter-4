@@ -45,15 +45,11 @@ $admin_access = config('\User\Config\UserConfig')->access_lvl_admin;
                     ?>
                         <tr>
                             <td>
-                                <?php if ($_SESSION['user_access'] >= $admin_access) { ?>
-                                    <a href="<?= base_url('plafor/module/view_module/' . $module['id']); ?>">
-                                    <?php } ?>
+                                <a href="<?= base_url('plafor/module/view_module/' . $module['id']); ?>">
                                     <span class="font-weight-bold"><?= $module['module_number']; ?></span>
                                     <?= $module['official_name']; ?>
                                     (V<?= $module['version']; ?>)
-                                    <?php if ($_SESSION['user_access'] >= $admin_access) { ?>
-                                    </a> (<?= lang('plafor_lang.module_is_' . ($module['is_school'] ? '' : 'not_') . 'school'); ?>)
-                                <?php } ?>
+                                </a> (<?= lang('plafor_lang.module_is_' . ($module['is_school'] ? '' : 'not_') . 'school'); ?>)
                             </td>
                             <td>
                                 <?php
