@@ -909,4 +909,36 @@ class ApprenticeTest extends CIUnitTestCase
         $this->assertNotEmpty($data);
         $this->assertEmpty($data['archive']);
     }
+
+    /**
+     * Tests that Apprentice::delete_grade for deletion as a trainer fails
+     *
+     * @group Grades
+     * @return void
+     */
+    public function testDeleteGradeTrainerDeleteFail(): void
+    {
+        // Setup
+        $grade_id = GradeModel::getInstance()->insert([
+            'fk_user_course' => 1,
+            'fk_module' => 1,
+            'grade' => 1.5,
+            'date_exam' => '2022-01-01',
+        ]);
+        $_SESSION['user_id'] = 4;
+        $_SESSION['user_access'] = config('\User\Config\UserConfig')->access_lvl_trainer;
+
+        // Test
+        /** @var \CodeIgniter\Test\TestResponse */
+        $result = $this->withUri(base_url('plafor/apprentice/delete_grade'))
+            ->controller(\Plafor\Controllers\Apprentice::class)
+            ->execute('delete_grade', $grade_id, 1);
+
+        // Assert
+        $result->assertRedirect();
+
+        $data = GradeModel::getInstance()->withDeleted()->find($grade_id);
+        $this->assertNotEmpty($data);
+        $this->assertEmpty($data['archive']);
+    }
 }

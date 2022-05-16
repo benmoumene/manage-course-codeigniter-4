@@ -859,7 +859,7 @@ class Apprentice extends \App\Controllers\BaseController
      */
     public function delete_grade(int $grade_id, int $action = 0)
     {
-        if (!isset($_SESSION['user_access']) || $_SESSION['user_access'] < config('\User\Config\UserConfig')->access_lvl_admin) {
+        if (!isset($_SESSION['user_access']) || $_SESSION['user_access'] < config('\User\Config\UserConfig')->access_lvl_trainer) {
             return $this->display_view('\User\errors\403error');
         }
 
@@ -869,6 +869,14 @@ class Apprentice extends \App\Controllers\BaseController
         }
 
         $apprentice_id = UserCourseModel::getInstance()->find($grade['fk_user_course'])['fk_user'];
+
+        if ($_SESSION['user_access'] == config('\User\Config\UserConfig')->access_lvl_trainer) {
+            // Only allow own apprentices
+            $apprentices_ids = TrainerApprenticeModel::getInstance()->where('fk_trainer', $_SESSION['user_id'])->findColumn('fk_apprentice');
+            if (!in_array($apprentice_id, $apprentices_ids)) {
+                return redirect()->to(base_url('plafor/apprentice/list_apprentice?trainer_id=' . $_SESSION['user_id']));
+            }
+        }
 
         switch ($action) {
             case 0: // Display confirmation
@@ -881,7 +889,10 @@ class Apprentice extends \App\Controllers\BaseController
 
                 return $this->display_view('\Plafor\grade\delete', $data);
             case 1: // Delete grade
-                UserCourseModuleGradeModel::getInstance()->delete($grade_id, TRUE);
+                if ($_SESSION['user_access'] >= config('\User\Config\UserConfig')->access_lvl_admin) {
+                    // Only admins can delete
+                    UserCourseModuleGradeModel::getInstance()->delete($grade_id, TRUE);
+                }
 
                 return redirect()->to(base_url('plafor/apprentice/list_grades/' . $apprentice_id));
             case 2: // Deactivate grade

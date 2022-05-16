@@ -69,7 +69,7 @@ $disable = ($grade['archive'] ?? NULL) == NULL;
     <!-- BUTTONS -->
     <div class="row">
         <div class="col text-right">
-            <?php if (isset($grade['id']) && $_SESSION['user_access'] >= config('\User\Config\UserConfig')->access_lvl_admin) { ?>
+            <?php if (isset($grade['id']) && $_SESSION['user_access'] >= config('\User\Config\UserConfig')->access_lvl_trainer) { ?>
                 <a href="<?= base_url('plafor/apprentice/delete_grade/' . $grade['id']); ?>" class="btn btn-<?= $disable ? 'danger' : 'secondary'; ?>"><?= lang('common_lang.btn_' . ($disable ? 'disable' : 'reactivate')); ?></a>
             <?php } ?>
             <a href="<?= base_url('plafor/apprentice/list_grades/' . $apprentice_id); ?>" class="btn btn-default"><?= lang('common_lang.btn_cancel'); ?></a>
