@@ -628,6 +628,7 @@ class Apprentice extends \App\Controllers\BaseController
             foreach ($links as $link) {
                 $module_id = $link['fk_module'];
                 $module = ModuleModel::getInstance()->find($module_id);
+                if (empty($module)) continue;
                 $module['is_school'] = $link['is_school'];
                 $course_modules[$module_id] = $module;
 

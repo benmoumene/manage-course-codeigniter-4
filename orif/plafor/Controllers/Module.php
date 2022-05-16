@@ -7,6 +7,7 @@ use CodeIgniter\HTTP\ResponseInterface;
 use Plafor\Models\CoursePlanModel;
 use Plafor\Models\CoursePlanModuleModel;
 use Plafor\Models\ModuleModel;
+use Plafor\Models\UserCourseModuleGradeModel;
 use Psr\Log\LoggerInterface;
 
 class Module extends \App\Controllers\BaseController
@@ -184,12 +185,11 @@ class Module extends \App\Controllers\BaseController
                 $this->display_view('\Plafor\module\delete', $data);
                 break;
             case 1: // Deactivate module
-                // Delete course plan links
-                CoursePlanModuleModel::getInstance()->where('fk_module', $module_id)->delete();
-
                 ModuleModel::getInstance()->delete($module_id, FALSE);
                 return redirect()->to(base_url('/plafor/module/list_modules'));
             case 2: // Delete module
+                // Delete linked grades
+                UserCourseModuleGradeModel::getInstance()->where('fk_module', $module_id)->delete();
                 // Delete course plan links
                 CoursePlanModuleModel::getInstance()->where('fk_module', $module_id)->delete();
 
