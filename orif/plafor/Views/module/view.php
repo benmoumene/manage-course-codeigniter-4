@@ -7,6 +7,9 @@
         <div class="col-12">
             <p class="font-weight-bold"><?= $module['official_name']; ?></p>
         </div>
+        <div class="col-12">
+            <a href="https://www.modulbaukasten.ch/module/<?= $module['module_number'];?>/<?= $module['version']; ?>/fr-FR"><?= lang('plafor_lang.module_official_page'); ?></a>
+        </div>
         <div class="col-6">
             <p><?= lang('plafor_lang.number_abr') . ' ' . $module['module_number']; ?></p>
         </div>

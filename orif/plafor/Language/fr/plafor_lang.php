@@ -91,6 +91,7 @@ return [
     'title_module_update'            => 'Modifier un module',
     'title_view_modules_linked'      => 'Modules liés',
     'module_no_link'                 => 'Aucune liaison',
+    'module_official_page'           => 'Page officielle du module',
 
     // Grades
     'title_grade_list'               => 'Liste des notes de l\'apprenti',
