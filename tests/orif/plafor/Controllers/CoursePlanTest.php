@@ -17,6 +17,9 @@ use Plafor\Models\ModuleModel;
 use Tests\Support\Models\CoursePlanFabricator;
 use Tests\Support\Models\ModuleFabricator;
 
+/**
+ * Tests for the CoursePlan controller
+ */
 class CoursePlanTest extends CIUnitTestCase
 {
     use ControllerTestTrait, DatabaseTestTrait;
@@ -111,10 +114,18 @@ class CoursePlanTest extends CIUnitTestCase
                 'expect_redirect' => FALSE,
                 'expected_links' => 3,
             ],
-            'Add link to module 4' => [
+            'Add link to module 4 as school' => [
                 'course_plan_id' => 1,
                 'post_data' => [
                     'modules_selected' => ['is_school:4'],
+                ],
+                'expect_redirect' => TRUE,
+                'expected_links' => 4,
+            ],
+            'Add link to module 4 as not school' => [
+                'course_plan_id' => 1,
+                'post_data' => [
+                    'modules_selected' => ['is_not_school:4'],
                 ],
                 'expect_redirect' => TRUE,
                 'expected_links' => 4,
@@ -166,9 +177,10 @@ class CoursePlanTest extends CIUnitTestCase
     /**
      * Tests CoursePlan::link_module
      *
+     * @dataProvider linkModuleProvider
      * @group Apprentice
      * @group Modules
-     * @dataProvider linkModuleProvider
+     * @group CoursePlans
      * @param  integer|null $course_plan_id ID of the course plan to try to link. If null, defaults to 0.
      * @param  array|null   $post_data Data to put into $_POST.
      * @param  boolean      $expect_redirect Whether a redirection is expected.
@@ -178,13 +190,10 @@ class CoursePlanTest extends CIUnitTestCase
     public function testLinkModule(?int $course_plan_id, ?array $post_data, bool $expect_redirect, int $expected_links): void
     {
         // Setup
-        if (!is_null($post_data)) {
+        if (!empty($post_data)) {
             global $_POST;
-            $keys = ['course_plan_id', 'modules_selected'];
-            foreach ($keys as $key) {
-                if (!is_null($post_data) && array_key_exists($key, $post_data)) {
-                    $_POST[$key] = $post_data[$key];
-                }
+            foreach ($post_data as $key => $value) {
+                $_POST[$key] = $value;
             }
         }
 
@@ -206,5 +215,144 @@ class CoursePlanTest extends CIUnitTestCase
             $links = count($linked_modules);
         }
         $this->assertEquals($expected_links, $links);
+    }
+
+    public function testLinkModuleMakeSchool(): void
+    {
+        // Setup
+        $course_plan_id = 1;
+        $link_id = CoursePlanModuleModel::getInstance()->insert([
+            'fk_course_plan' => $course_plan_id,
+            'fk_module' => 4,
+            'is_school' => FALSE,
+        ]);
+        global $_POST;
+        $_POST['modules_selected'] = ['is_school:4'];
+
+        // Test
+        /** @var \CodeIgniter\Test\TestResponse */
+        $result = $this->withUri(base_url('plafor/courseplan/link_module'))
+            ->controller(\Plafor\Controllers\CoursePlan::class)
+            ->execute('link_module', $course_plan_id);
+
+        $result->assertRedirect();
+
+        $data = CoursePlanModuleModel::getInstance()->find($link_id);
+        $this->assertNotEmpty($data);
+        $this->assertTrue($data['is_school'] == 1);
+    }
+
+    public function testLinkModuleUnschool(): void
+    {
+        // Setup
+        $course_plan_id = 1;
+        $link_id = CoursePlanModuleModel::getInstance()->insert([
+            'fk_course_plan' => $course_plan_id,
+            'fk_module' => 4,
+            'is_school' => TRUE,
+        ]);
+        global $_POST;
+        $_POST['modules_selected'] = ['is_not_school:4'];
+
+        // Test
+        /** @var \CodeIgniter\Test\TestResponse */
+        $result = $this->withUri(base_url('plafor/courseplan/link_module'))
+            ->controller(\Plafor\Controllers\CoursePlan::class)
+            ->execute('link_module', $course_plan_id);
+
+        $result->assertRedirect();
+
+        $data = CoursePlanModuleModel::getInstance()->find($link_id);
+        $this->assertNotEmpty($data);
+        $this->assertTrue($data['is_school'] == 0);
+    }
+
+    /**
+     * Provider for testLinkModuleAccess
+     *
+     * @return array
+     */
+    public function linkModuleAccessProvider(): array
+    {
+        /** @var \Config\UserConfig */
+        $user_config = config('\User\Config\UserConfig');
+
+        return [
+            'Not logged' => [
+                'user_access' => NULL,
+                'user_id' => NULL,
+                'course_plan_id' => 1,
+                'expect_redirect' => TRUE,
+                'expect_403' => FALSE,
+            ],
+            'Apprentice can not link' => [
+                'user_access' => $user_config->access_level_apprentice,
+                'user_id' => 1,
+                'course_plan_id' => 1,
+                'expect_redirect' => FALSE,
+                'expect_403' => TRUE,
+            ],
+            'Trainer can not link' => [
+                'user_access' => $user_config->access_lvl_trainer,
+                'user_id' => 3,
+                'course_plan_id' => 1,
+                'expect_redirect' => FALSE,
+                'expect_403' => TRUE,
+            ],
+            'Admin can link' => [
+                'user_access' => $user_config->access_lvl_admin,
+                'user_id' => 5,
+                'course_plan_id' => 1,
+                'expect_redirect' => FALSE,
+                'expect_403' => FALSE,
+            ],
+        ];
+    }
+
+    /**
+     * Tests CoursePlan::link_module access
+     *
+     * @dataProvider linkModuleAccessProvider
+     * @group Apprentice
+     * @group Modules
+     * @group CoursePlans
+     * @param  integer|null $user_access Access to give to the "user", NULL if no access is set
+     * @param  integer|null $user_id ID to give to the "user", NULL if no access is set
+     * @param  integer      $course_plan_id ID of the course plan to get
+     * @param  boolean      $expect_redirect Whether a redirection is expected
+     * @param  boolean      $expect_403 Whether a 403 page is expected
+     * @return void
+     */
+    public function testLinkModuleAccess(?int $user_access, ?int $user_id, int $course_plan_id, bool $expect_redirect, bool $expect_403): void
+    {
+        // Setup
+        if (is_null($user_access) || is_null($user_id)) {
+            session()->remove('user_access');
+            session()->remove('logged_in');
+            session()->remove('user_id');
+        } else {
+            session()->set('user_access', $user_access);
+            session()->set('logged_in', TRUE);
+            session()->set('user_id', $user_id);
+        }
+
+        // Test
+        /** @var \CodeIgniter\Test\TestResponse */
+        $result = $this->withUri(base_url('plafor/courseplan/link_module'))
+            ->controller(\Plafor\Controllers\CoursePlan::class)
+            ->execute('link_module', $course_plan_id);
+
+        // Assert
+        if ($expect_redirect) {
+            $result->assertRedirect();
+        } else {
+            $result->assertNotRedirect();
+
+            if ($expect_403) {
+                $result->assertSee('403');
+            } else {
+                $result->assertDontSee('403');
+            }
+        }
     }
 }

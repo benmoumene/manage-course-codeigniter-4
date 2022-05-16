@@ -481,11 +481,10 @@ class ModuleTest extends CIUnitTestCase
     public function testSaveModule(int $module_id, ?array $post_data, bool $expect_redirect, bool $expect_errors): void
     {
         // Setup
-        global $_POST;
-        $keys = ['module_number', 'official_name', 'version'];
-        foreach ($keys as $key) {
-            if (!is_null($post_data) && array_key_exists($key, $post_data)) {
-                $_POST[$key] = $post_data[$key];
+        if (!empty($post_data)) {
+            global $_POST;
+            foreach ($post_data as $key => $value) {
+                $_POST[$key] = $value;
             }
         }
         // Reset errors by removing the existing instance
@@ -515,7 +514,7 @@ class ModuleTest extends CIUnitTestCase
     }
 
     /**
-     * Provider for saveModuleAccessProvider
+     * Provider for testSaveModuleAccess
      *
      * @return array
      */
@@ -694,6 +693,96 @@ class ModuleTest extends CIUnitTestCase
                 $this->assertNotNull($data['archive']);
             } else {
                 $this->assertNull($data['archive']);
+            }
+        }
+    }
+
+    /**
+     * Provider for testDeleteModuleAccess
+     *
+     * @return array
+     */
+    public function deleteModuleAccessProvider() : array
+    {
+        /** @var \Config\UserConfig */
+        $user_config = config('\User\Config\UserConfig');
+
+        return [
+            'Not logged in' => [
+                'user_access' => NULL,
+                'expect_redirect' => TRUE,
+                'expect_403' => FALSE,
+            ],
+            'Logged in as nothing' => [
+                'user_access' => 0,
+                'expect_redirect' => FALSE,
+                'expect_403' => TRUE,
+            ],
+            'Logged in as apprentice' => [
+                'user_access' => $user_config->access_level_apprentice,
+                'expect_redirect' => FALSE,
+                'expect_403' => TRUE,
+            ],
+            'Logged in as admin' => [
+                'user_access' => $user_config->access_lvl_admin,
+                'expect_redirect' => FALSE,
+                'expect_403' => FALSE,
+            ],
+            'Logged in as guest' => [
+                'user_access' => $user_config->access_lvl_guest,
+                'expect_redirect' => FALSE,
+                'expect_403' => TRUE,
+            ],
+            'Logged in as registered' => [
+                'user_access' => $user_config->access_lvl_registered,
+                'expect_redirect' => FALSE,
+                'expect_403' => TRUE,
+            ],
+            'Logged in as trainer' => [
+                'user_access' => $user_config->access_lvl_trainer,
+                'expect_redirect' => FALSE,
+                'expect_403' => TRUE,
+            ],
+        ];
+    }
+
+    /**
+     * Tests whether Module::delete_module redirects with specific access
+     *
+     * @dataProvider deleteModuleAccessProvider
+     * @group Modules
+     * @param  integer|null $user_access Access given to the "user", NULL if no access is set.
+     * @param  boolean      $expect_redirect Whether redirection is expected
+     * @param  boolean      $expect_403 Whether a 403 page is expected
+     * @return void
+     */
+    public function testDeleteModuleAccess(?int $user_access, bool $expect_redirect, bool $expect_403): void
+    {
+        // Setup
+        if (is_null($user_access)) {
+            session()->remove('user_access');
+            session()->remove('logged_in');
+        } else {
+            session()->set('user_access', $user_access);
+            session()->set('logged_in', TRUE);
+        }
+
+        // Test
+        /** @var \CodeIgniter\Test\TestResponse */
+        $result = $this->withUri(base_url('plafor/module/delete_module'))
+            ->controller(\Plafor\Controllers\Module::class)
+            ->execute('delete_module', 1);
+
+        // Assert
+        if ($expect_redirect) {
+            $result->assertRedirect();
+        } else {
+            $result->assertNotRedirect();
+
+            if ($expect_403) {
+                $result->assertSee('403');
+            } else {
+                $result->assertDontSee('403');
             }
         }
     }

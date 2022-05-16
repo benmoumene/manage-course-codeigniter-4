@@ -471,6 +471,33 @@ class ApprenticeTest extends CIUnitTestCase
                 'expect_redirect' => FALSE,
                 'expect_errors' => TRUE,
             ],
+            'Insert without user course' => [
+                'user_course_id' => 999,
+                'module_id' => 1,
+                'post_data' => [
+                    'grade' => 3.0,
+                ],
+                'expect_redirect' => TRUE,
+                'expect_errors' => FALSE,
+            ],
+            'Insert without module' => [
+                'user_course_id' => 1,
+                'module_id' => 999,
+                'post_data' => [
+                    'grade' => 3.0,
+                ],
+                'expect_redirect' => TRUE,
+                'expect_errors' => FALSE,
+            ],
+            'Insert without link' => [
+                'user_course_id' => 1,
+                'module_id' => 4,
+                'post_data' => [
+                    'grade' => 3.0,
+                ],
+                'expect_redirect' => TRUE,
+                'expect_errors' => FALSE,
+            ],
         ];
     }
 
@@ -491,11 +518,10 @@ class ApprenticeTest extends CIUnitTestCase
         // Setup
         $user_course_id ??= 0;
         $module_id ??= 0;
-        global $_POST;
-        $keys = ['user_course_id', 'module_id', 'grade', 'date_exam'];
-        foreach ($keys as $key) {
-            if (!is_null($post_data) && array_key_exists($key, $post_data)) {
-                $_POST[$key] = $post_data[$key];
+        if (!empty($post_data)) {
+            global $_POST;
+            foreach ($post_data as $key => $value) {
+                $_POST[$key] = $value;
             }
         }
         // Reset errors by removing the existing instance
@@ -519,6 +545,124 @@ class ApprenticeTest extends CIUnitTestCase
                 $this->assertNotEmpty($errors);
             } else {
                 $this->assertEmpty($errors);
+            }
+        }
+    }
+
+    /**
+     * Provider for testAddGradeAccess
+     *
+     * @return array
+     */
+    public function addGradeAccessProvider(): array
+    {
+        /** @var \Config\UserConfig */
+        $user_config = config('\User\Config\UserConfig');
+
+        return [
+            'Not logged' => [
+                'user_access' => NULL,
+                'user_id' => NULL,
+                'user_course_id' => 1,
+                'module_id' => 1,
+                'expect_redirect' => TRUE,
+                'expect_403' => FALSE,
+            ],
+            'Apprentice can access own' => [
+                'user_access' => $user_config->access_level_apprentice,
+                'user_id' => 2,
+                'user_course_id' => 1,
+                'module_id' => 1,
+                'expect_redirect' => FALSE,
+                'expect_403' => FALSE,
+            ],
+            'Apprentice can not access other' => [
+                'user_access' => $user_config->access_level_apprentice,
+                'user_id' => 1,
+                'user_course_id' => 1,
+                'module_id' => 1,
+                'expect_redirect' => TRUE,
+                'expect_403' => FALSE,
+            ],
+            'Trainer can access own apprentice' => [
+                'user_access' => $user_config->access_lvl_trainer,
+                'user_id' => 3,
+                'user_course_id' => 2,
+                'module_id' => 2,
+                'expect_redirect' => FALSE,
+                'expect_403' => FALSE,
+            ],
+            'Trainer can not access other apprentice' => [
+                'user_access' => $user_config->access_lvl_trainer,
+                'user_id' => 3,
+                'user_course_id' => 1,
+                'module_id' => 1,
+                'expect_redirect' => TRUE,
+                'expect_403' => FALSE,
+            ],
+            'Admin can access apprentice 1' => [
+                'user_access' => $user_config->access_lvl_admin,
+                'user_id' => 5,
+                'user_course_id' => 1,
+                'module_id' => 1,
+                'expect_redirect' => FALSE,
+                'expect_403' => FALSE,
+            ],
+            'Admin can access apprentice 2' => [
+                'user_access' => $user_config->access_lvl_admin,
+                'user_id' => 5,
+                'user_course_id' => 2,
+                'module_id' => 2,
+                'expect_redirect' => FALSE,
+                'expect_403' => FALSE,
+            ],
+        ];
+    }
+
+    /**
+     * Tests Apprentice::add_grade access
+     *
+     * @dataProvider addGradeAccessProvider
+     * @group Grades
+     * @param  integer|null $user_access Access to give to the "user", NULL if no access is set
+     * @param  integer|null $user_id ID to give to the "user", NULL if no access is set
+     * @param  integer      $user_course_id ID of the user course to add to
+     * @param  integer      $module_id ID of the module to add to
+     * @param  boolean      $expect_redirect Whether a redirect is expected
+     * @param  boolean      $expect_403 Whether a 403 page is expected
+     * @return void
+     */
+    public function testAddGradeAccess(?int $user_access, ?int $user_id, int $user_course_id, int $module_id, bool $expect_redirect, bool $expect_403): void
+    {
+        // Setup
+        $user_course_id ??= 0;
+        $module_id ??= 0;
+        if (is_null($user_access) || is_null($user_id)) {
+            session()->remove('user_access');
+            session()->remove('logged_in');
+            session()->remove('user_id');
+        } else {
+            session()->set('user_access', $user_access);
+            session()->set('logged_in', TRUE);
+            session()->set('user_id', $user_id);
+        }
+
+        // Test
+        /** @var \CodeIgniter\Test\TestResponse */
+        $result = $this->withUri(base_url('plafor/apprentice/add_grade'))
+            ->controller(\Plafor\Controllers\Apprentice::class)
+            ->execute('add_grade', $user_course_id, $module_id);
+
+        // Assert
+        if ($expect_redirect) {
+            $result->assertRedirect();
+        } else {
+            $result->assertNotRedirect();
+
+            if ($expect_403) {
+                $result->assertSee('403');
+            } else {
+                $result->assertDontSee('403');
             }
         }
     }
@@ -625,11 +769,10 @@ class ApprenticeTest extends CIUnitTestCase
     {
         // Setup
         $grade_id ??= 0;
-        global $_POST;
-        $keys = ['grade_id', 'grade', 'date_exam'];
-        foreach ($keys as $key) {
-            if (!is_null($post_data) && array_key_exists($key, $post_data)) {
-                $_POST[$key] = $post_data[$key];
+        if (!empty($post_data)) {
+            global $_POST;
+            foreach ($post_data as $key => $value) {
+                $_POST[$key] = $value;
             }
         }
         // Reset errors by removing the existing instance
@@ -940,5 +1083,106 @@ class ApprenticeTest extends CIUnitTestCase
         $data = GradeModel::getInstance()->withDeleted()->find($grade_id);
         $this->assertNotEmpty($data);
         $this->assertEmpty($data['archive']);
+    }
+
+    /**
+     * Provider for testDeleteGradeAccess
+     *
+     * @return array
+     */
+    public function deleteGradeAccessProvider(): array
+    {
+        /** @var \Config\UserConfig */
+        $user_config = config('\User\Config\UserConfig');
+
+        return [
+            'Not logged' => [
+                'user_access' => NULL,
+                'user_id' => NULL,
+                'grade_id' => 1,
+                'expect_redirect' => TRUE,
+                'expect_403' => FALSE,
+            ],
+            'Apprentice cannot access' => [
+                'user_access' => $user_config->access_level_apprentice,
+                'user_id' => 1,
+                'grade_id' => 1,
+                'expect_redirect' => FALSE,
+                'expect_403' => TRUE,
+            ],
+            'Trainer can access own apprentice\'s grade' => [
+                'user_access' => $user_config->access_lvl_trainer,
+                'user_id' => 4,
+                'grade_id' => 1,
+                'expect_redirect' => FALSE,
+                'expect_403' => FALSE,
+            ],
+            'Trainer can access other apprentice\'s grade' => [
+                'user_access' => $user_config->access_lvl_trainer,
+                'user_id' => 4,
+                'grade_id' => 7,
+                'expect_redirect' => TRUE,
+                'expect_403' => FALSE,
+            ],
+            'Admin can access apprentice 1\'s grade' => [
+                'user_access' => $user_config->access_lvl_admin,
+                'user_id' => 5,
+                'grade_id' => 1,
+                'expect_redirect' => FALSE,
+                'expect_403' => FALSE,
+            ],
+            'Admin can access apprentice 2\'s grade' => [
+                'user_access' => $user_config->access_lvl_admin,
+                'user_id' => 5,
+                'grade_id' => 7,
+                'expect_redirect' => FALSE,
+                'expect_403' => FALSE,
+            ],
+        ];
+    }
+
+    /**
+     * Tests Apprentice::delete_grade access
+     *
+     * @dataProvider deleteGradeAccessProvider
+     * @group Grades
+     * @param  integer|null $user_access Access given to the "user", NULL if no access is set.
+     * @param  integer|null $user_id ID given to the "user", NULL if no access is set.
+     * @param  integer      $grade_id ID of the grade to get
+     * @param  boolean      $expect_redirect Whether redirection is expected
+     * @param  boolean      $expect_403 Whether a 403 page is expected
+     * @return void
+     */
+    public function testDeleteGradeAccess(?int $user_access, ?int $user_id, int $grade_id, bool $expect_redirect, bool $expect_403): void
+    {
+        // Setup
+        if (is_null($user_access) || is_null($user_id)) {
+            session()->remove('user_access');
+            session()->remove('logged_in');
+            session()->remove('user_id');
+        } else {
+            session()->set('user_access', $user_access);
+            session()->set('logged_in', TRUE);
+            session()->set('user_id', $user_id);
+        }
+
+        // Test
+        /** @var \CodeIgniter\Test\TestResponse */
+        $result = $this->withUri(base_url('plafor/apprentice/delete_grade'))
+            ->controller(\Plafor\Controllers\Apprentice::class)
+            ->execute('delete_grade', $grade_id);
+
+        // Assert
+        if ($expect_redirect) {
+            $result->assertRedirect();
+        } else {
+            $result->assertNotRedirect();
+
+            if ($expect_403) {
+                $result->assertSee('403');
+            } else {
+                $result->assertDontSee('403');
+            }
+        }
     }
 }
