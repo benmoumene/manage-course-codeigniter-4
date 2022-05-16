@@ -306,6 +306,20 @@ class CoursePlanTest extends CIUnitTestCase
                 'expect_redirect' => FALSE,
                 'expect_403' => FALSE,
             ],
+            'Guest can not link' => [
+                'user_access' => $user_config->access_lvl_guest,
+                'user_id' => 3,
+                'course_plan_id' => 1,
+                'expect_redirect' => FALSE,
+                'expect_403' => TRUE,
+            ],
+            'Registered can not link' => [
+                'user_access' => $user_config->access_lvl_registered,
+                'user_id' => 3,
+                'course_plan_id' => 1,
+                'expect_redirect' => FALSE,
+                'expect_403' => TRUE,
+            ],
         ];
     }
 
