@@ -75,13 +75,9 @@ $is_admin = service('session')->get('user_access') >= config('\User\Config\UserC
                     <?php foreach ($modules as $module) { ?>
                         <tr>
                             <td>
-                                <?php if($is_admin): ?>
                                 <a href="<?= base_url('plafor/module/view_module/'.$module['id']); ?>">
-                                <?php endif; ?>
                                     <span class="font-weight-bold"><?= $module['module_number']; ?></span> <?= $module['official_name']; ?> (V<?= $module['version']; ?>)
-                                <?php if($is_admin): ?>
                                 </a>
-                                <?php endif; ?>
                             </td>
                             <td><?= lang('plafor_lang.module_is_' . ($module['is_school'] ? '' : 'not_') . 'school'); ?></td>
                             <td>

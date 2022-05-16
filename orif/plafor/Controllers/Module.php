@@ -39,7 +39,7 @@ class Module extends \App\Controllers\BaseController
      */
     public function list_modules(bool $with_archived = false)
     {
-        if (!isset($_SESSION['user_access']) || $_SESSION['user_access'] < config('\User\Config\UserConfig')->access_lvl_admin) {
+        if (!isset($_SESSION['user_access'])) {
             return $this->display_view('\User\errors\403error');
         }
 
@@ -60,7 +60,7 @@ class Module extends \App\Controllers\BaseController
      */
     public function view_module($module_id = null)
     {
-        if (!isset($_SESSION['user_access']) || $_SESSION['user_access'] < config('\User\Config\UserConfig')->access_lvl_admin) {
+        if (!isset($_SESSION['user_access'])) {
             return $this->display_view('\User\errors\403error');
         }
 

@@ -1,4 +1,5 @@
 <?php
+$is_admin = session('user_access') >= config('\User\Config\UserConfig')->access_lvl_admin;
 view('\Plafor\templates\navigator', ['reset' => true]);
 helper('form');
 /**
@@ -46,15 +47,23 @@ helper('form');
                 <?php foreach ($modules as $module) { ?>
                     <tr>
                         <td>
-                            <a href="<?= base_url('plafor/module/view_module/'.$module['id']); ?>">
+                            <a href="<?= base_url('plafor/module/view_module/' . $module['id']); ?>">
                                 <span class="font-weight-bold"><?= $module['module_number']; ?></span>
                                 <?= $module['official_name']; ?>
                                 (V<?= $module['version']; ?>)
                             </a>
                         </td>
-                        <td><a href="<?= base_url('plafor/module/view_module/'.$module['id']); ?>"><?= lang('common_lang.btn_details'); ?></a></td>
-                        <td><a href="<?= base_url('plafor/module/save_module/'.$module['id']); ?>"><?= lang('common_lang.btn_edit'); ?></a></td>
-                        <td><a href="<?= base_url('plafor/module/delete_module/'.$module['id']); ?>" class="bi <?= $module['archive'] == null ? 'bi-trash' : 'bi-reply-all-fill' ?>"></a></td>
+                        <td><a href="<?= base_url('plafor/module/view_module/' . $module['id']); ?>"><?= lang('common_lang.btn_details'); ?></a></td>
+                        <td>
+                            <?php if ($is_admin) { ?>
+                                <a href="<?= base_url('plafor/module/save_module/' . $module['id']); ?>"><?= lang('common_lang.btn_edit'); ?></a>
+                            <?php } ?>
+                        </td>
+                        <td>
+                            <?php if ($is_admin) { ?>
+                                <a href="<?= base_url('plafor/module/delete_module/' . $module['id']); ?>" class="bi <?= $module['archive'] == null ? 'bi-trash' : 'bi-reply-all-fill' ?>"></a>
+                            <?php } ?>
+                        </td>
                     </tr>
                 <?php } ?>
             </tbody>
@@ -66,7 +75,7 @@ helper('form');
     $(document).ready(function() {
         $('#toggle_deleted').change(e => {
             let checked = e.currentTarget.checked;
-            $.post('<?= base_url(); ?>/plafor/module/list_modules/'+(+checked), {}, data => {
+            $.post('<?= base_url(); ?>/plafor/module/list_modules/' + (+checked), {}, data => {
                 $('#module_list').empty();
                 $('#module_list')[0].innerHTML = $(data).find('#module_list')[0].innerHTML;
             });

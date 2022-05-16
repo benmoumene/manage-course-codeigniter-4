@@ -154,7 +154,7 @@ class ModuleTest extends CIUnitTestCase
     }
 
     /**
-     * Provider for testListModuleAccess
+     * Provider for modules access tests
      *
      * @return array
      */
@@ -172,12 +172,12 @@ class ModuleTest extends CIUnitTestCase
             'Logged in as nothing' => [
                 'user_access' => 0,
                 'expect_redirect' => FALSE,
-                'expect_403' => TRUE,
+                'expect_403' => FALSE,
             ],
             'Logged in as apprentice' => [
                 'user_access' => $user_config->access_level_apprentice,
                 'expect_redirect' => FALSE,
-                'expect_403' => TRUE,
+                'expect_403' => FALSE,
             ],
             'Logged in as admin' => [
                 'user_access' => $user_config->access_lvl_admin,
@@ -187,17 +187,17 @@ class ModuleTest extends CIUnitTestCase
             'Logged in as guest' => [
                 'user_access' => $user_config->access_lvl_guest,
                 'expect_redirect' => FALSE,
-                'expect_403' => TRUE,
+                'expect_403' => FALSE,
             ],
             'Logged in as registered' => [
                 'user_access' => $user_config->access_lvl_registered,
                 'expect_redirect' => FALSE,
-                'expect_403' => TRUE,
+                'expect_403' => FALSE,
             ],
             'Logged in as trainer' => [
                 'user_access' => $user_config->access_lvl_trainer,
                 'expect_redirect' => FALSE,
-                'expect_403' => TRUE,
+                'expect_403' => FALSE,
             ],
         ];
     }
@@ -323,6 +323,9 @@ class ModuleTest extends CIUnitTestCase
             session()->set('user_access', $user_access);
             session()->set('logged_in', TRUE);
         }
+        // Somehow the server's query string is self erasing for this test
+        global $_SERVER;
+        $_SERVER['QUERY_STRING'] = 'plafor/module/view_module';
 
         // Test
         /** @var \CodeIgniter\Test\TestResponse */
@@ -512,9 +515,58 @@ class ModuleTest extends CIUnitTestCase
     }
 
     /**
+     * Provider for saveModuleAccessProvider
+     *
+     * @return array
+     */
+    public function saveModuleAccessProvider(): array
+    {
+        /** @var \Config\UserConfig */
+        $user_config = config('\User\Config\UserConfig');
+
+        return [
+            'Not logged in' => [
+                'user_access' => NULL,
+                'expect_redirect' => TRUE,
+                'expect_403' => FALSE,
+            ],
+            'Logged in as nothing' => [
+                'user_access' => 0,
+                'expect_redirect' => FALSE,
+                'expect_403' => TRUE,
+            ],
+            'Logged in as apprentice' => [
+                'user_access' => $user_config->access_level_apprentice,
+                'expect_redirect' => FALSE,
+                'expect_403' => TRUE,
+            ],
+            'Logged in as admin' => [
+                'user_access' => $user_config->access_lvl_admin,
+                'expect_redirect' => FALSE,
+                'expect_403' => FALSE,
+            ],
+            'Logged in as guest' => [
+                'user_access' => $user_config->access_lvl_guest,
+                'expect_redirect' => FALSE,
+                'expect_403' => TRUE,
+            ],
+            'Logged in as registered' => [
+                'user_access' => $user_config->access_lvl_registered,
+                'expect_redirect' => FALSE,
+                'expect_403' => TRUE,
+            ],
+            'Logged in as trainer' => [
+                'user_access' => $user_config->access_lvl_trainer,
+                'expect_redirect' => FALSE,
+                'expect_403' => TRUE,
+            ],
+        ];
+    }
+
+    /**
      * Tests whether Module::save_module redirects with specific access
      *
-     * @dataProvider accessProvider
+     * @dataProvider saveModuleAccessProvider
      * @group Modules
      * @param  integer|null $user_access Access given to the "user", NULL if no access is set.
      * @param  boolean      $expect_redirect Whether redirection is expected
