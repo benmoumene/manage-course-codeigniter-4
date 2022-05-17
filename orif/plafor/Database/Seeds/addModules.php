@@ -73,7 +73,7 @@ class addModules extends Seeder
             ],
             [
                 'module_number' => 117,
-                'official_name' => "Mettre ne plac el'infrastructure informatique et réseau d'une petite entreprise",
+                'official_name' => "Mettre en place l'infrastructure informatique et réseau d'une petite entreprise",
                 'version' => 4,
             ],
             [

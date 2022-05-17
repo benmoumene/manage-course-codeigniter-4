@@ -604,12 +604,14 @@ class Apprentice extends \App\Controllers\BaseController
         }
 
         $user_course_plans = UserCourseModel::getInstance()->where('fk_user', $apprentice_id)->where('fk_status', 1)->findAll();
-        // All modules of a course plan. The key is the course plan's id
+        // All modules of a course plan. The key is the user course's id
         $courses_modules = [];
-        // All grades of a course plan. The structure is [<course_plan_id> => [<module_id> => [<grades>]]]
+        // All grades of a course plan. The structure is [<user_course_id> => [<module_id> => [<grades>]]]
         $courses_grades = [];
-        // The grades' average of a course plan. The structure is [<course_plan_id> => [<module_id> => <average>]]
+        // The grades' average of a course plan. The structure is [<user_course_id> => [<module_id> => <average>]]
         $courses_averages = [];
+        // The pager of a course plan. The structure is [<user_course_id> => Pager]
+        $course_pagers = [];
         $course_plans = [];
         if (!empty($user_course_plans)) {
             foreach ($user_course_plans as $user_course) {
@@ -619,70 +621,94 @@ class Apprentice extends \App\Controllers\BaseController
 
         foreach ($user_course_plans as $user_course) {
             $course_plan_id = $user_course['fk_course_plan'];
+            $user_course_id = $user_course['id'];
 
             $course_modules = [];
             $course_grades = [];
             $course_averages = [];
 
-            $links = CoursePlanModuleModel::getInstance()->where('fk_course_plan', $course_plan_id)->findAll() ?? [];
-            foreach ($links as $link) {
+            /** @var float[] */
+            $school_averages = [];
+            /** @var float[] */
+            $not_school_averages = [];
+
+            $all_links = CoursePlanModuleModel::getInstance()->where('fk_course_plan', $course_plan_id)
+                ->whereIn('fk_module', ModuleModel::getInstance()->findColumn('id'))->findAll() ?? [];
+            $page_links = array_column(CoursePlanModuleModel::getInstance()->where('fk_course_plan', $course_plan_id)
+                ->whereIn('fk_module', ModuleModel::getInstance()->findColumn('id'))->paginate(null, 'course_' . $user_course_id) ?? [], 'id');
+
+            foreach ($all_links as $link) {
                 $module_id = $link['fk_module'];
                 $module = ModuleModel::getInstance()->find($module_id);
                 if (empty($module)) continue;
-                $module['is_school'] = $link['is_school'];
-                $course_modules[$module_id] = $module;
 
-                $course_grades[$module_id] = UserCourseModuleGradeModel::getInstance()->withDeleted($with_archived)->where('fk_user_course', $user_course['id'])->where('fk_module', $module_id)->findAll() ?? [];
-                $grades = UserCourseModuleGradeModel::getInstance()->where('fk_user_course', $user_course['id'])->where('fk_module', $module_id)->findAll() ?? [];
+                $grades = UserCourseModuleGradeModel::getInstance()
+                    ->where('fk_user_course', $user_course_id)
+                    ->where('fk_module', $module_id)->findAll() ?? [];
                 if (count($grades) > 0) {
-                    $course_averages[$module_id] = array_reduce($grades, function($sum, $grade) {
+                    $average = array_reduce($grades, function ($sum, $grade) {
                         return $grade['grade'] + $sum;
-                    }) / count($grades);
-                }
-            }
+                    }, 0) / count($grades);
 
-            if (count($course_averages) > 0) {
-                // School modules averages are worth 80% of the course plan average
-                $sum_school = 0;
-                $count_school = 0;
-                // Out of school modules are worth 20% of the course plan average
-                $sum_not_school = 0;
-                $count_not_school = 0;
-                foreach ($course_averages as $module_id => $average) {
-                    $module = $course_modules[$module_id];
-                    if (empty($module)) continue;
-
-                    if ($module['is_school']) {
-                        $sum_school += $average;
-                        $count_school++;
+                    if ($link['is_school']) {
+                        array_push($school_averages, $average);
                     } else {
-                        $sum_not_school += $average;
-                        $count_not_school++;
+                        array_push($not_school_averages, $average);
                     }
                 }
 
-                if ($count_school > 0 && $count_not_school > 0) {
-                    $course_averages['average'] = $sum_school / $count_school * .8 + $sum_not_school / $count_not_school * .2;
-                } elseif ($count_school > 0) {
-                    $course_averages['average'] = $sum_school / $count_school;
-                } elseif ($count_not_school > 0) {
-                    $course_averages['average'] = $sum_not_school / $count_not_school;
+
+                if (in_array($link['id'], $page_links)) {
+                    $module['is_school'] = $link['is_school'];
+                    $course_modules[$module_id] = $module;
+                    $course_grades[$module_id] = UserCourseModuleGradeModel::getInstance()->withDeleted($with_archived)
+                        ->where('fk_user_course', $user_course_id)
+                        ->where('fk_module', $module_id)->findAll() ?? [];
+
+                    if (isset($average)) {
+                        $course_averages[$module_id] = $average;
+                    }
+                }
+
+                unset($average);
+            }
+
+            if (count($school_averages) > 0 || count($not_school_averages) > 0) {
+                /** @var float */
+                $sum_school = array_reduce($school_averages, function (float $sum, float $grade): float {
+                    return $sum + $grade;
+                }, 0);
+                /** @var float */
+                $sum_not_school = array_reduce($not_school_averages, function (float $sum, float $grade): float {
+                    return $sum + $grade;
+                }, 0);
+
+                if ($sum_school > 0 && $sum_not_school > 0) {
+                    // School modules averages are worth 80% of the course plan average and the rest is 20%
+                    $course_averages['average'] = $sum_school / count($school_averages) * .8 + $sum_not_school / count($not_school_averages) * .2;
+                } elseif ($sum_school > 0) {
+                    $course_averages['average'] = $sum_school / count($school_averages);
+                } elseif ($sum_not_school > 0) {
+                    $course_averages['average'] = $sum_not_school / count($not_school_averages);
                 }
             }
 
-            $courses_modules[$course_plan_id] = $course_modules;
-            $courses_grades[$course_plan_id] = $course_grades;
-            $courses_averages[$course_plan_id] = $course_averages;
+            $courses_modules[$user_course_id] = $course_modules;
+            $courses_grades[$user_course_id] = $course_grades;
+            $courses_averages[$user_course_id] = $course_averages;
+            // The pager has to be stored because further user course plans will override it
+            $course_pagers[$user_course_id] = CoursePlanModuleModel::getInstance()->pager;
         }
 
         $data = [
-            'title' => lang('plafor_lang.title_grade_list'),
+            'title' => lang('plafor_lang.title_grade_list') . ' ' . $apprentice['username'],
             'course_plans' => $course_plans,
             'modules' => $courses_modules,
             'grades' => $courses_grades,
             'apprentice' => $apprentice,
             'with_archived' => $with_archived,
             'averages' => $courses_averages,
+            'pagers' => $course_pagers,
         ];
 
         $this->display_view('\Plafor\grade\list', $data);
@@ -710,8 +736,10 @@ class Apprentice extends \App\Controllers\BaseController
 
         // Check that the user course, the module, and a link between them exist
         $user_course = UserCourseModel::getInstance()->find($user_course_id);
-        if (empty($user_course) || empty(ModuleModel::getInstance()->find($module_id)) ||
-            empty(CoursePlanModuleModel::getInstance()->where('fk_course_plan', $user_course['fk_course_plan'])->where('fk_module', $module_id)->find())) {
+        if (
+            empty($user_course) || empty(ModuleModel::getInstance()->find($module_id)) ||
+            empty(CoursePlanModuleModel::getInstance()->where('fk_course_plan', $user_course['fk_course_plan'])->where('fk_module', $module_id)->find())
+        ) {
             return $this->index();
         }
 

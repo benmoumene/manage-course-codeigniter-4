@@ -22,12 +22,18 @@ $admin_access = config('\User\Config\UserConfig')->access_lvl_admin;
     <br />
     <?php
     foreach ($course_plans as $user_course_id => $course_plan) {
-        $course_modules = $modules[$course_plan['id']];
-        $course_grades = $grades[$course_plan['id']];
-        $course_averages = $averages[$course_plan['id']];
+        $course_modules = $modules[$user_course_id];
+        $course_grades = $grades[$user_course_id];
+        $course_averages = $averages[$user_course_id];
     ?>
         <div class="row">
-            <p class="font-weight-bold user-course-details-course-plan-name"><?= $course_plan['official_name']; ?></p>
+            <div class="col-12">
+                <p class="font-weight-bold user-course-details-course-plan-name"><?= $course_plan['official_name']; ?></p>
+            </div>
+
+            <div class="col-12">
+                <?= $pagers[$user_course_id]->links('course_' . $user_course_id); ?>
+            </div>
 
             <table class="table table-hover">
                 <thead>
@@ -39,7 +45,7 @@ $admin_access = config('\User\Config\UserConfig')->access_lvl_admin;
                         <th></th>
                     </tr>
                 </thead>
-                <tbody class="module_grades" id="modules_grades_<?= $course_plan['id']; ?>">
+                <tbody class="module_grades" id="modules_grades_<?= $user_course_id; ?>">
                     <?php
                     foreach ($course_modules as $module) {
                         $module_grades = $course_grades[$module['id']];
@@ -63,7 +69,7 @@ $admin_access = config('\User\Config\UserConfig')->access_lvl_admin;
                                         }
                                         if ($_SESSION['user_access'] >= $trainer_access) {
                                             $url = base_url('plafor/apprentice/edit_grade/' . $grade['id']);
-                                            $g = '<a href="' . $url . '">' . $g . '</a>';
+                                            $g = '<a href="' . $url . '" role="button">' . $g . '</a>';
                                         }
                                         if ($i != 0) echo ', ';
                                         echo $g;
@@ -90,6 +96,10 @@ $admin_access = config('\User\Config\UserConfig')->access_lvl_admin;
                     <?php } ?>
                 </tbody>
             </table>
+
+            <div class="col-12">
+                <?= $pagers[$user_course_id]->links('course_' . $user_course_id); ?>
+            </div>
         </div>
         <br>
     <?php } ?>

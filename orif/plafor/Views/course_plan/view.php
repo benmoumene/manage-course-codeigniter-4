@@ -57,10 +57,13 @@ $is_admin = service('session')->get('user_access') >= config('\User\Config\UserC
         </div>
         <div class="col-12">
             <?php if($is_admin): ?>
-            <a href="<?= base_url('plafor/module/save_module/0'); ?>" class="btn btn-primary"><?=lang('common_lang.btn_new_m')?></a>
-            <a href="<?= base_url('plafor/courseplan/link_module/' . $course_plan['id']); ?>" class="btn btn-primary"><?= lang('plafor_lang.change_course_plan_module_links'); ?></a>
+                <div class="mb-2">
+                    <a href="<?= base_url('plafor/module/save_module/0'); ?>" class="btn btn-primary"><?=lang('common_lang.btn_new_m')?></a>
+                    <a href="<?= base_url('plafor/courseplan/link_module/' . $course_plan['id']); ?>" class="btn btn-primary"><?= lang('plafor_lang.change_course_plan_module_links'); ?></a>
+                </div>
             <?php endif; ?>
 
+            <?= $pager->links('modules'); ?>
             <table class="table table-hover mt-2">
                 <thead>
                     <tr>
@@ -103,6 +106,7 @@ $is_admin = service('session')->get('user_access') >= config('\User\Config\UserC
                     <?php } ?>
                 </tbody>
             </table>
+            <?= $pager->links('modules'); ?>
         </div>
     </div>
 </div>
