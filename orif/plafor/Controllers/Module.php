@@ -44,10 +44,13 @@ class Module extends \App\Controllers\BaseController
             return $this->display_view('\User\errors\403error');
         }
 
+        $module_model = ModuleModel::getInstance()->withDeleted($with_archived);
+
         $data = [
             'title' => lang('plafor_lang.title_module_list'),
             'with_archived' => $with_archived,
-            'modules' => ModuleModel::getInstance()->withDeleted($with_archived)->findAll(),
+            'modules' => $module_model->paginate(20),
+            'pager' => $module_model->pager,
         ];
 
         $this->display_view('\Plafor\module\list', $data);

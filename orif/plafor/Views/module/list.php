@@ -34,6 +34,7 @@ helper('form');
         </div>
     </div>
     <div class="row mt-2">
+        <?= $pager->links(); ?>
         <table class="table table-hover">
             <thead>
                 <tr>
@@ -68,6 +69,7 @@ helper('form');
                 <?php } ?>
             </tbody>
         </table>
+        <?= $pager->links(); ?>
     </div>
 </div>
 
