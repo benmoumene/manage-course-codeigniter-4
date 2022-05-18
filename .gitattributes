@@ -5,3 +5,4 @@
 /phpunit.xml.dist export-ignore
 /documentation/ export-ignore
 /spark export-ignore
+/tests export-ignore
