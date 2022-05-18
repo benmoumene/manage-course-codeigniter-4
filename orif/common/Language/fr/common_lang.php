@@ -33,7 +33,7 @@ return[
     'btn_show_disabled'              => 'Afficher les éléments désactivés',
     'btn_delete'                     => 'Supprimer',
     'btn_search'                     => 'Rechercher',
-    'btn_display_all'                => 'Afficher tous les éléments',
+    'btn_display_all_page'           => 'Afficher tous les éléments sur la page',
 
 // Other common texts
     'yes'                            => 'Oui',

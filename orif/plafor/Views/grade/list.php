@@ -10,7 +10,7 @@ $trainer_access = config('\User\Config\UserConfig')->access_lvl_trainer;
         <div class="col-sm-12 text-right no-print row">
             <div class="col-6">
                 <label class="btn btn-default form-check-label" for="toggle_all">
-                    <?= form_label(lang('common_lang.btn_display_all'), 'toggle_all', [
+                    <?= form_label(lang('common_lang.btn_display_all_page'), 'toggle_all', [
                         'class' => 'form-check-label',
                     ]); ?>
                 </label>
