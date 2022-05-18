@@ -15,10 +15,10 @@ $disable = $grade['archive'] == NULL;
                         <?= lang('plafor_lang.grade_'. ($disable ? 'disable' : 'enable') .'_explanation'); ?>
                     </div>
                 <div class="text-right">
-                    <a href="<?= session('_ci_previous_url'); ?>" class="btn btn-default">
+                    <a href="<?= session('_ci_previous_url'); ?>" class="btn btn-default" role="button">
                         <?= lang('common_lang.btn_cancel'); ?>
                     </a>
-                    <a href="<?= base_url('plafor/apprentice/delete_grade/' . $grade['id'] . '/' . ($disable ? 2 : 3)); ?>" class="btn btn-<?= $disable ? 'danger' : 'primary'; ?>">
+                    <a href="<?= base_url('plafor/apprentice/delete_grade/' . $grade['id'] . '/' . ($disable ? 2 : 3)); ?>" class="btn btn-<?= $disable ? 'danger' : 'primary'; ?>" role="button">
                         <?= lang('common_lang.btn_' . ($disable ? 'disable' : 'reactivate')); ?>
                     </a>
                 </div>

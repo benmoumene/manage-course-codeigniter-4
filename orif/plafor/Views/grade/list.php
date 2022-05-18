@@ -39,10 +39,10 @@ $admin_access = config('\User\Config\UserConfig')->access_lvl_admin;
                 <thead>
                     <tr>
                         <th><?= lang('plafor_lang.field_module_official_name'); ?></th>
-                        <th></th>
+                        <th><?= lang('plafor_lang.module_school_type'); ?></th>
                         <th><?= lang('plafor_lang.field_grade_grades'); ?></th>
                         <th><?= lang('plafor_lang.grade_average'); ?></th>
-                        <th></th>
+                        <th aria-label="<?= lang('plafor_lang.title_grade_new'); ?>"></th>
                     </tr>
                 </thead>
                 <tbody class="module_grades" id="modules_grades_<?= $user_course_id; ?>">
@@ -82,7 +82,7 @@ $admin_access = config('\User\Config\UserConfig')->access_lvl_admin;
                             <td>
                                 <?= array_key_exists($module['id'], $course_averages) ? round($course_averages[$module['id']], 1) : ''; ?>
                             </td>
-                            <td><a href="<?= base_url('plafor/apprentice/add_grade/' . $user_course_id . '/' . $module['id']); ?>" class="btn btn-primary no-print">+</a></td>
+                            <td><a href="<?= base_url('plafor/apprentice/add_grade/' . $user_course_id . '/' . $module['id']); ?>" class="btn btn-primary no-print" role="button">+</a></td>
                         </tr>
                     <?php } ?>
                     <?php if (array_key_exists('average', $course_averages)) { ?>

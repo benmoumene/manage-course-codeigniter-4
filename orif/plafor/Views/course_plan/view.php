@@ -58,8 +58,8 @@ $is_admin = service('session')->get('user_access') >= config('\User\Config\UserC
         <div class="col-12">
             <?php if($is_admin): ?>
                 <div class="mb-2">
-                    <a href="<?= base_url('plafor/module/save_module/0'); ?>" class="btn btn-primary"><?=lang('common_lang.btn_new_m')?></a>
-                    <a href="<?= base_url('plafor/courseplan/link_module/' . $course_plan['id']); ?>" class="btn btn-primary"><?= lang('plafor_lang.change_course_plan_module_links'); ?></a>
+                    <a href="<?= base_url('plafor/module/save_module/0'); ?>" class="btn btn-primary" role="button"><?=lang('common_lang.btn_new_m')?></a>
+                    <a href="<?= base_url('plafor/courseplan/link_module/' . $course_plan['id']); ?>" class="btn btn-primary" role="button"><?= lang('plafor_lang.change_course_plan_module_links'); ?></a>
                 </div>
             <?php endif; ?>
 
@@ -68,10 +68,10 @@ $is_admin = service('session')->get('user_access') >= config('\User\Config\UserC
                 <thead>
                     <tr>
                         <th><?= lang('plafor_lang.field_module_official_name'); ?></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
+                        <th><?= lang('plafor_lang.module_school_type'); ?></th>
+                        <th aria-label="<?= lang('common_lang.btn_details'); ?>"></th>
+                        <th aria-label="<?= lang('common_lang.btn_edit'); ?>"></th>
+                        <th aria-label="<?= lang('common_lang.btn_delete'); ?>"></th>
                     </tr>
                 </thead>
                 <tbody>

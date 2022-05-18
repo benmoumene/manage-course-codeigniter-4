@@ -39,9 +39,9 @@ helper('form');
             <thead>
                 <tr>
                     <th><?= lang('plafor_lang.field_module_official_name'); ?></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
+                    <th aria-label="<?= lang('common_lang.btn_details'); ?>"></th>
+                    <th aria-label="<?= lang('common_lang.btn_edit'); ?>"></th>
+                    <th aria-label="<?= lang('common_lang.btn_delete'); ?>"></th>
                 </tr>
             </thead>
             <tbody id="module_list">
