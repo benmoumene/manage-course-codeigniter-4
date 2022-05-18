@@ -570,9 +570,10 @@ class Apprentice extends \App\Controllers\BaseController
      * @param  integer $apprentice_id ID of the apprentice whose modules are to show.
      * If the current user is an apprentice, it is ignored.
      * @param  boolean $with_archived If true, shows the archived grades too.
+     * @param  boolean $display_all If true, the modules will not be paginated.
      * @return void
      */
-    public function list_grades(int $apprentice_id = 0, bool $with_archived = false)
+    public function list_grades(int $apprentice_id = 0, bool $with_archived = false, bool $display_all = false)
     {
         if (!isset($_SESSION['user_access'])) {
             return $this->display_view('\User\errors\403error');
@@ -634,8 +635,11 @@ class Apprentice extends \App\Controllers\BaseController
 
             $all_links = CoursePlanModuleModel::getInstance()->where('fk_course_plan', $course_plan_id)
                 ->whereIn('fk_module', ModuleModel::getInstance()->findColumn('id'))->findAll() ?? [];
-            $page_links = array_column(CoursePlanModuleModel::getInstance()->where('fk_course_plan', $course_plan_id)
-                ->whereIn('fk_module', ModuleModel::getInstance()->findColumn('id'))->paginate(null, 'course_' . $user_course_id) ?? [], 'id');
+            $page_links = [];
+            if (!$display_all) {
+                $page_links = array_column(CoursePlanModuleModel::getInstance()->where('fk_course_plan', $course_plan_id)
+                    ->whereIn('fk_module', ModuleModel::getInstance()->findColumn('id'))->paginate(null, 'course_' . $user_course_id) ?? [], 'id');
+            }
 
             foreach ($all_links as $link) {
                 $module_id = $link['fk_module'];
@@ -658,7 +662,7 @@ class Apprentice extends \App\Controllers\BaseController
                 }
 
 
-                if (in_array($link['id'], $page_links)) {
+                if ($display_all || in_array($link['id'], $page_links)) {
                     $module['is_school'] = $link['is_school'];
                     $course_modules[$module_id] = $module;
                     $course_grades[$module_id] = UserCourseModuleGradeModel::getInstance()->withDeleted($with_archived)
@@ -707,6 +711,7 @@ class Apprentice extends \App\Controllers\BaseController
             'grades' => $courses_grades,
             'apprentice' => $apprentice,
             'with_archived' => $with_archived,
+            'display_all' =>$display_all,
             'averages' => $courses_averages,
             'pagers' => $course_pagers,
         ];

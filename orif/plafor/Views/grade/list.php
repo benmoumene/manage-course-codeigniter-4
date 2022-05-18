@@ -1,22 +1,33 @@
 <?php
 helper('form');
 $trainer_access = config('\User\Config\UserConfig')->access_lvl_trainer;
-$admin_access = config('\User\Config\UserConfig')->access_lvl_admin;
 ?>
 <div class="container">
     <div class="row">
         <div class="col">
             <h1 class="title-section"><?= lang('plafor_lang.title_grade_list') . ' ' . $apprentice['username']; ?></h1>
         </div>
-        <div class="col-sm-12 text-right no-print">
-            <label class="btn btn-default form-check-label" for="toggle_deleted">
-                <?= form_label(lang('common_lang.btn_show_disabled'), 'toggle_deleted', [
-                    'class' => 'form-check-label',
+        <div class="col-sm-12 text-right no-print row">
+            <div class="col-6">
+                <label class="btn btn-default form-check-label" for="toggle_all">
+                    <?= form_label(lang('common_lang.btn_display_all'), 'toggle_all', [
+                        'class' => 'form-check-label',
+                    ]); ?>
+                </label>
+                <?= form_checkbox('toggle_all', '', $display_all, [
+                    'id' => 'toggle_all',
                 ]); ?>
-            </label>
-            <?= form_checkbox('toggle_deleted', '', $with_archived, [
-                'id' => 'toggle_deleted',
-            ]); ?>
+            </div>
+            <div class="col-6">
+                <label class="btn btn-default form-check-label" for="toggle_deleted">
+                    <?= form_label(lang('common_lang.btn_show_disabled'), 'toggle_deleted', [
+                        'class' => 'form-check-label',
+                    ]); ?>
+                </label>
+                <?= form_checkbox('toggle_deleted', '', $with_archived, [
+                    'id' => 'toggle_deleted',
+                ]); ?>
+            </div>
         </div>
     </div>
     <br />
@@ -26,26 +37,28 @@ $admin_access = config('\User\Config\UserConfig')->access_lvl_admin;
         $course_grades = $grades[$user_course_id];
         $course_averages = $averages[$user_course_id];
     ?>
-        <div class="row">
+        <div class="row module_grades" id="modules_grades_<?= $user_course_id; ?>">
             <div class="col-12">
                 <p class="font-weight-bold user-course-details-course-plan-name"><?= $course_plan['official_name']; ?></p>
             </div>
 
-            <div class="col-12">
-                <?= $pagers[$user_course_id]->links('course_' . $user_course_id); ?>
-            </div>
+            <?php if (!is_null($pagers[$user_course_id])) { ?>
+                <div class="col-12 no-print">
+                    <?= $pagers[$user_course_id]->links('course_' . $user_course_id); ?>
+                </div>
+            <?php } ?>
 
             <table class="table table-hover">
                 <thead>
                     <tr>
-                        <th><?= lang('plafor_lang.field_module_official_name'); ?></th>
-                        <th><?= lang('plafor_lang.module_school_type'); ?></th>
-                        <th><?= lang('plafor_lang.field_grade_grades'); ?></th>
-                        <th><?= lang('plafor_lang.grade_average'); ?></th>
-                        <th aria-label="<?= lang('plafor_lang.title_grade_new'); ?>"></th>
+                        <th class="col-6"><?= lang('plafor_lang.field_module_official_name'); ?></th>
+                        <th class="col-2"><?= lang('plafor_lang.module_school_type'); ?></th>
+                        <th class="col-2"><?= lang('plafor_lang.field_grade_grades'); ?></th>
+                        <th class="col-1"><?= lang('plafor_lang.grade_average'); ?></th>
+                        <th class="col-1" aria-label="<?= lang('plafor_lang.title_grade_new'); ?>"></th>
                     </tr>
                 </thead>
-                <tbody class="module_grades" id="modules_grades_<?= $user_course_id; ?>">
+                <tbody>
                     <?php
                     foreach ($course_modules as $module) {
                         $module_grades = $course_grades[$module['id']];
@@ -97,9 +110,11 @@ $admin_access = config('\User\Config\UserConfig')->access_lvl_admin;
                 </tbody>
             </table>
 
-            <div class="col-12">
-                <?= $pagers[$user_course_id]->links('course_' . $user_course_id); ?>
-            </div>
+            <?php if (!is_null($pagers[$user_course_id])) { ?>
+                <div class="col-12 no-print">
+                    <?= $pagers[$user_course_id]->links('course_' . $user_course_id); ?>
+                </div>
+            <?php } ?>
         </div>
         <br>
     <?php } ?>
@@ -107,12 +122,18 @@ $admin_access = config('\User\Config\UserConfig')->access_lvl_admin;
 
 <script>
     $(document).ready(function() {
-        $('#toggle_deleted').change(e => {
-            let checked = e.currentTarget.checked;
-            $.post('<?= base_url('/plafor/apprentice/list_grades/' . $apprentice['id']); ?>/' + (+checked), {}, data => {
-                $('.module_grades').empty();
-                $('.module_grades').each((_, elem) => elem.innerHTML = $(data).find(`#${elem.id}`)[0].innerHTML);
-            });
-        });
+        $('#toggle_deleted').change(refresh_tables);
+        $('#toggle_all').change(refresh_tables);
     });
+
+    function refresh_tables() {
+        let with_deleted = $('#toggle_deleted')[0].checked;
+        let show_all = $('#toggle_all')[0].checked;
+
+        $.post(`<?= base_url('/plafor/apprentice/list_grades/' . $apprentice['id']); ?>/${+with_deleted}/${+show_all}`, {}, data => {
+            console.log($(data).find('.module_grades'));
+            $('.module_grades').empty();
+            $('.module_grades').each((_, elem) => elem.innerHTML = $(data).find(`#${elem.id}`)[0].innerHTML);
+        });
+    }
 </script>
