@@ -8,6 +8,7 @@ use Plafor\Models\CoursePlanModel;
 use Plafor\Models\CoursePlanModuleModel;
 use Plafor\Models\ModuleModel;
 use Plafor\Models\UserCourseModuleGradeModel;
+use Plafor\Models\UserCourseModuleModel;
 use Psr\Log\LoggerInterface;
 
 class Module extends \App\Controllers\BaseController
@@ -193,8 +194,15 @@ class Module extends \App\Controllers\BaseController
                 ModuleModel::getInstance()->delete($module_id, FALSE);
                 return redirect()->to(base_url('/plafor/module/list_modules'));
             case 2: // Delete module
-                // Delete linked grades
-                UserCourseModuleGradeModel::getInstance()->where('fk_module', $module_id)->delete();
+                if (!empty(UserCourseModuleModel::getInstance()->where('fk_module', $module_id)->findAll())) {
+                    // Delete linked grades
+                    UserCourseModuleGradeModel::getInstance()->whereIn('fk_user_course_module',
+                        UserCourseModuleModel::getInstance()->where('fk_module', $module_id)->findColumn('id') ?? []
+                    )
+                    ->delete();
+                    // Delete link
+                    UserCourseModuleModel::getInstance()->where('fk_module', $module_id)->delete();
+                }
                 // Delete course plan links
                 CoursePlanModuleModel::getInstance()->where('fk_module', $module_id)->delete();
 

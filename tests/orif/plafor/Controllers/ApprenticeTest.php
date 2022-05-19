@@ -18,6 +18,7 @@ use Plafor\Models\ModuleModel;
 use Plafor\Models\TrainerApprenticeModel;
 use Plafor\Models\UserCourseModel;
 use Plafor\Models\UserCourseModuleGradeModel as GradeModel;
+use Plafor\Models\UserCourseModuleModel;
 use Tests\Support\Models\ModuleFabricator;
 use Tests\Support\Models\UserFabricator;
 use Tests\Support\Models\CoursePlanFabricator;
@@ -131,11 +132,23 @@ class ApprenticeTest extends CIUnitTestCase
         ];
         CoursePlanModuleModel::getInstance()->skipValidation(TRUE);
         foreach ($links as $course_plan_id => $modules_ids) {
+            $user_course_plans = UserCourseModel::getInstance()
+                ->where('fk_course_plan', $course_plan_id)
+                ->where('fk_status', 1)
+                ->findColumn('id') ?? [];
+
             foreach ($modules_ids as $module_id) {
                 CoursePlanModuleModel::getInstance()->insert([
                     'fk_course_plan' => $course_plan_id,
                     'fk_module' => $module_id,
                 ]);
+
+                foreach ($user_course_plans as $user_course_id) {
+                    UserCourseModuleModel::getInstance()->insert([
+                        'fk_user_course' => $user_course_id,
+                        'fk_module' => $module_id,
+                    ]);
+                }
             }
         }
         CoursePlanModuleModel::getInstance()->skipValidation(FALSE);
@@ -157,10 +170,13 @@ class ApprenticeTest extends CIUnitTestCase
         GradeModel::getInstance()->skipValidation(TRUE);
         foreach ($links as $user_course_id => $modules_grades) {
             foreach ($modules_grades as $module_id => $grades) {
+                $link_id = UserCourseModuleModel::getInstance()
+                    ->where('fk_user_course', $user_course_id)
+                    ->where('fk_module', $module_id)
+                    ->first()['id'];
                 foreach ($grades as $grade) {
                     GradeModel::getInstance()->insert([
-                        'fk_user_course' => $user_course_id,
-                        'fk_module' => $module_id,
+                        'fk_user_course_module' => $link_id,
                         'grade' => $grade,
                         'date_exam' => '2022-01-01',
                     ]);
@@ -1031,9 +1047,12 @@ class ApprenticeTest extends CIUnitTestCase
     public function testDeleteGradeReactivate(): void
     {
         // Setup
-        $grade_id = GradeModel::getInstance()->insert([
+        $link_id = UserCourseModuleModel::getInstance()->insert([
             'fk_user_course' => 1,
             'fk_module' => 1,
+        ]);
+        $grade_id = GradeModel::getInstance()->insert([
+            'fk_user_course_module' => $link_id,
             'grade' => 1.5,
             'date_exam' => '2022-01-01',
             'archive' => '2022-01-01',
@@ -1062,9 +1081,12 @@ class ApprenticeTest extends CIUnitTestCase
     public function testDeleteGradeTrainerDeleteFail(): void
     {
         // Setup
-        $grade_id = GradeModel::getInstance()->insert([
+        $link_id = UserCourseModuleModel::getInstance()->insert([
             'fk_user_course' => 1,
             'fk_module' => 1,
+        ]);
+        $grade_id = GradeModel::getInstance()->insert([
+            'fk_user_course_module' => $link_id,
             'grade' => 1.5,
             'date_exam' => '2022-01-01',
         ]);

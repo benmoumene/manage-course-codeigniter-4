@@ -39,6 +39,7 @@ class Migration extends \CodeIgniter\Controller
                     '\Plafor\Database\Seeds\addOperationalCompetences2021Datas',
                     '\Plafor\Database\Seeds\addModules',
                     '\Plafor\Database\Seeds\addCoursePlanModules',
+                    '\Plafor\Database\Seeds\addUserCourseModulesDatas',
                 ];
 
                 try {

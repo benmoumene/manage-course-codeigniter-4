@@ -14,6 +14,8 @@ use Plafor\Models\ObjectiveModel;
 use Plafor\Models\OperationalCompetenceModel;
 use Plafor\Models\TrainerApprenticeModel;
 use Plafor\Models\UserCourseModel;
+use Plafor\Models\UserCourseModuleGradeModel;
+use Plafor\Models\UserCourseModuleModel;
 use Plafor\Models\UserCourseStatusModel;
 use User\Models\User_model;
 
@@ -390,6 +392,10 @@ class CoursePlan extends \App\Controllers\BaseController
                 case 1: // Delete user course
                     /**@todo delete course plan
                      * **/
+                    UserCourseModuleGradeModel::getInstance()->whereIn('fk_user_course_module',
+                        UserCourseModuleModel::getInstance()->where('fk_user_course', $user_course_id)->findColumn('id') ?? [])
+                        ->delete();
+                    UserCourseModuleModel::getInstance()->where('fk_user_course', $user_course_id)->delete();
                     AcquisitionStatusModel::getInstance()->where('fk_user_course', $user_course_id)->delete();
                     UserCourseModel::getInstance()->delete($user_course_id, false);
                     return redirect()->to(base_url('plafor/apprentice/list_apprentice'));

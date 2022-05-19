@@ -21,6 +21,7 @@ use Plafor\Models\UserCourseModel;
 use Plafor\Models\UserCourseStatusModel;
 use Plafor\Models\TrainerApprenticeModel;
 use Plafor\Models\UserCourseModuleGradeModel;
+use Plafor\Models\UserCourseModuleModel;
 use User\Models\User_type_model;
 use User\Models\User_model;
 
@@ -151,87 +152,92 @@ class Apprentice extends \App\Controllers\BaseController
      * @param int (SQL PRIMARY KEY) $id_user_course
      */
     public function save_user_course($id_apprentice = null,$id_user_course = 0){
-        if ($this->session->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_trainer) {
-            $apprentice = User_model::getInstance()->find($id_apprentice);
-            $user_course = UserCourseModel::getInstance()->find($id_user_course);
-
-            if ($id_apprentice == null || $apprentice['fk_user_type'] != User_type_model::getInstance()->where('name', lang('plafor_lang.title_apprentice'))->first()['id']) {
-                return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
-                exit();
-            }
-
-            if (count($_POST) > 0) {
-                $fk_course_plan = $this->request->getPost('course_plan');
-                $user_course = array(
-                    'fk_user' => $id_apprentice,
-                    'fk_course_plan' => $fk_course_plan,
-                    'fk_status' => $this->request->getPost('status'),
-                    'date_begin' => $this->request->getPost('date_begin'),
-                    'date_end' => $this->request->getPost('date_end'),
-                );
-                if ($id_user_course > 0) {
-                    //update
-                    UserCourseModel::getInstance()->update($id_user_course, $user_course);
-                } else if (UserCourseModel::getInstance()->where('fk_user', $id_apprentice)->where('fk_course_plan', $fk_course_plan)->first() == null) {
-                    //insert
-                    $id_user_course = UserCourseModel::getInstance()->insert($user_course);
-
-                    $course_plan = UserCourseModel::getCoursePlan($user_course['fk_course_plan']);
-                    $competenceDomainIds = [];
-
-                    foreach (CoursePlanModel::getCompetenceDomains($course_plan['id']) as $competence_domain) {
-                        $competenceDomainIds[] = $competence_domain['id'];
-                    }
-
-                    $operational_competences = [];
-                    // si il n'y a pas de compétence operationnelles associées
-                    try {
-                        $operational_competences = OperationalCompetenceModel::getInstance()->withDeleted()->whereIn('fk_competence_domain', $competenceDomainIds)->findAll();
-                    } catch (\Exception $e) {
-                    };
-                    $objectiveIds = array();
-                    foreach ($operational_competences as $operational_competence) {
-                        foreach (OperationalCompetenceModel::getObjectives($operational_competence['id']) as $objective) {
-                            $objectiveIds[] = $objective['id'];
-                        }
-                    }
-                    foreach ($objectiveIds as $objectiveId) {
-                        $acquisition_status = array(
-                            'fk_objective' => $objectiveId,
-                            'fk_user_course' => $id_user_course,
-                            'fk_acquisition_level' => 1
-                        );
-
-                        AcquisitionStatusModel::getInstance()->insert($acquisition_status);
-                    }
-                }
-                if (UserCourseModel::getInstance()->errors() == null) {
-                    //if ok
-                    return redirect()->to(base_url('plafor/apprentice/view_apprentice/' . $id_apprentice));
-                    exit();
-                }
-            }
-            $course_plans = [];
-            foreach (CoursePlanModel::getInstance()->findAll() as $courseplan)
-                $course_plans[$courseplan['id']] = $courseplan['official_name'];
-            $status = [];
-            foreach (UserCourseStatusModel::getInstance()->findAll() as $usercoursestatus) {
-                $status[$usercoursestatus['id']] = $usercoursestatus['name'];
-            }
-            $output = array(
-                'title' => lang('plafor_lang.title_user_course_plan_link'),
-                'course_plans' => $course_plans,
-                'user_course' => $user_course,
-                'status' => $status,
-                'apprentice' => $apprentice,
-                'errors' => UserCourseModel::getInstance()->errors()
-            );
-
-            return $this->display_view('Plafor\user_course/save', $output);
-        }
-        else{
+        if ($this->session->get('user_access') < config('\User\Config\UserConfig')->access_lvl_trainer) {
             return $this->display_view('\User\errors\403error');
         }
+
+        $apprentice = User_model::getInstance()->find($id_apprentice);
+        $user_course = UserCourseModel::getInstance()->find($id_user_course);
+
+        if ($id_apprentice == null || $apprentice['fk_user_type'] != User_type_model::getInstance()->where('name', lang('plafor_lang.title_apprentice'))->first()['id']) {
+            return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
+        }
+
+        if (count($_POST) > 0) {
+            $fk_course_plan = $this->request->getPost('course_plan');
+            $user_course = array(
+                'fk_user' => $id_apprentice,
+                'fk_course_plan' => $fk_course_plan,
+                'fk_status' => $this->request->getPost('status'),
+                'date_begin' => $this->request->getPost('date_begin'),
+                'date_end' => $this->request->getPost('date_end'),
+            );
+            if ($id_user_course > 0) {
+                //update
+                UserCourseModel::getInstance()->update($id_user_course, $user_course);
+            } else if (UserCourseModel::getInstance()->where('fk_user', $id_apprentice)->where('fk_course_plan', $fk_course_plan)->first() == null) {
+                //insert
+                $id_user_course = UserCourseModel::getInstance()->insert($user_course);
+
+                $course_plan = UserCourseModel::getCoursePlan($user_course['fk_course_plan']);
+                $competenceDomainIds = [];
+
+                foreach (CoursePlanModel::getCompetenceDomains($course_plan['id']) as $competence_domain) {
+                    $competenceDomainIds[] = $competence_domain['id'];
+                }
+
+                $operational_competences = [];
+                // si il n'y a pas de compétence operationnelles associées
+                try {
+                    $operational_competences = OperationalCompetenceModel::getInstance()->withDeleted()->whereIn('fk_competence_domain', $competenceDomainIds)->findAll();
+                } catch (\Exception $e) {}
+                $objectiveIds = array();
+                foreach ($operational_competences as $operational_competence) {
+                    foreach (OperationalCompetenceModel::getObjectives($operational_competence['id']) as $objective) {
+                        $objectiveIds[] = $objective['id'];
+                    }
+                }
+                foreach ($objectiveIds as $objectiveId) {
+                    $acquisition_status = array(
+                        'fk_objective' => $objectiveId,
+                        'fk_user_course' => $id_user_course,
+                        'fk_acquisition_level' => 1
+                    );
+
+                    AcquisitionStatusModel::getInstance()->insert($acquisition_status);
+                }
+
+                $course_modules = CoursePlanModuleModel::getInstance()->where('fk_course_plan', $fk_course_plan)->findAll() ?? [];
+                foreach ($course_modules as $link) {
+                    UserCourseModuleModel::getInstance()->insert([
+                        'fk_user_course' => $id_user_course,
+                        'fk_module' => $link['fk_module'],
+                        'is_school' => $link['is_school'],
+                    ]);
+                }
+            }
+            if (UserCourseModel::getInstance()->errors() == null) {
+                //if ok
+                return redirect()->to(base_url('plafor/apprentice/view_apprentice/' . $id_apprentice));
+            }
+        }
+        $course_plans = [];
+        foreach (CoursePlanModel::getInstance()->findAll() as $courseplan)
+            $course_plans[$courseplan['id']] = $courseplan['official_name'];
+        $status = [];
+        foreach (UserCourseStatusModel::getInstance()->findAll() as $usercoursestatus) {
+            $status[$usercoursestatus['id']] = $usercoursestatus['name'];
+        }
+        $output = array(
+            'title' => lang('plafor_lang.title_user_course_plan_link'),
+            'course_plans' => $course_plans,
+            'user_course' => $user_course,
+            'status' => $status,
+            'apprentice' => $apprentice,
+            'errors' => UserCourseModel::getInstance()->errors()
+        );
+
+        return $this->display_view('Plafor\user_course/save', $output);
     }
     /**@todo the user doesn't modify the trainer but add one on update
     /**
@@ -604,7 +610,7 @@ class Apprentice extends \App\Controllers\BaseController
             return redirect()->to(base_url('/plafor/apprentice/list_apprentice'));
         }
 
-        $user_course_plans = UserCourseModel::getInstance()->where('fk_user', $apprentice_id)->where('fk_status', 1)->findAll();
+        $user_course_plans = UserCourseModel::getInstance()->where('fk_user', $apprentice_id)->where('fk_status', 1)->findAll() ?? [];
         // All modules of a course plan. The key is the user course's id
         $courses_modules = [];
         // All grades of a course plan. The structure is [<user_course_id> => [<module_id> => [<grades>]]]
@@ -621,7 +627,6 @@ class Apprentice extends \App\Controllers\BaseController
         }
 
         foreach ($user_course_plans as $user_course) {
-            $course_plan_id = $user_course['fk_course_plan'];
             $user_course_id = $user_course['id'];
 
             $course_modules = [];
@@ -633,11 +638,11 @@ class Apprentice extends \App\Controllers\BaseController
             /** @var float[] */
             $not_school_averages = [];
 
-            $all_links = CoursePlanModuleModel::getInstance()->where('fk_course_plan', $course_plan_id)
+            $all_links = UserCourseModuleModel::getInstance()->where('fk_user_course', $user_course_id)
                 ->whereIn('fk_module', ModuleModel::getInstance()->findColumn('id'))->findAll() ?? [];
             $page_links = [];
             if (!$display_all) {
-                $page_links = array_column(CoursePlanModuleModel::getInstance()->where('fk_course_plan', $course_plan_id)
+                $page_links = array_column(UserCourseModuleModel::getInstance()->where('fk_user_course', $user_course_id)
                     ->whereIn('fk_module', ModuleModel::getInstance()->findColumn('id'))->paginate(null, 'course_' . $user_course_id) ?? [], 'id');
             }
 
@@ -646,28 +651,25 @@ class Apprentice extends \App\Controllers\BaseController
                 $module = ModuleModel::getInstance()->find($module_id);
                 if (empty($module)) continue;
 
-                $grades = UserCourseModuleGradeModel::getInstance()
-                    ->where('fk_user_course', $user_course_id)
-                    ->where('fk_module', $module_id)->findAll() ?? [];
+                $grades = UserCourseModuleGradeModel::getInstance()->where('fk_user_course_module', $link['id'])->findAll() ?? [];
                 if (count($grades) > 0) {
-                    $average = array_reduce($grades, function ($sum, $grade) {
-                        return $grade['grade'] + $sum;
-                    }, 0) / count($grades);
+                    /** @var float */
+                    $average = array_reduce($grades, fn ($sum, $grade) => $grade['grade'] + $sum, 0) / count($grades);
 
                     if ($link['is_school']) {
-                        array_push($school_averages, $average);
+                        $school_averages[] = $average;
                     } else {
-                        array_push($not_school_averages, $average);
+                        $not_school_averages[] = $average;
                     }
                 }
-
 
                 if ($display_all || in_array($link['id'], $page_links)) {
                     $module['is_school'] = $link['is_school'];
                     $course_modules[$module_id] = $module;
-                    $course_grades[$module_id] = UserCourseModuleGradeModel::getInstance()->withDeleted($with_archived)
-                        ->where('fk_user_course', $user_course_id)
-                        ->where('fk_module', $module_id)->findAll() ?? [];
+                    $course_grades[$module_id] = UserCourseModuleGradeModel::getInstance()
+                        ->withDeleted($with_archived)
+                        ->where('fk_user_course_module', $link['id'])
+                        ->findAll() ?? [];
 
                     if (isset($average)) {
                         $course_averages[$module_id] = $average;
@@ -679,20 +681,16 @@ class Apprentice extends \App\Controllers\BaseController
 
             if (count($school_averages) > 0 || count($not_school_averages) > 0) {
                 /** @var float */
-                $sum_school = array_reduce($school_averages, function (float $sum, float $grade): float {
-                    return $sum + $grade;
-                }, 0);
+                $sum_school = array_reduce($school_averages, fn (float $sum, float $grade) => $sum + $grade, 0);
                 /** @var float */
-                $sum_not_school = array_reduce($not_school_averages, function (float $sum, float $grade): float {
-                    return $sum + $grade;
-                }, 0);
+                $sum_not_school = array_reduce($not_school_averages, fn (float $sum, float $grade) => $sum + $grade, 0);
 
-                if ($sum_school > 0 && $sum_not_school > 0) {
+                if (count($school_averages) > 0 && count($not_school_averages) > 0) {
                     // School modules averages are worth 80% of the course plan average and the rest is 20%
                     $course_averages['average'] = $sum_school / count($school_averages) * .8 + $sum_not_school / count($not_school_averages) * .2;
-                } elseif ($sum_school > 0) {
+                } elseif (count($school_averages) > 0) {
                     $course_averages['average'] = $sum_school / count($school_averages);
-                } elseif ($sum_not_school > 0) {
+                } elseif (count($not_school_averages) > 0) {
                     $course_averages['average'] = $sum_not_school / count($not_school_averages);
                 }
             }
@@ -701,7 +699,7 @@ class Apprentice extends \App\Controllers\BaseController
             $courses_grades[$user_course_id] = $course_grades;
             $courses_averages[$user_course_id] = $course_averages;
             // The pager has to be stored because further user course plans will override it
-            $course_pagers[$user_course_id] = CoursePlanModuleModel::getInstance()->pager;
+            $course_pagers[$user_course_id] = UserCourseModuleModel::getInstance()->pager;
         }
 
         $data = [
@@ -776,9 +774,12 @@ class Apprentice extends \App\Controllers\BaseController
         $postData = [];
 
         if (count($_POST) > 0) {
+            $link_id = UserCourseModuleModel::getInstance()
+                ->where('fk_user_course', $user_course_id)
+                ->where('fk_module', $module_id)
+                ->first()['id'];
             $grade = [
-                'fk_user_course' => $user_course_id,
-                'fk_module' => $module_id,
+                'fk_user_course_module' => $link_id,
                 'grade' => $this->request->getPost('grade'),
                 'date_exam' => $this->request->getPost('date_exam'),
             ];
@@ -833,7 +834,8 @@ class Apprentice extends \App\Controllers\BaseController
         }
 
         // Check that the current user has access to the apprentice
-        $apprentice_id = UserCourseModel::getInstance()->find($grade['fk_user_course'])['fk_user'];
+        $link = UserCourseModuleModel::getInstance()->find($grade['fk_user_course_module']);
+        $apprentice_id = UserCourseModel::getInstance()->find($link['fk_user_course'])['fk_user'];
 
         /** @var \Config\UserConfig */
         $config = config('\User\Config\UserConfig');
@@ -851,7 +853,7 @@ class Apprentice extends \App\Controllers\BaseController
 
         if (count($_POST) > 0) {
             $grade = [
-                // Don't change linked module and course
+                // Don't change linked user_course_module
                 'grade' => $this->request->getPost('grade'),
                 'date_exam' => $this->request->getPost('date_exam'),
             ];
@@ -902,7 +904,8 @@ class Apprentice extends \App\Controllers\BaseController
             return $this->index();
         }
 
-        $apprentice_id = UserCourseModel::getInstance()->find($grade['fk_user_course'])['fk_user'];
+        $link = UserCourseModuleModel::getInstance()->find($grade['fk_user_course_module']);
+        $apprentice_id = UserCourseModel::getInstance()->find($link['fk_user_course'])['fk_user'];
 
         if ($_SESSION['user_access'] == config('\User\Config\UserConfig')->access_lvl_trainer) {
             // Only allow own apprentices
@@ -914,7 +917,7 @@ class Apprentice extends \App\Controllers\BaseController
 
         switch ($action) {
             case 0: // Display confirmation
-                $module = ModuleModel::getInstance()->find($grade['fk_module']);
+                $module = ModuleModel::getInstance()->find($link['fk_module']);
 
                 $data = [
                     'grade' => $grade,

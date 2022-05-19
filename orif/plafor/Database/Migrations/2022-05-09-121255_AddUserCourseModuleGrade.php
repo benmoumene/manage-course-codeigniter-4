@@ -15,12 +15,7 @@ class AddUserCourseModuleGrade extends Migration
                 'constraint' => '11',
                 'auto_increment' => TRUE,
             ],
-            'fk_user_course' => [
-                'type' => 'int',
-                'unsigned' => true,
-                'constraint' => '11',
-            ],
-            'fk_module' => [
+            'fk_user_course_module' => [
                 'type' => 'int',
                 'constraint' => '11',
             ],
@@ -35,8 +30,7 @@ class AddUserCourseModuleGrade extends Migration
         ]);
 
         $this->forge->addKey('id', TRUE, TRUE);
-        $this->forge->addForeignKey('fk_user_course', 'user_course', 'id');
-        $this->forge->addForeignKey('fk_module', 'module', 'id');
+        $this->forge->addForeignKey('fk_user_course_module', 'user_course_module', 'id');
         $this->forge->createTable('user_course_module_grade', TRUE);
     }
 

@@ -36,6 +36,7 @@ return [
     'title_course_plan_update' => 'Modifier le plan de formation',
     'title_course_plan_view' => 'Afficher les détails du plan de formation',
     'title_view_course_plans_linked' => 'Plans de formation liés',
+    'course_plan_module_link' => 'Liaison entre un plan de formation et un module',
 
     //Competence Domain
     'title_view_competence_domain' => 'Détail du domaine de compétence',
@@ -84,7 +85,7 @@ return [
 
     // Module
     'module_is_school'               => 'Ecole professionnelle',
-    'module_is_not_school'           => 'Cours inter-entreprise',
+    'module_is_not_school'           => 'Cours interentreprise',
     'title_module_view'              => 'Afficher les détails du module',
     'title_view_module'              => 'Détails du module',
     'title_module_new'               => 'Ajouter un module',
