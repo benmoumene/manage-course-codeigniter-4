@@ -42,6 +42,22 @@ $trainer_access = config('\User\Config\UserConfig')->access_lvl_trainer;
                 <p class="font-weight-bold user-course-details-course-plan-name"><?= $course_plan['official_name']; ?></p>
             </div>
 
+            <?php if (array_key_exists('average', $course_averages)) { ?>
+                <div class="col-4">
+                    <?= lang('plafor_lang.grade_course_average', ['average' => round($course_averages['average'], 2)]); ?>
+                </div>
+                <div class="col-4">
+                    <?php if (array_key_exists('average_school', $course_averages)) {
+                        echo lang('plafor_lang.grade_course_average_school', ['average' => round($course_averages['average_school'], 2)]);
+                    } ?>
+                </div>
+                <div class="col-4">
+                    <?php if (array_key_exists('average_not_school', $course_averages)) {
+                        echo lang('plafor_lang.grade_course_average_not_school', ['average' => round($course_averages['average_not_school'], 2)]);
+                    } ?>
+                </div>
+            <?php } ?>
+
             <?php if (!is_null($pagers[$user_course_id])) { ?>
                 <div class="col-12 no-print">
                     <?= $pagers[$user_course_id]->links('course_' . $user_course_id); ?>
@@ -96,15 +112,6 @@ $trainer_access = config('\User\Config\UserConfig')->access_lvl_trainer;
                                 <?= array_key_exists($module['id'], $course_averages) ? round($course_averages[$module['id']], 1) : ''; ?>
                             </td>
                             <td><a href="<?= base_url('plafor/apprentice/add_grade/' . $user_course_id . '/' . $module['id']); ?>" class="btn btn-primary no-print" role="button">+</a></td>
-                        </tr>
-                    <?php } ?>
-                    <?php if (array_key_exists('average', $course_averages)) { ?>
-                        <tr>
-                            <td><span class="font-weight-bold"><?= lang('plafor_lang.grade_course_average'); ?></span></td>
-                            <td></td>
-                            <td></td>
-                            <td><?= round($course_averages['average'], 2); ?></td>
-                            <td></td>
                         </tr>
                     <?php } ?>
                 </tbody>

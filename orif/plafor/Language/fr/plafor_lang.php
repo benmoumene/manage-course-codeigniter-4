@@ -101,7 +101,9 @@ return [
     'title_grade_new'                => 'Ajouter une note',
     'title_grade_update'             => 'Modifier une note',
     'grade_average'                  => 'Moyenne',
-    'grade_course_average'           => 'Moyenne du plan de formation',
+    'grade_course_average'           => 'Moyenne du plan de formation : {average, number}',
+    'grade_course_average_school'    => 'Moyenne des cours professionnels : {average, number}',
+    'grade_course_average_not_school' => 'Moyenne des cours interentreprises : {average, number}',
 
     // Page titles
     'title_apprentice_list'          => 'Liste des apprentis',

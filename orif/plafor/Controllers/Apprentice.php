@@ -680,18 +680,27 @@ class Apprentice extends \App\Controllers\BaseController
             }
 
             if (count($school_averages) > 0 || count($not_school_averages) > 0) {
-                /** @var float */
-                $sum_school = array_reduce($school_averages, fn (float $sum, float $grade) => $sum + $grade, 0);
-                /** @var float */
-                $sum_not_school = array_reduce($not_school_averages, fn (float $sum, float $grade) => $sum + $grade, 0);
+                if (count($school_averages) > 0) {
+                    /** @var float */
+                    $average_school = array_reduce($school_averages, fn (float $sum, float $grade) => $sum + $grade, 0) / count($school_averages);
+                }
+                if (count($not_school_averages) > 0) {
+                    /** @var float */
+                    $average_not_school = array_reduce($not_school_averages, fn (float $sum, float $grade) => $sum + $grade, 0) / count($not_school_averages);
+                }
 
-                if (count($school_averages) > 0 && count($not_school_averages) > 0) {
+                if (isset($average_school) && isset($average_not_school)) {
                     // School modules averages are worth 80% of the course plan average and the rest is 20%
-                    $course_averages['average'] = $sum_school / count($school_averages) * .8 + $sum_not_school / count($not_school_averages) * .2;
-                } elseif (count($school_averages) > 0) {
-                    $course_averages['average'] = $sum_school / count($school_averages);
-                } elseif (count($not_school_averages) > 0) {
-                    $course_averages['average'] = $sum_not_school / count($not_school_averages);
+                    $course_averages['average'] = $average_school * .8 + $average_not_school * .2;
+                    $course_averages['average_school'] = $average_school;
+                    $course_averages['average_not_school'] = $average_not_school;
+                } else {
+                    $course_averages['average'] = $average_school ?? $average_not_school;
+                    if (isset($average_school)) {
+                        $course_averages['average_school'] = $average_school;
+                    } else {
+                        $course_averages['average_not_school'] = $average_not_school;
+                    }
                 }
             }
 
