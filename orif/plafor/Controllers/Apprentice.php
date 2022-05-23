@@ -638,13 +638,27 @@ class Apprentice extends \App\Controllers\BaseController
             /** @var float[] */
             $not_school_averages = [];
 
-            $all_links = UserCourseModuleModel::getInstance()->where('fk_user_course', $user_course_id)
-                ->whereIn('fk_module', ModuleModel::getInstance()->findColumn('id'))->findAll() ?? [];
+            $pager = \Config\Services::pager(null, null, false);
+            $group = 'course_' . $user_course_id;
+            $page = $pager->getCurrentPage($group);
+
+            $query = \Config\Database::connect()
+                ->table('user_course_module')
+                ->select('user_course_module.*')
+                ->join('module', 'module.id = user_course_module.fk_module')
+                ->where('user_course_module.fk_user_course', $user_course_id)
+                ->where('module.archive IS NULL')
+                ->orderBy('module.module_number asc, module.version asc');
+
+            $count = $query->countAllResults(false);
+            $pager = $pager->store($group, $page, null, $count);
+            $per_page = $pager->getPerPage($group);
+
             $page_links = [];
             if (!$display_all) {
-                $page_links = array_column(UserCourseModuleModel::getInstance()->where('fk_user_course', $user_course_id)
-                    ->whereIn('fk_module', ModuleModel::getInstance()->findColumn('id'))->paginate(null, 'course_' . $user_course_id) ?? [], 'id');
+                $page_links = array_column($query->get($per_page, ($page - 1) * $per_page, false)->getResultArray(), 'id');
             }
+            $all_links = $query->get(null, 0)->getResultArray();
 
             foreach ($all_links as $link) {
                 $module_id = $link['fk_module'];
@@ -708,7 +722,7 @@ class Apprentice extends \App\Controllers\BaseController
             $courses_grades[$user_course_id] = $course_grades;
             $courses_averages[$user_course_id] = $course_averages;
             // The pager has to be stored because further user course plans will override it
-            $course_pagers[$user_course_id] = UserCourseModuleModel::getInstance()->pager;
+            $course_pagers[$user_course_id] = $pager;
         }
 
         $data = [

@@ -560,17 +560,31 @@ class CoursePlan extends \App\Controllers\BaseController
 
         $competence_domains=CoursePlanModel::getCompetenceDomains($course_plan_id);
         $modules = [];
-        /** @var CoursePlanModuleModel */
-        $course_plan_module_model = CoursePlanModuleModel::getInstance()->where('fk_course_plan', $course_plan_id)
-            ->whereIn('fk_module', ModuleModel::getInstance()->findColumn('id'));
-        if (!empty($links = $course_plan_module_model->paginate(null, 'modules'))) {
-            foreach ($links as $link) {
-                $module = ModuleModel::getInstance()->find($link['fk_module']);
-                if (empty($module)) continue;
+        $pager = \Config\Services::pager(null, null, false);
+        $page = $pager->getCurrentPage('modules');
 
-                $module['is_school'] = $link['is_school'];
-                $modules[] = $module;
-            }
+        $query = \Config\Database::connect()
+            ->table('course_plan_module')
+            ->select('course_plan_module.*')
+            ->join('module', 'module.id = course_plan_module.fk_module')
+            ->where('fk_course_plan', $course_plan_id)
+            ->where('module.archive IS NULL');
+
+        $count = $query->countAllResults(false);
+        $pager = $pager->store('modules', $page, null, $count);
+        $per_page = $pager->getPerPage('modules');
+
+        $links = $query
+            ->orderBy('module.module_number asc, module.version asc')
+            ->get($per_page, ($page - 1) * $per_page)
+            ->getResultArray();
+
+        foreach ($links as $link) {
+            $module = ModuleModel::getInstance()->find($link['fk_module']);
+            if (empty($module)) continue;
+
+            $module['is_school'] = $link['is_school'];
+            $modules[] = $module;
         }
 
         // Format date
@@ -582,7 +596,8 @@ class CoursePlan extends \App\Controllers\BaseController
             'course_plan'=>$course_plan,
             'competence_domains'=>$competence_domains,
             'modules' => $modules,
-            'pager' => $course_plan_module_model->pager,
+            //'pager' => $course_plan_module_model->pager,
+            'pager' => $pager,
         );
 
         return $this->display_view('\Plafor\course_plan\view',$output);
