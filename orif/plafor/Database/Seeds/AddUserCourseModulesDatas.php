@@ -6,7 +6,7 @@ use CodeIgniter\Database\Seeder;
 use Plafor\Models\ModuleModel;
 use Plafor\Models\UserCourseModuleModel;
 
-class AddUserCourseModulesDatas extends Seeder
+class addUserCourseModulesDatas extends Seeder
 {
     public function run()
     {
