@@ -138,7 +138,6 @@ $trainer_access = config('\User\Config\UserConfig')->access_lvl_trainer;
         let show_all = $('#toggle_all')[0].checked;
 
         $.post(`<?= base_url('/plafor/apprentice/list_grades/' . $apprentice['id']); ?>/${+with_deleted}/${+show_all}`, {}, data => {
-            console.log($(data).find('.module_grades'));
             $('.module_grades').empty();
             $('.module_grades').each((_, elem) => elem.innerHTML = $(data).find(`#${elem.id}`)[0].innerHTML);
         });

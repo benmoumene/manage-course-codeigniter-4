@@ -650,13 +650,14 @@ class Apprentice extends \App\Controllers\BaseController
                 ->where('module.archive IS NULL')
                 ->orderBy('module.module_number asc, module.version asc');
 
-            $count = $query->countAllResults(false);
-            $pager = $pager->store($group, $page, null, $count);
-            $per_page = $pager->getPerPage($group);
-
             $page_links = [];
             if (!$display_all) {
+                $count = $query->countAllResults(false);
+                $pager = $pager->store($group, $page, null, $count);
+                $per_page = $pager->getPerPage($group);
                 $page_links = array_column($query->get($per_page, ($page - 1) * $per_page, false)->getResultArray(), 'id');
+            } else {
+                $pager = null;
             }
             $all_links = $query->get(null, 0)->getResultArray();
 
