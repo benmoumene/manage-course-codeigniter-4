@@ -94,7 +94,7 @@ $trainer_access = config('\User\Config\UserConfig')->access_lvl_trainer;
                                     foreach ($module_grades as $i => $grade) {
                                         $g = $grade['grade'];
                                         if ($grade['archive'] != NULL) {
-                                            $g = '<span class="text-danger">' . $g . '</span>';
+                                            $g = '<span class="text-danger print-strikethrough">' . $g . '</span>';
                                         }
                                         if ($_SESSION['user_access'] >= $trainer_access) {
                                             $url = base_url('plafor/apprentice/edit_grade/' . $grade['id']);

@@ -22,6 +22,9 @@
     .no-print {
         display: none;
     }
+    .print-strikethrough {
+        text-decoration: line-through;
+    }
     a {
         text-decoration: none !important;
     }
