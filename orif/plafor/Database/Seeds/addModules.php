@@ -363,6 +363,11 @@ class addModules extends Seeder
                 'version' => 1,
             ],
             [
+                'module_number' => 262,
+                'official_name' => "Exécuter l'évaluation de moyens ICT",
+                'version' => 1,
+            ],
+            [
                 'module_number' => 263,
                 'official_name' => "Garantir la sécurité des terminaux ICT utilisateurs",
                 'version' => 1,

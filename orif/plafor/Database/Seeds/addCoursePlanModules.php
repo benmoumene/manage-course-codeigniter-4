@@ -794,7 +794,7 @@ class addCoursePlanModules extends Seeder
                 // 1st year
                 [
                     'module_number' => 105,
-                    'version' => 1,
+                    'version' => 3,
                     'is_school' => FALSE,
                 ],
                 [
